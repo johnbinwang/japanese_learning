@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>日语形态练习</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div class="app">
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 学习页面 -->
+            <div id="learn" class="page active">
+                <div class="page-header">
+                    <h1>日语形态练习</h1>
+                    <div class="user-info">
+                        <span id="user-code">加载中...</span>
+                    </div>
+                </div>
+                
+                <!-- 模块选择 -->
+                <div class="module-selector">
+                    <button class="module-btn active" data-module="verb">
+                        <div class="module-icon">動</div>
+                        <div class="module-text">
+                            <div class="module-title">动词变形</div>
+                            <div class="module-desc">ます形・て形・否定形等</div>
+                        </div>
+                    </button>
+                    <button class="module-btn" data-module="adj">
+                        <div class="module-icon">形</div>
+                        <div class="module-text">
+                            <div class="module-title">形容词变形</div>
+                            <div class="module-desc">i形容词・na形容词</div>
+                        </div>
+                    </button>
+                    <button class="module-btn" data-module="plain">
+                        <div class="module-icon">簡</div>
+                        <div class="module-text">
+                            <div class="module-title">简体形</div>
+                            <div class="module-desc">简体形变化练习</div>
+                        </div>
+                    </button>
+                </div>
+                
+                <!-- 形态选择 -->
+                <div class="form-selector">
+                    <div class="form-chips" id="form-chips">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+                
+                <!-- 练习模式切换 -->
+                <div class="mode-toggle">
+                    <button class="mode-btn active" data-mode="quiz">测验模式</button>
+                    <button class="mode-btn" data-mode="flashcard">闪卡模式</button>
+                </div>
+                
+                <!-- 测验卡片 -->
+                <div class="quiz-card" id="quiz-card" style="display: none;">
+                    <div class="card-header">
+                        <div class="word-info">
+                            <div class="word-main" id="word-main">読む</div>
+                            <div class="word-reading" id="word-reading">よむ</div>
+                            <div class="word-meaning" id="word-meaning">读</div>
+                        </div>
+                        <div class="target-form" id="target-form">て形</div>
+                    </div>
+                    
+                    <div class="input-section">
+                        <input type="text" id="answer-input" placeholder="请输入答案" autocomplete="off">
+                        <button class="submit-btn" id="submit-btn">提交</button>
+                    </div>
+                    
+                    <div class="result-section" id="result-section" style="display: none;">
+                        <div class="result-status" id="result-status"></div>
+                        <div class="correct-answer" id="correct-answer"></div>
+                        <div class="explanation" id="explanation"></div>
+                        <button class="next-btn" id="next-btn">下一题</button>
+                    </div>
+                </div>
+                
+                <!-- 闪卡 -->
+                <div class="flashcard" id="flashcard" style="display: none;">
+                    <div class="card-front" id="card-front">
+                        <div class="word-info">
+                            <div class="word-main" id="fc-word-main">読む</div>
+                            <div class="word-reading" id="fc-word-reading">よむ</div>
+                            <div class="word-meaning" id="fc-word-meaning">读</div>
+                        </div>
+                        <div class="target-form" id="fc-target-form">て形</div>
+                        <button class="flip-btn" id="flip-btn">显示答案</button>
+                    </div>
+                    
+                    <div class="card-back" id="card-back" style="display: none;">
+                        <div class="answer-display" id="fc-answer">読んで</div>
+                        <div class="explanation" id="fc-explanation">む结尾动词的て形变化</div>
+                        
+                        <div class="feedback-buttons">
+                            <button class="feedback-btn again" data-feedback="again">Again</button>
+                            <button class="feedback-btn hard" data-feedback="hard">Hard</button>
+                            <button class="feedback-btn good" data-feedback="good">Good</button>
+                            <button class="feedback-btn easy" data-feedback="easy">Easy</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 开始按钮 -->
+                <div class="start-section">
+                    <button class="start-btn" id="start-btn">开始练习</button>
+                </div>
+            </div>
+            
+            <!-- 进度页面 -->
+            <div id="progress" class="page">
+                <div class="page-header">
+                    <h1>学习进度</h1>
+                    <div class="module-selector">
+                        <button class="module-btn active" data-module="verb">动词</button>
+                        <button class="module-btn" data-module="adj">形容词</button>
+                        <button class="module-btn" data-module="plain">简体形</button>
+                    </div>
+                </div>
+                
+                <!-- 进度标签页 -->
+                <div class="progress-tabs">
+                    <button class="tab-btn active" data-tab="overview">概览</button>
+                    <button class="tab-btn" data-tab="analysis">分析</button>
+                    <button class="tab-btn" data-tab="trends">趋势</button>
+                    <button class="tab-btn" data-tab="recommendations">建议</button>
+                </div>
+                
+                <!-- 概览标签页 -->
+                <div id="overview-tab" class="tab-content active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-reviews">0</div>
+                            <div class="stat-label">总复习数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="accuracy">0%</div>
+                            <div class="stat-label">正确率</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="due-count">0</div>
+                            <div class="stat-label">待复习</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="avg-streak">0</div>
+                            <div class="stat-label">平均熟练度</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-charts">
+                        <div class="chart-section">
+                            <h3>模块对比</h3>
+                            <div id="module-comparison" class="module-comparison">
+                                <!-- 动态生成 -->
+                            </div>
+                        </div>
+                        
+
+                    </div>
+                </div>
+                
+                <!-- 分析标签页 -->
+                <div id="analysis-tab" class="tab-content">
+                    <div class="analysis-section">
+                        <h3>变形掌握度</h3>
+                        <div id="form-mastery" class="form-mastery">
+                            <!-- 动态生成 -->
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-section">
+                        <h3>错误分析</h3>
+                        <div id="error-analysis" class="error-analysis">
+                            <div class="error-stats" id="error-stats">
+                                <!-- 动态生成 -->
+                            </div>
+                            <div class="problem-items" id="problem-items">
+                                <h4>需要重点关注的项目</h4>
+                                <div class="problem-list" id="problem-list">
+                                    <!-- 动态生成 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 趋势标签页 -->
+                <div id="trends-tab" class="tab-content">
+                    <div class="trends-section">
+                        <h3>学习趋势</h3>
+                        <div class="trend-charts">
+                            <div class="chart-container">
+                                <h4>每日学习情况</h4>
+                                <canvas id="daily-trend-chart" width="350" height="200"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <h4>每周进度</h4>
+                                <canvas id="weekly-trend-chart" width="350" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 建议标签页 -->
+                <div id="recommendations-tab" class="tab-content">
+                    <div class="recommendations-section">
+                        <h3>学习建议</h3>
+                        <div id="recommendations-list" class="recommendations-list">
+                            <!-- 动态生成 -->
+                        </div>
+                    </div>
+                    
+                    <div class="study-goals">
+                        <h3>学习目标</h3>
+                        <div class="goal-setting">
+                            <div class="goal-item">
+                                <label>每日复习目标</label>
+                                <input type="number" id="daily-goal" min="1" max="100" value="20">
+                                <span>个项目</span>
+                            </div>
+                            <div class="goal-item">
+                                <label>目标准确率</label>
+                                <input type="number" id="accuracy-goal" min="50" max="100" value="85">
+                                <span>%</span>
+                            </div>
+                            <button class="save-goals-btn" id="save-goals-btn">保存目标</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 设置页面 -->
+            <div id="settings" class="page">
+                <div class="page-header">
+                    <h1>设置</h1>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>账户信息</h3>
+                    <div class="setting-item">
+                        <label>访问码</label>
+                        <div class="access-code-section">
+                            <input type="text" id="access-code-display" readonly>
+                            <button class="copy-btn" id="copy-code-btn">复制</button>
+                        </div>
+                        <div class="setting-desc">在新设备上输入此访问码可同步学习进度</div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label>绑定新设备</label>
+                        <div class="bind-section">
+                            <input type="text" id="bind-code-input" placeholder="输入6位访问码">
+                            <button class="bind-btn" id="bind-btn">绑定</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>学习设置</h3>
+                    <div class="setting-item">
+                        <label class="switch-label">
+                            <input type="checkbox" id="due-only-toggle">
+                            <span class="switch"></span>
+                            只显示到期题目
+                        </label>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label class="switch-label">
+                            <input type="checkbox" id="show-explain-toggle">
+                            <span class="switch"></span>
+                            显示变形规则说明
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>启用的变形</h3>
+                    <div class="form-toggles" id="form-toggles">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- 底部导航 -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-page="learn">
+                <div class="nav-icon">📚</div>
+                <div class="nav-label">学习</div>
+            </button>
+            <button class="nav-item" data-page="progress">
+                <div class="nav-icon">📊</div>
+                <div class="nav-label">进度</div>
+            </button>
+            <button class="nav-item" data-page="settings">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-label">设置</div>
+            </button>
+        </nav>
+    </div>
+    
+    <!-- 加载提示 -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">加载中...</div>
+    </div>
+    
+    <!-- 提示消息 -->
+    <div class="toast" id="toast"></div>
+    
+    <script src="app.js"></script>
+</body>
+</html>

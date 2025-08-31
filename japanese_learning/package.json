@@ -1,0 +1,47 @@
+{
+  "name": "japanese-learning-app",
+  "version": "1.0.0",
+  "description": "日语形态练习H5应用 - 动词变形、形容词变形、简体形学习",
+  "main": "api/index.js",
+  "scripts": {
+    "dev": "node api/index.js",
+    "start": "node api/index.js",
+    "seed": "node seed-verbs.js && node seed-adjs.js",
+    "setup-db": "psql $DATABASE_URL < schema.sql",
+    "build": "echo 'No build step required for static files'",
+    "test": "echo 'No tests specified'"
+  },
+  "keywords": [
+    "japanese",
+    "learning",
+    "conjugation",
+    "srs",
+    "h5",
+    "mobile"
+  ],
+  "author": "Japanese Learning App",
+  "license": "MIT",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.2.1",
+    "express": "^4.18.2",
+    "pg": "^8.11.3",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/japanese-learning-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/japanese-learning-app/issues"
+  },
+  "homepage": "https://github.com/your-username/japanese-learning-app#readme"
+}
