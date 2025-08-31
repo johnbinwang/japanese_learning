@@ -79,11 +79,12 @@ class API {
         });
     }
     
-    static async getNext(module, selectedForms = []) {
+    static async getNext(module, selectedForms = [], mode = 'quiz') {
         const formsParam = selectedForms.length > 0 ? `&forms=${selectedForms.join(',')}` : '';
+        const modeParam = `&mode=${mode}`;
         // 添加时间戳参数防止缓存
         const timestamp = Date.now();
-        return this.request(`/api/next?module=${module}${formsParam}&_t=${timestamp}`, {
+        return this.request(`/api/next?module=${module}${formsParam}${modeParam}&_t=${timestamp}`, {
             cache: 'no-cache'
         });
     }
@@ -395,7 +396,7 @@ class LearningManager {
     }
     
     async loadNextQuestion() {
-        const data = await API.getNext(state.currentModule, state.selectedForms);
+        const data = await API.getNext(state.currentModule, state.selectedForms, state.currentMode);
         state.currentQuestion = data;
         
         state.isFlashcardFlipped = false;
@@ -474,7 +475,8 @@ class LearningManager {
                          state.currentModule === 'adj' ? 'adj' : 'pln',
                 itemId: state.currentQuestion.itemId,
                 form: state.currentQuestion.targetForm,
-                userAnswer: userAnswer
+                userAnswer: userAnswer,
+                mode: state.currentMode
             };
             
             const result = await API.submit(submitData);
@@ -880,7 +882,8 @@ class LearningManager {
                          state.currentModule === 'adj' ? 'adj' : 'pln',
                 itemId: state.currentQuestion.itemId,
                 form: state.currentQuestion.targetForm,
-                feedback: feedback
+                feedback: feedback,
+                mode: state.currentMode
             };
             
             await API.submit(submitData);
@@ -908,7 +911,7 @@ class LearningManager {
 // 进度显示
 function updateProgressDisplay(data) {
     document.getElementById('total-reviews').textContent = data.totalReviews || 0;
-    document.getElementById('accuracy').textContent = `${Math.round((data.accuracy || 0) * 100)}%`;
+    document.getElementById('accuracy').textContent = `${Math.round(data.accuracy || 0)}%`;
     document.getElementById('due-count').textContent = data.dueCount || 0;
     document.getElementById('avg-streak').textContent = Math.round(data.avgStreak || 0);
 }
@@ -977,8 +980,15 @@ function initProgressTabs() {
 function updateProgressDisplayWithModule() {
     const selectedModule = state.selectedModule || 'all';
     const isDetailed = document.querySelector('.tab-btn.active')?.dataset.tab !== 'overview';
+    const currentMode = state.currentMode;
     
-    const url = `/api/progress?module=${selectedModule}${isDetailed ? '&detailed=true' : ''}`;
+    let url = `/api/progress?module=${selectedModule}`;
+    if (isDetailed) {
+        url += '&detailed=true';
+    }
+    if (currentMode) {
+        url += `&mode=${currentMode}`;
+    }
     
     fetch(url)
         .then(response => response.json())
@@ -1019,13 +1029,13 @@ function updateAnalysisTab(data) {
     }
     
     // 更新变形掌握度
-    if (data.formAnalysis) {
-        updateFormMastery(data.formAnalysis);
+    if (data.formMastery) {
+        updateFormMastery(data.formMastery);
     }
     
     // 更新错误分析
-    if (data.errorAnalysis) {
-        updateErrorAnalysis(data.errorAnalysis);
+    if (data.errorPatterns) {
+        updateErrorAnalysis(data.errorPatterns);
     }
 }
 
@@ -1114,8 +1124,8 @@ function updateErrorAnalysis(errorData) {
 
 // 更新趋势标签页
 function updateTrendsTab(data) {
-    if (data.trends) {
-        updateTrendCharts(data.trends);
+    if (data.learningTrends) {
+        updateTrendCharts(data.learningTrends);
     }
 }
 

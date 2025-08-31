@@ -9,7 +9,8 @@
     "seed": "node seed-verbs.js && node seed-adjs.js",
     "setup-db": "psql $DATABASE_URL < schema.sql",
     "build": "echo 'No build step required for static files'",
-    "test": "echo 'No tests specified'"
+    "test": "mocha test_progress.js --timeout 10000",
+    "test:progress": "node test_progress.js"
   },
   "keywords": [
     "japanese",
@@ -31,7 +32,9 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "mocha": "^11.7.1",
+    "nodemon": "^3.0.1",
+    "supertest": "^7.1.4"
   },
   "engines": {
     "node": ">=18.0.0"

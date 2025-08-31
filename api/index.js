@@ -58,12 +58,13 @@ async function initializeDatabase() {
         item_type CHAR(3) NOT NULL CHECK (item_type IN ('vrb', 'adj', 'pln')),
         item_id INTEGER NOT NULL,
         form TEXT NOT NULL,
+        learning_mode VARCHAR(10) DEFAULT 'quiz' CHECK (learning_mode IN ('quiz', 'flashcard')),
         attempts INTEGER DEFAULT 0,
         correct INTEGER DEFAULT 0,
         streak INTEGER DEFAULT 0,
         due_at TIMESTAMPTZ DEFAULT NOW(),
         last_reviewed TIMESTAMPTZ DEFAULT NOW(),
-        UNIQUE(anon_id, item_type, item_id, form)
+        UNIQUE(anon_id, item_type, item_id, form, learning_mode)
       );
     `);
     
@@ -729,7 +730,8 @@ app.get('/api/next', authenticateUser, async (req, res) => {
       'Expires': '0'
     });
     
-    const { module, forms } = req.query; // verb, adj, plain
+    const { module, forms, mode } = req.query; // verb, adj, plain
+    const learningMode = mode || 'quiz'; // 默认为quiz模式
     
     // 处理前端传递的 forms 参数
     let selectedForms = [];
@@ -790,13 +792,13 @@ app.get('/api/next', authenticateUser, async (req, res) => {
                ${itemType === 'adj' ? 'i.type' : 'i.group_type as group'}
         FROM reviews r
         JOIN ${tableName} i ON r.item_id = i.id
-        WHERE r.anon_id = $1 AND r.item_type = $2
+        WHERE r.anon_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
       `;
       
-      const params = [req.user.anonId, itemType];
+      const params = [req.user.anonId, itemType, learningMode];
       
       // 按启用的形态过滤（确保只取当前启用形态的到期题目）
-      query += ' AND r.form = ANY($3)';
+      query += ' AND r.form = ANY($4)';
       params.push(enabledForms);
       
       if (settings.due_only) {
@@ -811,7 +813,7 @@ app.get('/api/next', authenticateUser, async (req, res) => {
     } else {
       // 开发环境：使用模拟数据
       const reviews = Array.from(mockDB.reviews.values())
-        .filter(r => r.anonId === req.user.anonId && r.itemType === itemType && enabledForms.includes(r.form));
+        .filter(r => r.anonId === req.user.anonId && r.itemType === itemType && r.learningMode === learningMode && enabledForms.includes(r.form));
       
       if (reviews.length > 0) {
         const review = reviews[0];
@@ -842,14 +844,14 @@ app.get('/api/next', authenticateUser, async (req, res) => {
           FROM ${tableName} i
           WHERE i.id NOT IN (
             SELECT r.item_id FROM reviews r 
-            WHERE r.anon_id = $1 AND r.item_type = $2
+            WHERE r.anon_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
           )
           ORDER BY RANDOM()
           LIMIT 1
         `;
         
-        console.log('SQL查询:', randomQuery, '参数:', [req.user.anonId, itemType]);
-        const { rows: newRows } = await pool.query(randomQuery, [req.user.anonId, itemType]);
+        console.log('SQL查询:', randomQuery, '参数:', [req.user.anonId, itemType, learningMode]);
+        const { rows: newRows } = await pool.query(randomQuery, [req.user.anonId, itemType, learningMode]);
         
         if (newRows.length === 0) {
           return res.json({ error: '没有更多题目' });
@@ -861,9 +863,9 @@ app.get('/api/next', authenticateUser, async (req, res) => {
         const targetForm = forms[Math.floor(Math.random() * forms.length)];
         
         // 创建新的复习记录
-        const insertSql = `INSERT INTO reviews (anon_id, item_type, item_id, form, due_at) 
-           VALUES ($1, $2, $3, $4, NOW()) 
-           ON CONFLICT (anon_id, item_type, item_id, form) DO NOTHING`;
+        const insertSql = `INSERT INTO reviews (anon_id, item_type, item_id, form, learning_mode, due_at) 
+           VALUES ($1, $2, $3, $4, 'quiz', NOW()) 
+           ON CONFLICT (anon_id, item_type, item_id, form, learning_mode) DO NOTHING`;
         const insertParams = [req.user.anonId, itemType, item.id, targetForm];
         await pool.query(insertSql, insertParams);
         
@@ -899,7 +901,7 @@ app.get('/api/next', authenticateUser, async (req, res) => {
         // 开发环境：使用模拟数据
         const items = itemType === 'adj' ? mockDB.adjectives : mockDB.verbs;
         const reviewedItems = Array.from(mockDB.reviews.values())
-          .filter(r => r.anonId === req.user.anonId && r.itemType === itemType)
+          .filter(r => r.anonId === req.user.anonId && r.itemType === itemType && r.learningMode === learningMode)
           .map(r => r.itemId);
         
         const availableItems = items.filter(i => !reviewedItems.includes(i.id));
@@ -914,12 +916,13 @@ app.get('/api/next', authenticateUser, async (req, res) => {
         const targetForm = forms[Math.floor(Math.random() * forms.length)];
         
         // 创建新的复习记录
-        const reviewKey = `${req.user.anonId}-${itemType}-${item.id}-${targetForm}`;
+        const reviewKey = `${req.user.anonId}-${itemType}-${item.id}-${targetForm}-${learningMode}`;
         mockDB.reviews.set(reviewKey, {
           anonId: req.user.anonId,
           itemType,
           itemId: item.id,
           form: targetForm,
+          learningMode,
           dueAt: new Date(),
           streak: 0,
           attempts: 0,
@@ -994,13 +997,14 @@ app.get('/api/next', authenticateUser, async (req, res) => {
 // 提交答案
 app.post('/api/submit', authenticateUser, async (req, res) => {
   try {
-    const { itemType, itemId, form, userAnswer, feedback } = req.body;
-    // console.log('/api/submit 收到的数据:', { itemType, itemId, form, userAnswer, feedback });
+    const { itemType, itemId, form, userAnswer, feedback, mode } = req.body;
+    const learningMode = mode || 'quiz'; // 默认为quiz模式
+    // console.log('/api/submit 收到的数据:', { itemType, itemId, form, userAnswer, feedback, mode });
     
     // 标准化itemType - 处理大小写不匹配问题
-    const normalizedItemType = itemType.toUpperCase() === 'VRB' ? 'vrb' : 
-                               itemType.toUpperCase() === 'ADJ' ? 'adj' : 
-                               itemType.toUpperCase() === 'PLN' ? 'pln' : 
+    const normalizedItemType = itemType.toUpperCase() === 'VRB' || itemType.toLowerCase() === 'verb' ? 'vrb' : 
+                               itemType.toUpperCase() === 'ADJ' || itemType.toLowerCase() === 'adjective' ? 'adj' : 
+                               itemType.toUpperCase() === 'PLN' || itemType.toLowerCase() === 'plain' ? 'pln' : 
                                itemType.toLowerCase();
     
     let item, correctAnswer;
@@ -1043,8 +1047,8 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
     
     if (pool) {
       // 生产环境：使用真实数据库
-      const reviewSql = 'SELECT * FROM reviews WHERE anon_id = $1 AND item_type = $2 AND item_id = $3 AND form = $4';
-      const reviewParams = [req.user.anonId, normalizedItemType, itemId, form];
+      const reviewSql = 'SELECT * FROM reviews WHERE anon_id = $1 AND item_type = $2 AND item_id = $3 AND form = $4 AND learning_mode = $5';
+      const reviewParams = [req.user.anonId, normalizedItemType, itemId, form, learningMode];
       console.log('SQL查询:', reviewSql, '参数:', reviewParams);
       const { rows: reviewRows } = await pool.query(reviewSql, reviewParams);
       
@@ -1064,16 +1068,16 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
       const { newStreak, dueAt } = srsAlgorithm.calculateNextDue(currentStreak, finalFeedback);
       
       // 更新复习记录
-      const updateSql = `INSERT INTO reviews (anon_id, item_type, item_id, form, attempts, correct, streak, due_at, last_reviewed)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
-         ON CONFLICT (anon_id, item_type, item_id, form)
-         DO UPDATE SET attempts = $5, correct = $6, streak = $7, due_at = $8, last_reviewed = NOW()`;
-      const updateParams = [req.user.anonId, normalizedItemType, itemId, form, attempts, correct, newStreak, dueAt];
+      const updateSql = `INSERT INTO reviews (anon_id, item_type, item_id, form, learning_mode, attempts, correct, streak, due_at, last_reviewed)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
+         ON CONFLICT (anon_id, item_type, item_id, form, learning_mode)
+         DO UPDATE SET attempts = $6, correct = $7, streak = $8, due_at = $9, last_reviewed = NOW()`;
+      const updateParams = [req.user.anonId, normalizedItemType, itemId, form, learningMode, attempts, correct, newStreak, dueAt];
       console.log('SQL更新:', updateSql, '参数:', updateParams);
       await pool.query(updateSql, updateParams);
     } else {
       // 开发环境：使用模拟数据
-      const reviewKey = `${req.user.anonId}-${normalizedItemType}-${itemId}-${form}`;
+      const reviewKey = `${req.user.anonId}-${normalizedItemType}-${itemId}-${form}-${learningMode}`;
       const currentReview = mockDB.reviews.get(reviewKey) || {
         attempts: 0,
         correct: 0,
@@ -1092,6 +1096,7 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
         itemType: normalizedItemType,
         itemId: parseInt(itemId),
         form,
+        learningMode,
         attempts,
         correct,
         streak: newStreak,
@@ -1120,11 +1125,14 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
 // 获取进度统计
 app.get('/api/progress', authenticateUser, async (req, res) => {
   try {
-    const { module, detailed } = req.query;
+    const { module, detailed, mode } = req.query;
+    console.log(`🚀 /api/progress called with: module=${module}, detailed=${detailed}, mode=${mode}, anonId=${req.user.anonId}`);
     
     if (detailed === 'true') {
+      console.log('📊 Calling getDetailedProgress...');
       // 返回详细的进度分析
-      const progressData = await getDetailedProgress(req.user.anonId, module);
+      const progressData = await getDetailedProgress(req.user.anonId, module, mode);
+      console.log('✅ getDetailedProgress completed, returning data');
       res.json(progressData);
       return;
     }
@@ -1133,6 +1141,15 @@ app.get('/api/progress', authenticateUser, async (req, res) => {
     if (module === 'verb') itemType = 'vrb';
     else if (module === 'adj') itemType = 'adj';
     else itemType = 'pln';
+    
+    // 构建查询条件
+    let whereClause = 'WHERE anon_id = $1 AND item_type = $2';
+    let params = [req.user.anonId, itemType];
+    
+    if (mode) {
+      whereClause += ' AND learning_mode = $3';
+      params.push(mode);
+    }
     
     // 总体统计
     const { rows: statsRows } = await pool.query(
@@ -1143,8 +1160,8 @@ app.get('/api/progress', authenticateUser, async (req, res) => {
          AVG(streak) as avg_streak,
          COUNT(CASE WHEN due_at <= NOW() THEN 1 END) as due_count
        FROM reviews 
-       WHERE anon_id = $1 AND item_type = $2`,
-      [req.user.anonId, itemType]
+       ${whereClause}`,
+      params
     );
     
     // 按熟练度分组
@@ -1158,7 +1175,7 @@ app.get('/api/progress', authenticateUser, async (req, res) => {
          END as level,
          COUNT(*) as count
        FROM reviews 
-       WHERE anon_id = $1 AND item_type = $2
+       ${whereClause}
        GROUP BY 
          CASE 
            WHEN streak = 0 THEN 'new'
@@ -1166,31 +1183,31 @@ app.get('/api/progress', authenticateUser, async (req, res) => {
            WHEN streak <= 4 THEN 'familiar'
            ELSE 'mastered'
          END`,
-      [req.user.anonId, itemType]
+      params
     );
     
     // 最近7天的学习记录
+    let recentWhereClause = whereClause + ' AND last_reviewed >= NOW() - INTERVAL \'7 days\'';
     const { rows: recentRows } = await pool.query(
       `SELECT 
          DATE(last_reviewed) as date,
          COUNT(*) as reviews,
          SUM(CASE WHEN correct > 0 THEN 1 ELSE 0 END) as correct_reviews
        FROM reviews 
-       WHERE anon_id = $1 AND item_type = $2 
-         AND last_reviewed >= NOW() - INTERVAL '7 days'
+       ${recentWhereClause}
        GROUP BY DATE(last_reviewed)
        ORDER BY date`,
-      [req.user.anonId, itemType]
+      params
     );
     
     const stats = statsRows[0];
-    const accuracy = stats.total_attempts > 0 ? (stats.total_correct / stats.total_attempts * 100).toFixed(1) : 0;
+    const accuracy = stats.total_attempts > 0 ? parseFloat((stats.total_correct / stats.total_attempts * 100).toFixed(1)) : 0;
     
     res.json({
       totalReviews: parseInt(stats.total_reviews) || 0,
       totalAttempts: parseInt(stats.total_attempts) || 0,
       totalCorrect: parseInt(stats.total_correct) || 0,
-      accuracy: parseFloat(accuracy),
+      accuracy: Math.min(accuracy, 100), // 确保正确率不超过100%
       avgStreak: parseFloat(stats.avg_streak) || 0,
       dueCount: parseInt(stats.due_count) || 0,
       levelDistribution: streakRows.reduce((acc, row) => {
@@ -1207,12 +1224,23 @@ app.get('/api/progress', authenticateUser, async (req, res) => {
 });
 
 // 详细进度分析函数
-async function getDetailedProgress(anonId, module) {
-  const moduleStats = await getModuleComparison(anonId);
-  const formAnalysis = await getFormAnalysis(anonId, module);
-  const errorAnalysis = await getErrorAnalysis(anonId, module);
-  const learningTrends = await getLearningTrends(anonId, module);
+async function getDetailedProgress(anonId, module, mode = null) {
+  console.log(`🔍 getDetailedProgress called with: anonId=${anonId}, module=${module}, mode=${mode}`);
+  
+  const moduleStats = await getModuleComparison(anonId, mode, module);
+  console.log('📊 moduleStats:', moduleStats);
+  
+  const formAnalysis = await getFormAnalysis(anonId, module, mode);
+  console.log('📋 formAnalysis:', formAnalysis);
+  
+  const errorAnalysis = await getErrorAnalysis(anonId, module, mode);
+  console.log('❌ errorAnalysis:', errorAnalysis);
+  
+  const learningTrends = await getLearningTrends(anonId, module, mode);
+  console.log('📈 learningTrends:', learningTrends);
+  
   const recommendations = await getRecommendations(anonId, module);
+  console.log('💡 recommendations:', recommendations);
   
   return {
     moduleComparison: moduleStats,
@@ -1224,10 +1252,14 @@ async function getDetailedProgress(anonId, module) {
 }
 
 // 模块对比分析
-async function getModuleComparison(anonId) {
-  const { rows } = await pool.query(
-    `SELECT 
+async function getModuleComparison(anonId, mode = null, module = null) {
+  if (!pool) {
+    return [];
+  }
+  
+  let sql = `SELECT 
        item_type,
+       learning_mode,
        COUNT(*) as total_items,
        SUM(attempts) as total_attempts,
        SUM(correct) as total_correct,
@@ -1235,90 +1267,138 @@ async function getModuleComparison(anonId) {
        COUNT(CASE WHEN due_at <= NOW() THEN 1 END) as due_count,
        AVG(CASE WHEN attempts > 0 THEN correct::float / attempts ELSE 0 END) as accuracy
      FROM reviews 
-     WHERE anon_id = $1
-     GROUP BY item_type`,
-    [anonId]
-  );
+     WHERE anon_id = $1`;
+  
+  const params = [anonId];
+  let paramIndex = 2;
+  
+  if (module) {
+    let itemType;
+    if (module === 'verb') itemType = 'vrb';
+    else if (module === 'adj') itemType = 'adj';
+    else itemType = 'pln';
+    
+    sql += ` AND item_type = $${paramIndex}`;
+    params.push(itemType);
+    paramIndex++;
+  }
+  
+  if (mode) {
+    sql += ` AND learning_mode = $${paramIndex}`;
+    params.push(mode);
+  }
+  
+  sql += ` GROUP BY item_type, learning_mode`;
+  
+  const { rows } = await pool.query(sql, params);
   
   return rows.map(row => ({
     module: row.item_type === 'vrb' ? 'verb' : row.item_type === 'adj' ? 'adjective' : 'plain',
+    mode: row.learning_mode,
     totalItems: parseInt(row.total_items),
     totalAttempts: parseInt(row.total_attempts) || 0,
     totalCorrect: parseInt(row.total_correct) || 0,
     avgStreak: parseFloat(row.avg_streak) || 0,
     dueCount: parseInt(row.due_count) || 0,
-    accuracy: parseFloat(row.accuracy) || 0
+    accuracy: Math.min(parseFloat(row.accuracy) * 100 || 0, 100).toFixed(1)
   }));
 }
 
 // 变形掌握度分析
-async function getFormAnalysis(anonId, module) {
+async function getFormAnalysis(anonId, module, mode = null) {
+  if (!pool) {
+    return [];
+  }
+  
   let itemType;
   if (module === 'verb') itemType = 'vrb';
   else if (module === 'adj') itemType = 'adj';
   else itemType = 'pln';
   
-  const { rows } = await pool.query(
-    `SELECT 
+  let sql = `SELECT 
        form,
+       learning_mode,
        COUNT(*) as total_items,
        SUM(attempts) as total_attempts,
        SUM(correct) as total_correct,
        AVG(streak) as avg_streak,
        COUNT(CASE WHEN streak >= 5 THEN 1 END) as mastered_count
      FROM reviews 
-     WHERE anon_id = $1 AND item_type = $2
-     GROUP BY form
-     ORDER BY avg_streak DESC`,
-    [anonId, itemType]
-  );
+     WHERE anon_id = $1 AND item_type = $2`;
+  
+  const params = [anonId, itemType];
+  if (mode) {
+    sql += ` AND learning_mode = $3`;
+    params.push(mode);
+  }
+  
+  sql += ` GROUP BY form, learning_mode ORDER BY avg_streak DESC`;
+  
+  const { rows } = await pool.query(sql, params);
   
   return rows.map(row => ({
     form: row.form,
+    mode: row.learning_mode,
     totalItems: parseInt(row.total_items),
     totalAttempts: parseInt(row.total_attempts) || 0,
     totalCorrect: parseInt(row.total_correct) || 0,
     avgStreak: parseFloat(row.avg_streak) || 0,
     masteredCount: parseInt(row.mastered_count) || 0,
-    accuracy: row.total_attempts > 0 ? (row.total_correct / row.total_attempts) : 0,
-    masteryRate: row.total_items > 0 ? (row.mastered_count / row.total_items) : 0
+    accuracy: row.total_attempts > 0 ? Math.min((row.total_correct / row.total_attempts * 100), 100).toFixed(1) : '0.0',
+    masteryRate: row.total_items > 0 ? (row.mastered_count / row.total_items * 100).toFixed(1) : '0.0'
   }));
 }
 
 // 错误模式分析
-async function getErrorAnalysis(anonId, module) {
+async function getErrorAnalysis(anonId, module, mode = null) {
+  if (!pool) {
+    return { errorItems: [], errorStats: [] };
+  }
+  
   let itemType;
   if (module === 'verb') itemType = 'vrb';
   else if (module === 'adj') itemType = 'adj';
   else itemType = 'pln';
   
-  const { rows } = await pool.query(
-    `SELECT 
+  let sql = `SELECT 
        form,
        item_id,
+       learning_mode,
        attempts,
        correct,
        streak,
        (attempts - correct) as errors
      FROM reviews 
-     WHERE anon_id = $1 AND item_type = $2 AND attempts > correct
-     ORDER BY (attempts - correct) DESC, attempts DESC
-     LIMIT 20`,
-    [anonId, itemType]
-  );
+     WHERE anon_id = $1 AND item_type = $2 AND attempts > correct`;
   
-  const errorStats = await pool.query(
-    `SELECT 
+  const params = [anonId, itemType];
+  if (mode) {
+    sql += ` AND learning_mode = $3`;
+    params.push(mode);
+  }
+  
+  sql += ` ORDER BY (attempts - correct) DESC, attempts DESC LIMIT 20`;
+  
+  const { rows } = await pool.query(sql, params);
+  
+  let errorStatsSql = `SELECT 
        form,
+       learning_mode,
        COUNT(*) as error_items,
        SUM(attempts - correct) as total_errors,
        AVG(attempts - correct) as avg_errors_per_item
      FROM reviews 
-     WHERE anon_id = $1 AND item_type = $2 AND attempts > correct
-     GROUP BY form
-     ORDER BY total_errors DESC`,
-    [anonId, itemType]
-  );
+     WHERE anon_id = $1 AND item_type = $2 AND attempts > correct`;
+  
+  const errorStatsParams = [anonId, itemType];
+  if (mode) {
+    errorStatsSql += ` AND learning_mode = $3`;
+    errorStatsParams.push(mode);
+  }
+  
+  errorStatsSql += ` GROUP BY form, learning_mode ORDER BY total_errors DESC`;
+  
+  const errorStats = await pool.query(errorStatsSql, errorStatsParams);
   
   return {
     problemItems: rows.map(row => ({
@@ -1339,41 +1419,55 @@ async function getErrorAnalysis(anonId, module) {
 }
 
 // 学习趋势分析
-async function getLearningTrends(anonId, module) {
+async function getLearningTrends(anonId, module, mode = null) {
+  if (!pool) {
+    return { dailyTrends: [], weeklyTrends: [] };
+  }
+  
   let itemType;
   if (module === 'verb') itemType = 'vrb';
   else if (module === 'adj') itemType = 'adj';
   else itemType = 'pln';
   
   // 最近30天的学习趋势
-  const { rows: dailyTrends } = await pool.query(
-    `SELECT 
+  let dailySql = `SELECT 
        DATE(last_reviewed) as date,
        COUNT(*) as reviews,
        SUM(CASE WHEN correct > 0 THEN 1 ELSE 0 END) as correct_reviews,
        AVG(CASE WHEN attempts > 0 THEN correct::float / attempts ELSE 0 END) as daily_accuracy
      FROM reviews 
      WHERE anon_id = $1 AND item_type = $2 
-       AND last_reviewed >= NOW() - INTERVAL '30 days'
-     GROUP BY DATE(last_reviewed)
-     ORDER BY date`,
-    [anonId, itemType]
-  );
+       AND last_reviewed >= NOW() - INTERVAL '30 days'`;
+  
+  const dailyParams = [anonId, itemType];
+  if (mode) {
+    dailySql += ` AND learning_mode = $3`;
+    dailyParams.push(mode);
+  }
+  
+  dailySql += ` GROUP BY DATE(last_reviewed) ORDER BY date`;
+  
+  const { rows: dailyTrends } = await pool.query(dailySql, dailyParams);
   
   // 每周学习统计
-  const { rows: weeklyTrends } = await pool.query(
-    `SELECT 
+  let weeklySql = `SELECT 
        DATE_TRUNC('week', last_reviewed) as week,
        COUNT(*) as reviews,
        SUM(CASE WHEN correct > 0 THEN 1 ELSE 0 END) as correct_reviews,
        AVG(streak) as avg_streak
      FROM reviews 
      WHERE anon_id = $1 AND item_type = $2 
-       AND last_reviewed >= NOW() - INTERVAL '12 weeks'
-     GROUP BY DATE_TRUNC('week', last_reviewed)
-     ORDER BY week`,
-    [anonId, itemType]
-  );
+       AND last_reviewed >= NOW() - INTERVAL '12 weeks'`;
+  
+  const weeklyParams = [anonId, itemType];
+  if (mode) {
+    weeklySql += ` AND learning_mode = $3`;
+    weeklyParams.push(mode);
+  }
+  
+  weeklySql += ` GROUP BY DATE_TRUNC('week', last_reviewed) ORDER BY week`;
+  
+  const { rows: weeklyTrends } = await pool.query(weeklySql, weeklyParams);
   
   return {
     daily: dailyTrends.map(row => ({
@@ -1393,6 +1487,10 @@ async function getLearningTrends(anonId, module) {
 
 // 学习建议生成
 async function getRecommendations(anonId, module) {
+  if (!pool) {
+    return [];
+  }
+  
   let itemType;
   if (module === 'verb') itemType = 'vrb';
   else if (module === 'adj') itemType = 'adj';

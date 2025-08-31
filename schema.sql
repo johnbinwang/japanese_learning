@@ -41,18 +41,22 @@ CREATE TABLE IF NOT EXISTS reviews (
     item_type CHAR(3) NOT NULL CHECK (item_type IN ('vrb', 'adj', 'pln')),
     item_id INTEGER NOT NULL,
     form TEXT NOT NULL,
+    learning_mode VARCHAR(10) DEFAULT 'quiz' CHECK (learning_mode IN ('quiz', 'flashcard')),
     attempts INTEGER DEFAULT 0,
     correct INTEGER DEFAULT 0,
     streak INTEGER DEFAULT 0,
     due_at TIMESTAMPTZ DEFAULT NOW(),
     last_reviewed TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE(anon_id, item_type, item_id, form)
+    UNIQUE(anon_id, item_type, item_id, form, learning_mode)
 );
 
 -- 创建索引以提高查询性能
 CREATE INDEX IF NOT EXISTS idx_users_anon_access_code ON users_anon(access_code);
 CREATE INDEX IF NOT EXISTS idx_reviews_anon_id ON reviews(anon_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_due_at ON reviews(due_at);
+CREATE INDEX IF NOT EXISTS idx_reviews_learning_mode ON reviews(learning_mode);
+CREATE INDEX IF NOT EXISTS idx_reviews_anon_id_learning_mode ON reviews(anon_id, learning_mode);
+CREATE INDEX IF NOT EXISTS idx_reviews_item_type_learning_mode ON reviews(item_type, learning_mode);
 CREATE INDEX IF NOT EXISTS idx_reviews_item_type ON reviews(item_type);
 CREATE INDEX IF NOT EXISTS idx_verbs_group ON verbs(group_type);
 CREATE INDEX IF NOT EXISTS idx_adjectives_type ON adjectives(type);
