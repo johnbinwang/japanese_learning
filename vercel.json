@@ -18,8 +18,5 @@
       "src": "/(.*)",
       "dest": "/public/$1"
     }
-  ],
-  "env": {
-    "DATABASE_URL": "@database_url"
-  }
+  ]
 }
