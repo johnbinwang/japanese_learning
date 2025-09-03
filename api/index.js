@@ -98,21 +98,11 @@ if (pool) {
   initializeDatabase();
 }
 
-// 开发环境模拟数据库
-const mockDB = {
-  users: new Map(),
-  verbs: [
-    { id: 1, kana: 'よむ', kanji: '読む', group_type: 'I', meaning: '读' },
-    { id: 2, kana: 'たべる', kanji: '食べる', group_type: 'II', meaning: '吃' },
-    { id: 3, kana: 'する', kanji: 'する', group_type: 'IRR', meaning: '做' }
-  ],
-  adjectives: [
-    { id: 1, kana: 'おおきい', kanji: '大きい', type: 'i', meaning: '大的' },
-    { id: 2, kana: 'きれい', kanji: '綺麗', type: 'na', meaning: '美丽的' }
-  ],
-  reviews: new Map(),
-  settings: new Map()
-};
+// 确保数据库连接存在
+if (!pool) {
+  console.error('❌ 数据库连接失败：请检查 DATABASE_URL 环境变量');
+  process.exit(1);
+}
 
 // 中间件
 app.use(cors({
@@ -141,9 +131,7 @@ async function authenticateUser(req, res, next) {
     let anonId = req.signedCookies.anonId;
     let accessCode = req.headers['x-access-code'] || req.signedCookies.accessCode;
     
-    if (pool) {
-      // 生产环境：使用真实数据库
-      // 如果提供了访问码，尝试绑定
+    // 如果提供了访问码，尝试绑定
       if (req.headers['x-access-code']) {
         const { rows } = await pool.query(
           'SELECT id FROM users_anon WHERE access_code = $1',
@@ -200,59 +188,6 @@ async function authenticateUser(req, res, next) {
           maxAge: 365 * 24 * 60 * 60 * 1000 // 1年
         });
       }
-    } else {
-      // 开发环境：使用模拟数据
-      if (req.headers['x-access-code']) {
-        const user = Array.from(mockDB.users.values()).find(u => u.accessCode === req.headers['x-access-code']);
-        if (user) {
-          anonId = user.id;
-          accessCode = req.headers['x-access-code'];
-          
-          res.cookie('anonId', anonId, { 
-            signed: true, 
-            httpOnly: true, 
-            maxAge: 365 * 24 * 60 * 60 * 1000
-          });
-          res.cookie('accessCode', accessCode, { 
-            signed: true, 
-            httpOnly: true, 
-            maxAge: 365 * 24 * 60 * 60 * 1000
-          });
-        } else if (req.method === 'POST') {
-          // POST 请求中访问码无效时返回错误
-          return res.status(400).json({ error: '访问码无效' });
-        }
-      }
-      
-      if (!anonId) {
-        anonId = uuidv4();
-        accessCode = generateAccessCode();
-        
-        mockDB.users.set(anonId, {
-          id: anonId,
-          accessCode: accessCode,
-          createdAt: new Date()
-        });
-        
-        mockDB.settings.set(anonId, {
-          anonId: anonId,
-          due_only: true,
-          show_explain: true,
-          enabled_forms: ['masu', 'te', 'nai', 'ta']
-        });
-        
-        res.cookie('anonId', anonId, { 
-          signed: true, 
-          httpOnly: true, 
-          maxAge: 365 * 24 * 60 * 60 * 1000
-        });
-        res.cookie('accessCode', accessCode, { 
-          signed: true, 
-          httpOnly: true, 
-          maxAge: 365 * 24 * 60 * 60 * 1000
-        });
-      }
-    }
     
     req.user = { anonId, accessCode };
     next();
@@ -473,10 +408,13 @@ const conjugationEngine = {
     
     switch (form) {
       case 'negative':
+      case 'plain_negative':
         return adj === 'いい' ? 'よくない' : stem + 'くない';
       case 'past':
+      case 'plain_past':
         return adj === 'いい' ? 'よかった' : stem + 'かった';
       case 'past_negative':
+      case 'plain_past_negative':
         return adj === 'いい' ? 'よくなかった' : stem + 'くなかった';
       case 'adverb':
         return adj === 'いい' ? 'よく' : stem + 'く';
@@ -492,11 +430,14 @@ const conjugationEngine = {
     
     switch (form) {
       case 'negative':
-        return base + 'じゃない';
+      case 'plain_negative':
+        return base + 'じゃない / ' + base + 'ではない';
       case 'past':
+      case 'plain_past':
         return base + 'だった';
       case 'past_negative':
-        return base + 'じゃなかった';
+      case 'plain_past_negative':
+        return base + 'じゃなかった / ' + base + 'ではなかった';
       case 'rentai':
         return base + 'な';
       case 'te':
@@ -579,38 +520,22 @@ app.get('/api/me', authenticateUser, async (req, res) => {
   try {
     let settings;
     
-    if (pool) {
-      // 生产环境：使用真实数据库
-      const { rows } = await pool.query(
-        'SELECT s.* FROM settings s WHERE s.anon_id = $1',
-        [req.user.anonId]
-      );
-      
-      const s = rows[0] || {
-        due_only: true,
-        show_explain: true,
-        enabled_forms: ['masu', 'te', 'nai', 'ta', 'potential', 'volitional']
-      };
-      // 统一返回 camelCase 字段，便于前端直接使用
-      settings = {
-        dueOnly: s.due_only,
-        showExplain: s.show_explain,
-        enabledForms: s.enabled_forms || []
-      };
-    } else {
-      // 开发环境：使用模拟数据
-      const s = mockDB.settings.get(req.user.anonId) || {
-        due_only: true,
-        show_explain: true,
-        enabled_forms: ['masu', 'te', 'nai', 'ta', 'potential', 'volitional']
-      };
-      // 统一返回 camelCase 字段，便于前端直接使用
-      settings = {
-        dueOnly: s.due_only,
-        showExplain: s.show_explain,
-        enabledForms: s.enabled_forms || []
-      };
-    }
+    const { rows } = await pool.query(
+      'SELECT s.* FROM settings s WHERE s.anon_id = $1',
+      [req.user.anonId]
+    );
+    
+    const s = rows[0] || {
+      due_only: true,
+      show_explain: true,
+      enabled_forms: ['masu', 'te', 'nai', 'ta', 'potential', 'volitional']
+    };
+    // 统一返回 camelCase 字段，便于前端直接使用
+    settings = {
+      dueOnly: s.due_only,
+      showExplain: s.show_explain,
+      enabledForms: s.enabled_forms || []
+    };
     
     res.json({
       anonIdMasked: req.user.anonId.slice(0, 8) + '...',
@@ -631,36 +556,21 @@ app.post('/api/me', authenticateUser, async (req, res) => {
     // 如果到达这里，说明绑定成功或用户已存在
     let settings;
     
-    if (pool) {
-      // 生产环境：使用真实数据库
-      const { rows } = await pool.query(
-        'SELECT s.* FROM settings s WHERE s.anon_id = $1',
-        [req.user.anonId]
-      );
-      
-      const s = rows[0] || {
-        due_only: true,
-        show_explain: true,
-        enabled_forms: ['masu', 'te', 'nai', 'ta', 'potential', 'volitional']
-      };
-      settings = {
-        dueOnly: s.due_only,
-        showExplain: s.show_explain,
-        enabledForms: s.enabled_forms || []
-      };
-    } else {
-      // 开发环境：使用模拟数据
-      const s = mockDB.settings.get(req.user.anonId) || {
-        due_only: true,
-        show_explain: true,
-        enabled_forms: ['masu', 'te', 'nai', 'ta', 'potential', 'volitional']
-      };
-      settings = {
-        dueOnly: s.due_only,
-        showExplain: s.show_explain,
-        enabledForms: s.enabled_forms || []
-      };
-    }
+    const { rows } = await pool.query(
+      'SELECT s.* FROM settings s WHERE s.anon_id = $1',
+      [req.user.anonId]
+    );
+    
+    const s = rows[0] || {
+      due_only: true,
+      show_explain: true,
+      enabled_forms: ['masu', 'te', 'nai', 'ta', 'potential', 'volitional']
+    };
+    settings = {
+      dueOnly: s.due_only,
+      showExplain: s.show_explain,
+      enabledForms: s.enabled_forms || []
+    };
     
     res.json({
       anonIdMasked: req.user.anonId.slice(0, 8) + '...',
@@ -683,35 +593,18 @@ app.post('/api/settings', authenticateUser, async (req, res) => {
     const showExplain = (req.body.show_explain !== undefined) ? req.body.show_explain : req.body.showExplain;
     const enabledForms = (req.body.enabled_forms !== undefined) ? req.body.enabled_forms : req.body.enabledForms;
     
-    if (pool) {
-      // 生产环境：使用真实数据库
-      await pool.query(
-        `INSERT INTO settings (anon_id, due_only, show_explain, enabled_forms) 
-         VALUES ($1, COALESCE($2, (SELECT due_only FROM settings WHERE anon_id = $1)), 
-                 COALESCE($3, (SELECT show_explain FROM settings WHERE anon_id = $1)), 
-                 COALESCE($4, (SELECT enabled_forms FROM settings WHERE anon_id = $1))) 
-         ON CONFLICT (anon_id) 
-         DO UPDATE SET 
-           due_only = COALESCE($2, settings.due_only), 
-           show_explain = COALESCE($3, settings.show_explain), 
-           enabled_forms = COALESCE($4, settings.enabled_forms)`,
-        [req.user.anonId, dueOnly, showExplain, enabledForms]
-      );
-    } else {
-      // 开发环境：使用模拟数据
-      const settings = mockDB.settings.get(req.user.anonId) || {
-        anonId: req.user.anonId,
-        due_only: true,
-        show_explain: true,
-        enabled_forms: ['masu', 'te', 'nai', 'ta']
-      };
-      
-      if (dueOnly !== undefined) settings.due_only = dueOnly;
-      if (showExplain !== undefined) settings.show_explain = showExplain;
-      if (enabledForms !== undefined) settings.enabled_forms = enabledForms;
-      
-      mockDB.settings.set(req.user.anonId, settings);
-    }
+    await pool.query(
+      `INSERT INTO settings (anon_id, due_only, show_explain, enabled_forms) 
+       VALUES ($1, COALESCE($2, (SELECT due_only FROM settings WHERE anon_id = $1)), 
+               COALESCE($3, (SELECT show_explain FROM settings WHERE anon_id = $1)), 
+               COALESCE($4, (SELECT enabled_forms FROM settings WHERE anon_id = $1))) 
+       ON CONFLICT (anon_id) 
+       DO UPDATE SET 
+         due_only = COALESCE($2, settings.due_only), 
+         show_explain = COALESCE($3, settings.show_explain), 
+         enabled_forms = COALESCE($4, settings.enabled_forms)`,
+      [req.user.anonId, dueOnly, showExplain, enabledForms]
+    );
     
     res.json({ success: true });
   } catch (error) {
@@ -741,17 +634,11 @@ app.get('/api/next', authenticateUser, async (req, res) => {
     
     let settings;
     
-    if (pool) {
-      // 生产环境：使用真实数据库
-      const { rows: settingsRows } = await pool.query(
-        'SELECT * FROM settings WHERE anon_id = $1',
-        [req.user.anonId]
-      );
-      settings = settingsRows[0] || { due_only: true, enabled_forms: ['masu', 'te', 'nai', 'ta'] };
-    } else {
-      // 开发环境：使用模拟数据
-      settings = mockDB.settings.get(req.user.anonId) || { due_only: true, enabled_forms: ['masu', 'te', 'nai', 'ta'] };
-    }
+    const { rows: settingsRows } = await pool.query(
+      'SELECT * FROM settings WHERE anon_id = $1',
+      [req.user.anonId]
+    );
+    settings = settingsRows[0] || { due_only: true, enabled_forms: ['masu', 'te', 'nai', 'ta'] };
 
     // 如果传入了 forms 参数，覆盖设置中的 enabled_forms，保持为 TEXT 数组格式
     if (selectedForms.length > 0) {
@@ -779,67 +666,61 @@ app.get('/api/next', authenticateUser, async (req, res) => {
       itemType = 'adj';
       tableName = 'adjectives';
     } else {
+      // 简体形模块使用专门的 plain 表，包含动词和形容词数据
       itemType = 'pln';
-      tableName = 'verbs'; // 简体形也用动词表
+      tableName = 'plain';
     }
     
     let rows = [];
     
-    if (pool) {
-      // 生产环境：使用真实数据库
-      let query = `
+    let query;
+    if (module === 'plain') {
+      // plain 表的查询，根据 item_type 动态选择字段
+      query = `
+        SELECT r.*, i.kana, i.kanji, i.meaning, i.item_type,
+               CASE 
+                 WHEN i.item_type = 'vrb' THEN i.group_type
+                 WHEN i.item_type = 'adj' THEN i.adj_type
+               END as type_info
+        FROM reviews r
+        JOIN ${tableName} i ON r.item_id = i.id
+        WHERE r.anon_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
+      `;
+    } else {
+      // 原有的 verbs 和 adjectives 表查询
+      query = `
         SELECT r.*, i.kana, i.kanji, i.meaning,
                ${itemType === 'adj' ? 'i.type' : 'i.group_type as group'}
         FROM reviews r
         JOIN ${tableName} i ON r.item_id = i.id
         WHERE r.anon_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
       `;
-      
-      const params = [req.user.anonId, itemType, learningMode];
-      
-      // 按启用的形态过滤（确保只取当前启用形态的到期题目）
-      query += ' AND r.form = ANY($4)';
-      params.push(enabledForms);
-      
-      if (settings.due_only) {
-        query += ' AND r.due_at <= NOW()';
-      }
-      
-      query += ' ORDER BY r.due_at ASC, r.streak ASC LIMIT 1';
-      
-      console.log('SQL查询:', query, '参数:', params);
-      const result = await pool.query(query, params);
-      rows = result.rows;
-    } else {
-      // 开发环境：使用模拟数据
-      const reviews = Array.from(mockDB.reviews.values())
-        .filter(r => r.anonId === req.user.anonId && r.itemType === itemType && r.learningMode === learningMode && enabledForms.includes(r.form));
-      
-      if (reviews.length > 0) {
-        const review = reviews[0];
-        const items = itemType === 'adj' ? mockDB.adjectives : mockDB.verbs;
-        const item = items.find(i => i.id === review.itemId);
-        
-        if (item) {
-          rows = [{
-            ...review,
-            kana: cleanWordText(item.kana),
-            kanji: cleanWordText(item.kanji),
-            meaning: cleanWordText(item.meaning),
-            type: item.type,
-            group: item.group_type
-          }];
-        }
-      }
     }
+    
+    const params = [req.user.anonId, itemType, learningMode];
+    
+    // 按启用的形态过滤（确保只取当前启用形态的到期题目）
+    query += ' AND r.form = ANY($4)';
+    params.push(enabledForms);
+    
+    if (settings.due_only) {
+      query += ' AND r.due_at <= NOW()';
+    }
+    
+    query += ' ORDER BY r.due_at ASC, r.streak ASC LIMIT 1';
+    
+    console.log('SQL查询:', query, '参数:', params);
+    const result = await pool.query(query, params);
+    rows = result.rows;
     
     // 如果没有到期项目，随机选择一个新项目
     if (rows.length === 0) {
       let item;
       
-      if (pool) {
-        // 生产环境：使用真实数据库
-        const randomQuery = `
+      let randomQuery;
+      if (module === 'plain') {
+        // plain 表的随机查询
+        randomQuery = `
           SELECT i.*, 'new' as status
           FROM ${tableName} i
           WHERE i.id NOT IN (
@@ -849,127 +730,111 @@ app.get('/api/next', authenticateUser, async (req, res) => {
           ORDER BY RANDOM()
           LIMIT 1
         `;
-        
-        console.log('SQL查询:', randomQuery, '参数:', [req.user.anonId, itemType, learningMode]);
-        const { rows: newRows } = await pool.query(randomQuery, [req.user.anonId, itemType, learningMode]);
-        
-        if (newRows.length === 0) {
-          return res.json({ error: '没有更多题目' });
-        }
-        
-        item = newRows[0];
-        
-        const forms = enabledForms;
-        const targetForm = forms[Math.floor(Math.random() * forms.length)];
-        
-        // 创建新的复习记录
-        const insertSql = `INSERT INTO reviews (anon_id, item_type, item_id, form, learning_mode, due_at) 
-           VALUES ($1, $2, $3, $4, 'quiz', NOW()) 
-           ON CONFLICT (anon_id, item_type, item_id, form, learning_mode) DO NOTHING`;
-        const insertParams = [req.user.anonId, itemType, item.id, targetForm];
-        await pool.query(insertSql, insertParams);
-        
-        // 确保字段名称一致性，并去除空格
-        const verbItem = itemType === 'adj' ? item : { ...item, group: (item.group_type || '').trim() };
-        
-        const correctAnswer = itemType === 'adj' 
-          ? conjugationEngine.conjugateAdjective(item, targetForm)
-          : conjugationEngine.conjugateVerb(verbItem, targetForm);
-        
-        // 调试信息已移除
-        
-        const responseData = {
-          itemId: item.id,
-          itemType: module, // 使用原始的module参数 (verb, adj, plain)
-          kana: cleanWordText(item.kana),
-          kanji: cleanWordText(item.kanji),
-          meaning: cleanWordText(item.meaning),
-          targetForm,
-          correctAnswer, // 仅用于验证，前端不应显示
-          isNew: true
-        };
-        
-        // 为动词添加group字段，为形容词添加type字段
-        if (module === 'verb') {
-          responseData.group = verbItem.group;
-        } else if (module === 'adj') {
-          responseData.type = item.type;
-        }
-        // console.log('/api/next 返回数据 (生产环境新题目):', responseData);
-        return res.json(responseData);
       } else {
-        // 开发环境：使用模拟数据
-        const items = itemType === 'adj' ? mockDB.adjectives : mockDB.verbs;
-        const reviewedItems = Array.from(mockDB.reviews.values())
-          .filter(r => r.anonId === req.user.anonId && r.itemType === itemType && r.learningMode === learningMode)
-          .map(r => r.itemId);
-        
-        const availableItems = items.filter(i => !reviewedItems.includes(i.id));
-        
-        if (availableItems.length === 0) {
-          return res.json({ error: '没有更多题目' });
-        }
-        
-        item = availableItems[Math.floor(Math.random() * availableItems.length)];
-        
-        const forms = enabledForms;
-        const targetForm = forms[Math.floor(Math.random() * forms.length)];
-        
-        // 创建新的复习记录
-        const reviewKey = `${req.user.anonId}-${itemType}-${item.id}-${targetForm}-${learningMode}`;
-        mockDB.reviews.set(reviewKey, {
-          anonId: req.user.anonId,
-          itemType,
-          itemId: item.id,
-          form: targetForm,
-          learningMode,
-          dueAt: new Date(),
-          streak: 0,
-          attempts: 0,
-          correct: 0
-        });
-        
-        // 确保字段名称一致性，并去除空格
-        const verbItem = itemType === 'adj' ? item : { ...item, group: (item.group_type || '').trim() };
-        const correctAnswer = itemType === 'adj' 
-          ? conjugationEngine.conjugateAdjective(item, targetForm)
-          : conjugationEngine.conjugateVerb(verbItem, targetForm);
-        
-        const responseData = {
-          itemId: item.id,
-          itemType: module, // 使用原始的module参数 (verb, adj, plain)
-          kana: cleanWordText(item.kana),
-          kanji: cleanWordText(item.kanji),
-          meaning: cleanWordText(item.meaning),
-          targetForm,
-          correctAnswer, // 仅用于验证，前端不应显示
-          isNew: true
-        };
-        
-        // 为动词添加group字段，为形容词添加type字段
-         if (module === 'verb') {
-           responseData.group = verbItem.group;
-         } else if (module === 'adj') {
-           responseData.type = item.type;
-         }
-        
-        // console.log('/api/next 返回数据 (开发环境新题目):', responseData);
-        return res.json(responseData);
+        // 原有的查询
+        randomQuery = `
+          SELECT i.*, 'new' as status
+          FROM ${tableName} i
+          WHERE i.id NOT IN (
+            SELECT r.item_id FROM reviews r 
+            WHERE r.anon_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
+          )
+          ORDER BY RANDOM()
+          LIMIT 1
+        `;
       }
+      
+      console.log('SQL查询:', randomQuery, '参数:', [req.user.anonId, itemType, learningMode]);
+      const { rows: newRows } = await pool.query(randomQuery, [req.user.anonId, itemType, learningMode]);
+      
+      if (newRows.length === 0) {
+        return res.json({ error: '没有更多题目' });
+      }
+      
+      item = newRows[0];
+      
+      const forms = enabledForms;
+      const targetForm = forms[Math.floor(Math.random() * forms.length)];
+      
+      // 创建新的复习记录
+      const insertSql = `INSERT INTO reviews (anon_id, item_type, item_id, form, learning_mode, due_at) 
+         VALUES ($1, $2, $3, $4, 'quiz', NOW()) 
+         ON CONFLICT (anon_id, item_type, item_id, form, learning_mode) DO NOTHING`;
+      const insertParams = [req.user.anonId, itemType, item.id, targetForm];
+      await pool.query(insertSql, insertParams);
+      
+      // 处理 plain 表和其他表的数据结构差异
+      let processedItem, actualItemType;
+      if (module === 'plain') {
+        actualItemType = item.item_type; // 从 plain 表获取实际的项目类型
+        if (item.item_type === 'vrb') {
+          processedItem = { ...item, group: (item.group_type || '').trim() };
+        } else {
+          processedItem = { ...item, type: (item.adj_type || '').trim() };
+        }
+      } else {
+        actualItemType = itemType;
+        processedItem = itemType === 'adj' ? item : { ...item, group: (item.group_type || '').trim() };
+      }
+      
+      const correctAnswer = (module === 'plain' && item.item_type === 'adj') || itemType === 'adj'
+        ? conjugationEngine.conjugateAdjective(processedItem, targetForm)
+        : conjugationEngine.conjugateVerb(processedItem, targetForm);
+      
+      // 调试信息已移除
+      
+      const responseData = {
+        itemId: item.id,
+        itemType: module === 'plain' ? actualItemType : module, // 修复：plain 模块使用实际的项目类型，其他模块使用模块名
+        kana: cleanWordText(item.kana),
+        kanji: cleanWordText(item.kanji),
+        meaning: cleanWordText(item.meaning),
+        targetForm,
+        correctAnswer, // 仅用于验证，前端不应显示
+        isNew: true
+      };
+      
+      // 为动词添加group字段，为形容词添加type字段
+      if (module === 'verb') {
+        responseData.group = processedItem.group;
+      } else if (module === 'adj') {
+        responseData.type = processedItem.type;
+      } else if (module === 'plain') {
+        // plain 模块根据实际类型添加相应字段
+        if (actualItemType === 'vrb') {
+          responseData.group = processedItem.group;
+        } else if (actualItemType === 'adj') {
+          responseData.type = processedItem.type;
+        }
+      }
+      // console.log('/api/next 返回数据 (生产环境新题目):', responseData);
+      return res.json(responseData);
     }
     
     const review = rows[0];
-    // 确保字段名称一致性 - review 对象已通过 SQL 查询重命名字段，但需要去除空格
-    const reviewItem = itemType === 'adj' ? review : { ...review, group: (review.group || '').trim() };
-    const correctAnswer = itemType === 'adj'
-      ? conjugationEngine.conjugateAdjective(review, review.form)
+    // 处理复习题目的数据结构
+    let reviewItem, reviewItemType;
+    if (module === 'plain') {
+      reviewItemType = review.item_type; // 从 plain 表获取实际类型
+      if (review.item_type === 'vrb') {
+        reviewItem = { ...review, group: (review.type_info || '').trim() };
+      } else {
+        reviewItem = { ...review, type: (review.type_info || '').trim() };
+      }
+    } else {
+      reviewItemType = itemType;
+      reviewItem = itemType === 'adj' ? review : { ...review, group: (review.group || '').trim() };
+    }
+    
+    const correctAnswer = (module === 'plain' && review.item_type === 'adj') || itemType === 'adj'
+      ? conjugationEngine.conjugateAdjective(reviewItem, review.form)
       : conjugationEngine.conjugateVerb(reviewItem, review.form);
     
     console.log(`复习题目 - ${module}:`, review.kanji || review.kana, itemType === 'adj' ? '类型:' : '分组:', itemType === 'adj' ? review.type : review.group, '目标形式:', review.form, '正确答案:', correctAnswer);
     
     const responseData = {
       itemId: review.item_id || review.id, // 兼容两种情况
-      itemType: module, // 使用原始的module参数 (verb, adj, plain)
+      itemType: module === 'plain' ? reviewItemType : module, // 修复：plain 模块使用实际的项目类型，其他模块使用模块名
       kana: cleanWordText(review.kana),
       kanji: cleanWordText(review.kanji),
       meaning: cleanWordText(review.meaning),
@@ -981,9 +846,16 @@ app.get('/api/next', authenticateUser, async (req, res) => {
     
     // 为动词添加group字段，为形容词添加type字段
      if (module === 'verb') {
-       responseData.group = review.group;
+       responseData.group = reviewItem.group;
      } else if (module === 'adj') {
-       responseData.type = review.type;
+       responseData.type = reviewItem.type;
+     } else if (module === 'plain') {
+       // plain 模块根据实际类型添加相应字段
+       if (reviewItemType === 'vrb') {
+         responseData.group = reviewItem.group;
+       } else if (reviewItemType === 'adj') {
+         responseData.type = reviewItem.type;
+       }
      }
     //console.log('/api/next 返回数据:', responseData);
     res.json(responseData);
@@ -1009,33 +881,45 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
     
     let item, correctAnswer;
     
-    if (pool) {
-      // 生产环境：使用真实数据库
-      const tableName = normalizedItemType === 'adj' ? 'adjectives' : 'verbs';
-      const sql = `SELECT * FROM ${tableName} WHERE id = $1`;
-      console.log('SQL查询:', sql, '参数:', [itemId]);
-      const { rows: itemRows } = await pool.query(sql, [itemId]);
-      
-      if (itemRows.length === 0) {
-        return res.status(404).json({ error: '题目不存在' });
-      }
-      
-      item = itemRows[0];
+    // 根据 itemType 确定查询的表和逻辑
+    let tableName, sql;
+    if (normalizedItemType === 'pln') {
+      // plain 模块从 plain 表查询
+      tableName = 'plain';
+      sql = `SELECT * FROM ${tableName} WHERE id = $1`;
+    } else if (normalizedItemType === 'adj') {
+      tableName = 'adjectives';
+      sql = `SELECT * FROM ${tableName} WHERE id = $1`;
     } else {
-      // 开发环境：使用模拟数据
-      const items = normalizedItemType === 'adj' ? mockDB.adjectives : mockDB.verbs;
-      item = items.find(i => i.id === parseInt(itemId));
-      
-      if (!item) {
-        return res.status(404).json({ error: '题目不存在' });
-      }
-    } 
+      tableName = 'verbs';
+      sql = `SELECT * FROM ${tableName} WHERE id = $1`;
+    }
+    
+    console.log('SQL查询:', sql, '参数:', [itemId]);
+    const { rows: itemRows } = await pool.query(sql, [itemId]);
+    
+    if (itemRows.length === 0) {
+      return res.status(404).json({ error: '题目不存在' });
+    }
+    
+    item = itemRows[0]; 
     
     // 生成正确答案
-    if (normalizedItemType === 'adj') {
+    if (normalizedItemType === 'pln') {
+      // plain 模块根据实际的 item_type 决定变位方式
+      if (item.item_type === 'adj') {
+        // 处理形容词数据结构
+        const processedItem = { ...item, type: (item.adj_type || '').trim() };
+        correctAnswer = conjugationEngine.conjugateAdjective(processedItem, form);
+      } else {
+        // 处理动词数据结构
+        const processedItem = { ...item, group: (item.group_type || '').trim() };
+        correctAnswer = conjugationEngine.conjugateVerb(processedItem, form);
+      }
+    } else if (normalizedItemType === 'adj') {
       correctAnswer = conjugationEngine.conjugateAdjective(item, form);
     } else {
-      // 动词处理（包括vrb, pln等）
+      // 动词处理
       correctAnswer = conjugationEngine.conjugateVerb(item, form);
     }
     
@@ -1045,65 +929,34 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
     let attempts = 0;
     let correct = 0;
     
-    if (pool) {
-      // 生产环境：使用真实数据库
-      const reviewSql = 'SELECT * FROM reviews WHERE anon_id = $1 AND item_type = $2 AND item_id = $3 AND form = $4 AND learning_mode = $5';
-      const reviewParams = [req.user.anonId, normalizedItemType, itemId, form, learningMode];
-      console.log('SQL查询:', reviewSql, '参数:', reviewParams);
-      const { rows: reviewRows } = await pool.query(reviewSql, reviewParams);
-      
-      if (reviewRows.length > 0) {
-        const review = reviewRows[0];
-        currentStreak = review.streak;
-        attempts = review.attempts;
-        correct = review.correct;
-      }
-      
-      // 更新统计
-      attempts++;
-      if (isCorrect) correct++;
-      
-      // 计算新的间隔和到期时间
-      const finalFeedback = feedback || (isCorrect ? 'good' : 'again');
-      const { newStreak, dueAt } = srsAlgorithm.calculateNextDue(currentStreak, finalFeedback);
-      
-      // 更新复习记录
-      const updateSql = `INSERT INTO reviews (anon_id, item_type, item_id, form, learning_mode, attempts, correct, streak, due_at, last_reviewed)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
-         ON CONFLICT (anon_id, item_type, item_id, form, learning_mode)
-         DO UPDATE SET attempts = $6, correct = $7, streak = $8, due_at = $9, last_reviewed = NOW()`;
-      const updateParams = [req.user.anonId, normalizedItemType, itemId, form, learningMode, attempts, correct, newStreak, dueAt];
-      console.log('SQL更新:', updateSql, '参数:', updateParams);
-      await pool.query(updateSql, updateParams);
-    } else {
-      // 开发环境：使用模拟数据
-      const reviewKey = `${req.user.anonId}-${normalizedItemType}-${itemId}-${form}-${learningMode}`;
-      const currentReview = mockDB.reviews.get(reviewKey) || {
-        attempts: 0,
-        correct: 0,
-        streak: 0
-      };
-      
-      attempts = currentReview.attempts + 1;
-      correct = currentReview.correct + (isCorrect ? 1 : 0);
-      currentStreak = currentReview.streak;
-      
-      const finalFeedback = feedback || (isCorrect ? 'good' : 'again');
-      const { newStreak, dueAt } = srsAlgorithm.calculateNextDue(currentStreak, finalFeedback);
-      
-      mockDB.reviews.set(reviewKey, {
-        anonId: req.user.anonId,
-        itemType: normalizedItemType,
-        itemId: parseInt(itemId),
-        form,
-        learningMode,
-        attempts,
-        correct,
-        streak: newStreak,
-        dueAt,
-        lastReviewed: new Date()
-      });
+    const reviewSql = 'SELECT * FROM reviews WHERE anon_id = $1 AND item_type = $2 AND item_id = $3 AND form = $4 AND learning_mode = $5';
+    const reviewParams = [req.user.anonId, normalizedItemType, itemId, form, learningMode];
+    console.log('SQL查询:', reviewSql, '参数:', reviewParams);
+    const { rows: reviewRows } = await pool.query(reviewSql, reviewParams);
+    
+    if (reviewRows.length > 0) {
+      const review = reviewRows[0];
+      currentStreak = review.streak;
+      attempts = review.attempts;
+      correct = review.correct;
     }
+    
+    // 更新统计
+    attempts++;
+    if (isCorrect) correct++;
+    
+    // 计算新的间隔和到期时间
+    const finalFeedback = feedback || (isCorrect ? 'good' : 'again');
+    const { newStreak, dueAt } = srsAlgorithm.calculateNextDue(currentStreak, finalFeedback);
+    
+    // 更新复习记录
+    const updateSql = `INSERT INTO reviews (anon_id, item_type, item_id, form, learning_mode, attempts, correct, streak, due_at, last_reviewed)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
+       ON CONFLICT (anon_id, item_type, item_id, form, learning_mode)
+       DO UPDATE SET attempts = $6, correct = $7, streak = $8, due_at = $9, last_reviewed = NOW()`;
+    const updateParams = [req.user.anonId, normalizedItemType, itemId, form, learningMode, attempts, correct, newStreak, dueAt];
+    console.log('SQL更新:', updateSql, '参数:', updateParams);
+    await pool.query(updateSql, updateParams);
     
     // 获取解释
     const explanation = conjugationEngine.getExplanation(normalizedItemType, form, item.group_type, item.type);

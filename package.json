@@ -8,6 +8,7 @@
     "start": "node api/index.js",
     "seed": "node seed-verbs.js && node seed-adjs.js",
     "setup-db": "psql $DATABASE_URL < schema.sql",
+    "migrate": "node migrate.js",
     "build": "echo 'No build step required for static files'",
     "test": "mocha test_progress.js --timeout 10000",
     "test:progress": "node test_progress.js"

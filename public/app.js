@@ -533,7 +533,14 @@ class LearningManager {
             } else if (state.currentModule === 'adj') {
                 explanation = this.getAdjectiveExplanation(q.targetForm, q.type);
             } else if (state.currentModule === 'plain') {
-                explanation = this.getPlainFormExplanation(q.targetForm, q.group);
+                // 简体形模块需要根据实际题目类型来显示explanation
+                if (q.itemType === 'vrb') {
+                    explanation = this.getPlainFormExplanation(q.targetForm, q.group);
+                } else if (q.itemType === 'adj') {
+                    explanation = this.getAdjectiveExplanation(q.targetForm, q.type);
+                } else {
+                    explanation = '简体形式';
+                }
             } else {
                 explanation = '简体形式';
             }
@@ -814,6 +821,9 @@ class LearningManager {
             'negative': cleanType === 'i' ? 'i形容词否定形：去い+くない（如：高い→高くない）' : 'na形容词否定形：+じゃない（如：きれい→きれいじゃない）',
             'past': cleanType === 'i' ? 'i形容词过去形：去い+かった（如：高い→高かった）' : 'na形容词过去形：+だった（如：きれい→きれいだった）',
             'past_negative': cleanType === 'i' ? 'i形容词过去否定形：去い+くなかった（如：高い→高くなかった）' : 'na形容词过去否定形：+じゃなかった（如：きれい→きれいじゃなかった）',
+            'plain_negative': cleanType === 'i' ? '简体否定形（i形容词）：去い+くない（如：高い→高くない）' : '简体否定形（na形容词）：+じゃない / +ではない（如：きれい→きれいじゃない）',
+            'plain_past': cleanType === 'i' ? '简体过去形（i形容词）：去い+かった（如：高い→高かった）' : '简体过去形（na形容词）：+だった（如：きれい→きれいだった）',
+            'plain_past_negative': cleanType === 'i' ? '简体过去否定形（i形容词）：去い+くなかった（如：高い→高くなかった）' : '简体过去否定形（na形容词）：+じゃなかった / +ではなかった（如：きれい→きれいじゃなかった）',
             'adverb': 'i形容词副词形：去い+く（如：高い→高く）',
             'te': cleanType === 'i' ? 'i形容词て形：去い+くて（如：高い→高くて）' : 'na形容词て形：+で（如：きれい→きれいで）',
             'rentai': 'na形容词连体形：+な（如：きれい→きれいな）'
