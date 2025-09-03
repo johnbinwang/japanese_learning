@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS adjectives (
 -- 用户设置表
 CREATE TABLE IF NOT EXISTS settings (
     anon_id UUID PRIMARY KEY REFERENCES users_anon(id) ON DELETE CASCADE,
-    due_only BOOLEAN DEFAULT true,
+    due_only BOOLEAN DEFAULT false,
     show_explain BOOLEAN DEFAULT true,
     enabled_forms TEXT[] DEFAULT ARRAY['masu', 'te', 'nai', 'ta', 'potential', 'volitional']
 );

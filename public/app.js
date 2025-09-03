@@ -1,7 +1,7 @@
 // 全局状态
 const state = {
     currentModule: 'verb',
-    currentMode: 'quiz',
+    currentMode: 'flashcard',
     currentQuestion: null,
     selectedForms: [],
     selectedModule: 'all',
@@ -192,6 +192,17 @@ class LearningManager {
     constructor() {
         this.initializeEventListeners();
         this.updateFormChips();
+        this.initializeModeButtons();
+    }
+    
+    initializeModeButtons() {
+        // 初始化模式按钮状态，确保闪卡模式默认激活
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.mode === state.currentMode) {
+                btn.classList.add('active');
+            }
+        });
     }
     
     initializeEventListeners() {

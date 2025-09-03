@@ -47,7 +47,7 @@ async function initializeDatabase() {
       
       CREATE TABLE IF NOT EXISTS settings (
         anon_id UUID PRIMARY KEY REFERENCES users_anon(id) ON DELETE CASCADE,
-        due_only BOOLEAN DEFAULT true,
+        due_only BOOLEAN DEFAULT false,
         show_explain BOOLEAN DEFAULT true,
         enabled_forms TEXT[] DEFAULT ARRAY['masu', 'te', 'nai', 'ta', 'potential', 'volitional']
       );
@@ -526,7 +526,7 @@ app.get('/api/me', authenticateUser, async (req, res) => {
     );
     
     const s = rows[0] || {
-      due_only: true,
+      due_only: false,
       show_explain: true,
       enabled_forms: ['masu', 'te', 'nai', 'ta', 'potential', 'volitional']
     };
@@ -562,7 +562,7 @@ app.post('/api/me', authenticateUser, async (req, res) => {
     );
     
     const s = rows[0] || {
-      due_only: true,
+      due_only: false,
       show_explain: true,
       enabled_forms: ['masu', 'te', 'nai', 'ta', 'potential', 'volitional']
     };
@@ -638,7 +638,7 @@ app.get('/api/next', authenticateUser, async (req, res) => {
       'SELECT * FROM settings WHERE anon_id = $1',
       [req.user.anonId]
     );
-    settings = settingsRows[0] || { due_only: true, enabled_forms: ['masu', 'te', 'nai', 'ta'] };
+    settings = settingsRows[0] || { due_only: false, enabled_forms: ['masu', 'te', 'nai', 'ta'] };
 
     // 如果传入了 forms 参数，覆盖设置中的 enabled_forms，保持为 TEXT 数组格式
     if (selectedForms.length > 0) {
