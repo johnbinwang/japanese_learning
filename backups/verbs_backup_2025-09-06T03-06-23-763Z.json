@@ -1,0 +1,11363 @@
+[
+  {
+    "id": 1,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2,
+    "kana": "かく",
+    "kanji": "書く",
+    "group_type": "I  ",
+    "meaning": "写"
+  },
+  {
+    "id": 3,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 4,
+    "kana": "のむ",
+    "kanji": "飲む",
+    "group_type": "I  ",
+    "meaning": "喝"
+  },
+  {
+    "id": 5,
+    "kana": "はなす",
+    "kanji": "話す",
+    "group_type": "I  ",
+    "meaning": "说话"
+  },
+  {
+    "id": 6,
+    "kana": "きく",
+    "kanji": "聞く",
+    "group_type": "I  ",
+    "meaning": "听"
+  },
+  {
+    "id": 7,
+    "kana": "あるく",
+    "kanji": "歩く",
+    "group_type": "I  ",
+    "meaning": "走路"
+  },
+  {
+    "id": 8,
+    "kana": "はたらく",
+    "kanji": "働く",
+    "group_type": "I  ",
+    "meaning": "工作"
+  },
+  {
+    "id": 9,
+    "kana": "およぐ",
+    "kanji": "泳ぐ",
+    "group_type": "I  ",
+    "meaning": "游泳"
+  },
+  {
+    "id": 10,
+    "kana": "あそぶ",
+    "kanji": "遊ぶ",
+    "group_type": "I  ",
+    "meaning": "玩"
+  },
+  {
+    "id": 11,
+    "kana": "よぶ",
+    "kanji": "呼ぶ",
+    "group_type": "I  ",
+    "meaning": "叫"
+  },
+  {
+    "id": 12,
+    "kana": "しぬ",
+    "kanji": "死ぬ",
+    "group_type": "I  ",
+    "meaning": "死"
+  },
+  {
+    "id": 13,
+    "kana": "たつ",
+    "kanji": "立つ",
+    "group_type": "I  ",
+    "meaning": "站"
+  },
+  {
+    "id": 14,
+    "kana": "まつ",
+    "kanji": "待つ",
+    "group_type": "I  ",
+    "meaning": "等"
+  },
+  {
+    "id": 15,
+    "kana": "もつ",
+    "kanji": "持つ",
+    "group_type": "I  ",
+    "meaning": "拿"
+  },
+  {
+    "id": 16,
+    "kana": "うつ",
+    "kanji": "打つ",
+    "group_type": "I  ",
+    "meaning": "打"
+  },
+  {
+    "id": 17,
+    "kana": "かう",
+    "kanji": "買う",
+    "group_type": "I  ",
+    "meaning": "买"
+  },
+  {
+    "id": 18,
+    "kana": "うる",
+    "kanji": "売る",
+    "group_type": "I  ",
+    "meaning": "卖"
+  },
+  {
+    "id": 19,
+    "kana": "つくる",
+    "kanji": "作る",
+    "group_type": "I  ",
+    "meaning": "做"
+  },
+  {
+    "id": 20,
+    "kana": "とる",
+    "kanji": "取る",
+    "group_type": "I  ",
+    "meaning": "拿"
+  },
+  {
+    "id": 21,
+    "kana": "はいる",
+    "kanji": "入る",
+    "group_type": "I  ",
+    "meaning": "进入"
+  },
+  {
+    "id": 22,
+    "kana": "かえる",
+    "kanji": "帰る",
+    "group_type": "I  ",
+    "meaning": "回去"
+  },
+  {
+    "id": 23,
+    "kana": "のる",
+    "kanji": "乗る",
+    "group_type": "I  ",
+    "meaning": "乘坐"
+  },
+  {
+    "id": 24,
+    "kana": "すわる",
+    "kanji": "座る",
+    "group_type": "I  ",
+    "meaning": "坐"
+  },
+  {
+    "id": 25,
+    "kana": "はしる",
+    "kanji": "走る",
+    "group_type": "I  ",
+    "meaning": "跑"
+  },
+  {
+    "id": 26,
+    "kana": "おわる",
+    "kanji": "終わる",
+    "group_type": "I  ",
+    "meaning": "结束"
+  },
+  {
+    "id": 27,
+    "kana": "はじまる",
+    "kanji": "始まる",
+    "group_type": "I  ",
+    "meaning": "开始"
+  },
+  {
+    "id": 28,
+    "kana": "わかる",
+    "kanji": "分かる",
+    "group_type": "I  ",
+    "meaning": "明白"
+  },
+  {
+    "id": 29,
+    "kana": "ある",
+    "kanji": "ある",
+    "group_type": "I  ",
+    "meaning": "有(无生物)"
+  },
+  {
+    "id": 30,
+    "kana": "なる",
+    "kanji": "なる",
+    "group_type": "I  ",
+    "meaning": "成为"
+  },
+  {
+    "id": 31,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 32,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 33,
+    "kana": "ねる",
+    "kanji": "寝る",
+    "group_type": "II ",
+    "meaning": "睡觉"
+  },
+  {
+    "id": 34,
+    "kana": "おきる",
+    "kanji": "起きる",
+    "group_type": "II ",
+    "meaning": "起床"
+  },
+  {
+    "id": 35,
+    "kana": "でる",
+    "kanji": "出る",
+    "group_type": "II ",
+    "meaning": "出去"
+  },
+  {
+    "id": 36,
+    "kana": "いる",
+    "kanji": "いる",
+    "group_type": "II ",
+    "meaning": "有(生物)"
+  },
+  {
+    "id": 37,
+    "kana": "きる",
+    "kanji": "着る",
+    "group_type": "II ",
+    "meaning": "穿"
+  },
+  {
+    "id": 38,
+    "kana": "あける",
+    "kanji": "開ける",
+    "group_type": "II ",
+    "meaning": "打开"
+  },
+  {
+    "id": 39,
+    "kana": "しめる",
+    "kanji": "閉める",
+    "group_type": "II ",
+    "meaning": "关闭"
+  },
+  {
+    "id": 40,
+    "kana": "つける",
+    "kanji": "付ける",
+    "group_type": "II ",
+    "meaning": "安装"
+  },
+  {
+    "id": 41,
+    "kana": "けす",
+    "kanji": "消す",
+    "group_type": "I  ",
+    "meaning": "关掉"
+  },
+  {
+    "id": 42,
+    "kana": "おしえる",
+    "kanji": "教える",
+    "group_type": "II ",
+    "meaning": "教"
+  },
+  {
+    "id": 43,
+    "kana": "おぼえる",
+    "kanji": "覚える",
+    "group_type": "II ",
+    "meaning": "记住"
+  },
+  {
+    "id": 44,
+    "kana": "わすれる",
+    "kanji": "忘れる",
+    "group_type": "II ",
+    "meaning": "忘记"
+  },
+  {
+    "id": 45,
+    "kana": "あげる",
+    "kanji": "上げる",
+    "group_type": "II ",
+    "meaning": "给"
+  },
+  {
+    "id": 46,
+    "kana": "もらう",
+    "kanji": "もらう",
+    "group_type": "I  ",
+    "meaning": "收到"
+  },
+  {
+    "id": 47,
+    "kana": "くれる",
+    "kanji": "くれる",
+    "group_type": "II ",
+    "meaning": "给我"
+  },
+  {
+    "id": 48,
+    "kana": "かりる",
+    "kanji": "借りる",
+    "group_type": "II ",
+    "meaning": "借"
+  },
+  {
+    "id": 49,
+    "kana": "かす",
+    "kanji": "貸す",
+    "group_type": "I  ",
+    "meaning": "借给"
+  },
+  {
+    "id": 50,
+    "kana": "すてる",
+    "kanji": "捨てる",
+    "group_type": "II ",
+    "meaning": "扔"
+  },
+  {
+    "id": 51,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 52,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 53,
+    "kana": "あく",
+    "kanji": "開く",
+    "group_type": "I  ",
+    "meaning": "开"
+  },
+  {
+    "id": 54,
+    "kana": "しまる",
+    "kanji": "閉まる",
+    "group_type": "I  ",
+    "meaning": "关"
+  },
+  {
+    "id": 55,
+    "kana": "つく",
+    "kanji": "着く",
+    "group_type": "I  ",
+    "meaning": "到达"
+  },
+  {
+    "id": 56,
+    "kana": "でかける",
+    "kanji": "出かける",
+    "group_type": "II ",
+    "meaning": "外出"
+  },
+  {
+    "id": 57,
+    "kana": "かかる",
+    "kanji": "かかる",
+    "group_type": "I  ",
+    "meaning": "花费"
+  },
+  {
+    "id": 58,
+    "kana": "やすむ",
+    "kanji": "休む",
+    "group_type": "I  ",
+    "meaning": "休息"
+  },
+  {
+    "id": 60,
+    "kana": "べんきょうする",
+    "kanji": "勉強する",
+    "group_type": "IRR",
+    "meaning": "学习"
+  },
+  {
+    "id": 61,
+    "kana": "りょうりする",
+    "kanji": "料理する",
+    "group_type": "IRR",
+    "meaning": "做饭"
+  },
+  {
+    "id": 62,
+    "kana": "せんたくする",
+    "kanji": "洗濯する",
+    "group_type": "IRR",
+    "meaning": "洗衣服"
+  },
+  {
+    "id": 63,
+    "kana": "そうじする",
+    "kanji": "掃除する",
+    "group_type": "IRR",
+    "meaning": "打扫"
+  },
+  {
+    "id": 64,
+    "kana": "かいものする",
+    "kanji": "買い物する",
+    "group_type": "IRR",
+    "meaning": "购物"
+  },
+  {
+    "id": 65,
+    "kana": "さんぽする",
+    "kanji": "散歩する",
+    "group_type": "IRR",
+    "meaning": "散步"
+  },
+  {
+    "id": 66,
+    "kana": "うんどうする",
+    "kanji": "運動する",
+    "group_type": "IRR",
+    "meaning": "运动"
+  },
+  {
+    "id": 67,
+    "kana": "りょこうする",
+    "kanji": "旅行する",
+    "group_type": "IRR",
+    "meaning": "旅行"
+  },
+  {
+    "id": 68,
+    "kana": "けっこんする",
+    "kanji": "結婚する",
+    "group_type": "IRR",
+    "meaning": "结婚"
+  },
+  {
+    "id": 69,
+    "kana": "そつぎょうする",
+    "kanji": "卒業する",
+    "group_type": "IRR",
+    "meaning": "毕业"
+  },
+  {
+    "id": 70,
+    "kana": "しゅっぱつする",
+    "kanji": "出発する",
+    "group_type": "IRR",
+    "meaning": "出发"
+  },
+  {
+    "id": 71,
+    "kana": "とうちゃくする",
+    "kanji": "到着する",
+    "group_type": "IRR",
+    "meaning": "到达"
+  },
+  {
+    "id": 72,
+    "kana": "でんわする",
+    "kanji": "電話する",
+    "group_type": "IRR",
+    "meaning": "打电话"
+  },
+  {
+    "id": 73,
+    "kana": "しゃしんをとる",
+    "kanji": "写真を撮る",
+    "group_type": "I  ",
+    "meaning": "拍照"
+  },
+  {
+    "id": 74,
+    "kana": "おんがくをきく",
+    "kanji": "音楽を聞く",
+    "group_type": "I  ",
+    "meaning": "听音乐"
+  },
+  {
+    "id": 75,
+    "kana": "てがみをかく",
+    "kanji": "手紙を書く",
+    "group_type": "I  ",
+    "meaning": "写信"
+  },
+  {
+    "id": 76,
+    "kana": "ほんをよむ",
+    "kanji": "本を読む",
+    "group_type": "I  ",
+    "meaning": "读书"
+  },
+  {
+    "id": 77,
+    "kana": "えいがをみる",
+    "kanji": "映画を見る",
+    "group_type": "II ",
+    "meaning": "看电影"
+  },
+  {
+    "id": 78,
+    "kana": "テレビをみる",
+    "kanji": "テレビを見る",
+    "group_type": "II ",
+    "meaning": "看电视"
+  },
+  {
+    "id": 79,
+    "kana": "ゲームをする",
+    "kanji": "ゲームをする",
+    "group_type": "IRR",
+    "meaning": "玩游戏"
+  },
+  {
+    "id": 80,
+    "kana": "スポーツをする",
+    "kanji": "スポーツをする",
+    "group_type": "IRR",
+    "meaning": "做运动"
+  },
+  {
+    "id": 81,
+    "kana": "パーティーをする",
+    "kanji": "パーティーをする",
+    "group_type": "IRR",
+    "meaning": "开派对"
+  },
+  {
+    "id": 82,
+    "kana": "プレゼントをあげる",
+    "kanji": "プレゼントを上げる",
+    "group_type": "II ",
+    "meaning": "送礼物"
+  },
+  {
+    "id": 83,
+    "kana": "あらう",
+    "kanji": "洗う",
+    "group_type": "I  ",
+    "meaning": "洗"
+  },
+  {
+    "id": 84,
+    "kana": "ふく",
+    "kanji": "拭く",
+    "group_type": "I  ",
+    "meaning": "擦"
+  },
+  {
+    "id": 85,
+    "kana": "みがく",
+    "kanji": "磨く",
+    "group_type": "I  ",
+    "meaning": "刷"
+  },
+  {
+    "id": 86,
+    "kana": "きる",
+    "kanji": "切る",
+    "group_type": "I  ",
+    "meaning": "切"
+  },
+  {
+    "id": 87,
+    "kana": "やく",
+    "kanji": "焼く",
+    "group_type": "I  ",
+    "meaning": "烤"
+  },
+  {
+    "id": 88,
+    "kana": "にる",
+    "kanji": "煮る",
+    "group_type": "II ",
+    "meaning": "煮"
+  },
+  {
+    "id": 89,
+    "kana": "いためる",
+    "kanji": "炒める",
+    "group_type": "II ",
+    "meaning": "炒"
+  },
+  {
+    "id": 90,
+    "kana": "あじをつける",
+    "kanji": "味を付ける",
+    "group_type": "II ",
+    "meaning": "调味"
+  },
+  {
+    "id": 91,
+    "kana": "しおをいれる",
+    "kanji": "塩を入れる",
+    "group_type": "II ",
+    "meaning": "放盐"
+  },
+  {
+    "id": 92,
+    "kana": "さとうをいれる",
+    "kanji": "砂糖を入れる",
+    "group_type": "II ",
+    "meaning": "放糖"
+  },
+  {
+    "id": 93,
+    "kana": "よろこぶ",
+    "kanji": "喜ぶ",
+    "group_type": "I  ",
+    "meaning": "高兴"
+  },
+  {
+    "id": 94,
+    "kana": "かなしむ",
+    "kanji": "悲しむ",
+    "group_type": "I  ",
+    "meaning": "悲伤"
+  },
+  {
+    "id": 95,
+    "kana": "おこる",
+    "kanji": "怒る",
+    "group_type": "I  ",
+    "meaning": "生气"
+  },
+  {
+    "id": 96,
+    "kana": "おどろく",
+    "kanji": "驚く",
+    "group_type": "I  ",
+    "meaning": "惊讶"
+  },
+  {
+    "id": 97,
+    "kana": "しんぱいする",
+    "kanji": "心配する",
+    "group_type": "IRR",
+    "meaning": "担心"
+  },
+  {
+    "id": 98,
+    "kana": "あんしんする",
+    "kanji": "安心する",
+    "group_type": "IRR",
+    "meaning": "安心"
+  },
+  {
+    "id": 99,
+    "kana": "がっかりする",
+    "kanji": "がっかりする",
+    "group_type": "IRR",
+    "meaning": "失望"
+  },
+  {
+    "id": 100,
+    "kana": "こまる",
+    "kanji": "困る",
+    "group_type": "I  ",
+    "meaning": "困扰"
+  },
+  {
+    "id": 101,
+    "kana": "たすかる",
+    "kanji": "助かる",
+    "group_type": "I  ",
+    "meaning": "得救"
+  },
+  {
+    "id": 102,
+    "kana": "たすける",
+    "kanji": "助ける",
+    "group_type": "II ",
+    "meaning": "帮助"
+  },
+  {
+    "id": 103,
+    "kana": "しらべる",
+    "kanji": "調べる",
+    "group_type": "II ",
+    "meaning": "调查"
+  },
+  {
+    "id": 104,
+    "kana": "けんきゅうする",
+    "kanji": "研究する",
+    "group_type": "IRR",
+    "meaning": "研究"
+  },
+  {
+    "id": 105,
+    "kana": "はっぴょうする",
+    "kanji": "発表する",
+    "group_type": "IRR",
+    "meaning": "发表"
+  },
+  {
+    "id": 106,
+    "kana": "しつもんする",
+    "kanji": "質問する",
+    "group_type": "IRR",
+    "meaning": "提问"
+  },
+  {
+    "id": 107,
+    "kana": "こたえる",
+    "kanji": "答える",
+    "group_type": "II ",
+    "meaning": "回答"
+  },
+  {
+    "id": 108,
+    "kana": "せつめいする",
+    "kanji": "説明する",
+    "group_type": "IRR",
+    "meaning": "说明"
+  },
+  {
+    "id": 109,
+    "kana": "りかいする",
+    "kanji": "理解する",
+    "group_type": "IRR",
+    "meaning": "理解"
+  },
+  {
+    "id": 110,
+    "kana": "しゅくだいをする",
+    "kanji": "宿題をする",
+    "group_type": "IRR",
+    "meaning": "做作业"
+  },
+  {
+    "id": 111,
+    "kana": "しけんをうける",
+    "kanji": "試験を受ける",
+    "group_type": "II ",
+    "meaning": "考试"
+  },
+  {
+    "id": 112,
+    "kana": "ごうかくする",
+    "kanji": "合格する",
+    "group_type": "IRR",
+    "meaning": "合格"
+  },
+  {
+    "id": 113,
+    "kana": "あるいていく",
+    "kanji": "歩いて行く",
+    "group_type": "I  ",
+    "meaning": "走着去"
+  },
+  {
+    "id": 114,
+    "kana": "じてんしゃでいく",
+    "kanji": "自転車で行く",
+    "group_type": "I  ",
+    "meaning": "骑自行车去"
+  },
+  {
+    "id": 115,
+    "kana": "でんしゃにのる",
+    "kanji": "電車に乗る",
+    "group_type": "I  ",
+    "meaning": "坐电车"
+  },
+  {
+    "id": 116,
+    "kana": "バスにのる",
+    "kanji": "バスに乗る",
+    "group_type": "I  ",
+    "meaning": "坐公交车"
+  },
+  {
+    "id": 117,
+    "kana": "ひこうきにのる",
+    "kanji": "飛行機に乗る",
+    "group_type": "I  ",
+    "meaning": "坐飞机"
+  },
+  {
+    "id": 118,
+    "kana": "くるまをうんてんする",
+    "kanji": "車を運転する",
+    "group_type": "IRR",
+    "meaning": "开车"
+  },
+  {
+    "id": 119,
+    "kana": "タクシーをよぶ",
+    "kanji": "タクシーを呼ぶ",
+    "group_type": "I  ",
+    "meaning": "叫出租车"
+  },
+  {
+    "id": 120,
+    "kana": "みちにまよう",
+    "kanji": "道に迷う",
+    "group_type": "I  ",
+    "meaning": "迷路"
+  },
+  {
+    "id": 121,
+    "kana": "みちをきく",
+    "kanji": "道を聞く",
+    "group_type": "I  ",
+    "meaning": "问路"
+  },
+  {
+    "id": 122,
+    "kana": "ちずをみる",
+    "kanji": "地図を見る",
+    "group_type": "II ",
+    "meaning": "看地图"
+  },
+  {
+    "id": 123,
+    "kana": "びょうきになる",
+    "kanji": "病気になる",
+    "group_type": "I  ",
+    "meaning": "生病"
+  },
+  {
+    "id": 124,
+    "kana": "げんきになる",
+    "kanji": "元気になる",
+    "group_type": "I  ",
+    "meaning": "恢复健康"
+  },
+  {
+    "id": 125,
+    "kana": "くすりをのむ",
+    "kanji": "薬を飲む",
+    "group_type": "I  ",
+    "meaning": "吃药"
+  },
+  {
+    "id": 126,
+    "kana": "いしゃにいく",
+    "kanji": "医者に行く",
+    "group_type": "I  ",
+    "meaning": "看医生"
+  },
+  {
+    "id": 127,
+    "kana": "びょういんにいく",
+    "kanji": "病院に行く",
+    "group_type": "I  ",
+    "meaning": "去医院"
+  },
+  {
+    "id": 128,
+    "kana": "ねつがでる",
+    "kanji": "熱が出る",
+    "group_type": "II ",
+    "meaning": "发烧"
+  },
+  {
+    "id": 129,
+    "kana": "せきがでる",
+    "kanji": "咳が出る",
+    "group_type": "II ",
+    "meaning": "咳嗽"
+  },
+  {
+    "id": 130,
+    "kana": "のどがいたい",
+    "kanji": "喉が痛い",
+    "group_type": "I  ",
+    "meaning": "喉咙疼"
+  },
+  {
+    "id": 131,
+    "kana": "あたまがいたい",
+    "kanji": "頭が痛い",
+    "group_type": "I  ",
+    "meaning": "头疼"
+  },
+  {
+    "id": 132,
+    "kana": "おなかがいたい",
+    "kanji": "お腹が痛い",
+    "group_type": "I  ",
+    "meaning": "肚子疼"
+  },
+  {
+    "id": 183,
+    "kana": "いく1",
+    "kanji": "行く1",
+    "group_type": "I  ",
+    "meaning": "去 (1)"
+  },
+  {
+    "id": 184,
+    "kana": "かく1",
+    "kanji": "書く1",
+    "group_type": "I  ",
+    "meaning": "写 (1)"
+  },
+  {
+    "id": 185,
+    "kana": "よむ1",
+    "kanji": "読む1",
+    "group_type": "I  ",
+    "meaning": "读 (1)"
+  },
+  {
+    "id": 186,
+    "kana": "のむ1",
+    "kanji": "飲む1",
+    "group_type": "I  ",
+    "meaning": "喝 (1)"
+  },
+  {
+    "id": 187,
+    "kana": "はなす1",
+    "kanji": "話す1",
+    "group_type": "I  ",
+    "meaning": "说话 (1)"
+  },
+  {
+    "id": 188,
+    "kana": "きく1",
+    "kanji": "聞く1",
+    "group_type": "I  ",
+    "meaning": "听 (1)"
+  },
+  {
+    "id": 189,
+    "kana": "あるく1",
+    "kanji": "歩く1",
+    "group_type": "I  ",
+    "meaning": "走路 (1)"
+  },
+  {
+    "id": 190,
+    "kana": "はたらく1",
+    "kanji": "働く1",
+    "group_type": "I  ",
+    "meaning": "工作 (1)"
+  },
+  {
+    "id": 191,
+    "kana": "およぐ1",
+    "kanji": "泳ぐ1",
+    "group_type": "I  ",
+    "meaning": "游泳 (1)"
+  },
+  {
+    "id": 192,
+    "kana": "あそぶ1",
+    "kanji": "遊ぶ1",
+    "group_type": "I  ",
+    "meaning": "玩 (1)"
+  },
+  {
+    "id": 193,
+    "kana": "よぶ1",
+    "kanji": "呼ぶ1",
+    "group_type": "I  ",
+    "meaning": "叫 (1)"
+  },
+  {
+    "id": 194,
+    "kana": "しぬ1",
+    "kanji": "死ぬ1",
+    "group_type": "I  ",
+    "meaning": "死 (1)"
+  },
+  {
+    "id": 195,
+    "kana": "たつ1",
+    "kanji": "立つ1",
+    "group_type": "I  ",
+    "meaning": "站 (1)"
+  },
+  {
+    "id": 196,
+    "kana": "まつ1",
+    "kanji": "待つ1",
+    "group_type": "I  ",
+    "meaning": "等 (1)"
+  },
+  {
+    "id": 197,
+    "kana": "もつ1",
+    "kanji": "持つ1",
+    "group_type": "I  ",
+    "meaning": "拿 (1)"
+  },
+  {
+    "id": 198,
+    "kana": "うつ1",
+    "kanji": "打つ1",
+    "group_type": "I  ",
+    "meaning": "打 (1)"
+  },
+  {
+    "id": 199,
+    "kana": "かう1",
+    "kanji": "買う1",
+    "group_type": "I  ",
+    "meaning": "买 (1)"
+  },
+  {
+    "id": 200,
+    "kana": "うる1",
+    "kanji": "売る1",
+    "group_type": "I  ",
+    "meaning": "卖 (1)"
+  },
+  {
+    "id": 201,
+    "kana": "つくる1",
+    "kanji": "作る1",
+    "group_type": "I  ",
+    "meaning": "做 (1)"
+  },
+  {
+    "id": 202,
+    "kana": "とる1",
+    "kanji": "取る1",
+    "group_type": "I  ",
+    "meaning": "拿 (1)"
+  },
+  {
+    "id": 203,
+    "kana": "はいる1",
+    "kanji": "入る1",
+    "group_type": "I  ",
+    "meaning": "进入 (1)"
+  },
+  {
+    "id": 204,
+    "kana": "かえる1",
+    "kanji": "帰る1",
+    "group_type": "I  ",
+    "meaning": "回去 (1)"
+  },
+  {
+    "id": 205,
+    "kana": "のる1",
+    "kanji": "乗る1",
+    "group_type": "I  ",
+    "meaning": "乘坐 (1)"
+  },
+  {
+    "id": 206,
+    "kana": "すわる1",
+    "kanji": "座る1",
+    "group_type": "I  ",
+    "meaning": "坐 (1)"
+  },
+  {
+    "id": 207,
+    "kana": "はしる1",
+    "kanji": "走る1",
+    "group_type": "I  ",
+    "meaning": "跑 (1)"
+  },
+  {
+    "id": 208,
+    "kana": "おわる1",
+    "kanji": "終わる1",
+    "group_type": "I  ",
+    "meaning": "结束 (1)"
+  },
+  {
+    "id": 209,
+    "kana": "はじまる1",
+    "kanji": "始まる1",
+    "group_type": "I  ",
+    "meaning": "开始 (1)"
+  },
+  {
+    "id": 210,
+    "kana": "わかる1",
+    "kanji": "分かる1",
+    "group_type": "I  ",
+    "meaning": "明白 (1)"
+  },
+  {
+    "id": 211,
+    "kana": "ある1",
+    "kanji": "ある1",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (1)"
+  },
+  {
+    "id": 212,
+    "kana": "なる1",
+    "kanji": "なる1",
+    "group_type": "I  ",
+    "meaning": "成为 (1)"
+  },
+  {
+    "id": 213,
+    "kana": "たべる1",
+    "kanji": "食べる1",
+    "group_type": "II ",
+    "meaning": "吃 (1)"
+  },
+  {
+    "id": 214,
+    "kana": "みる1",
+    "kanji": "見る1",
+    "group_type": "II ",
+    "meaning": "看 (1)"
+  },
+  {
+    "id": 215,
+    "kana": "ねる1",
+    "kanji": "寝る1",
+    "group_type": "II ",
+    "meaning": "睡觉 (1)"
+  },
+  {
+    "id": 216,
+    "kana": "おきる1",
+    "kanji": "起きる1",
+    "group_type": "II ",
+    "meaning": "起床 (1)"
+  },
+  {
+    "id": 217,
+    "kana": "でる1",
+    "kanji": "出る1",
+    "group_type": "II ",
+    "meaning": "出去 (1)"
+  },
+  {
+    "id": 218,
+    "kana": "いる1",
+    "kanji": "いる1",
+    "group_type": "II ",
+    "meaning": "有(生物) (1)"
+  },
+  {
+    "id": 219,
+    "kana": "きる1",
+    "kanji": "着る1",
+    "group_type": "II ",
+    "meaning": "穿 (1)"
+  },
+  {
+    "id": 220,
+    "kana": "あける1",
+    "kanji": "開ける1",
+    "group_type": "II ",
+    "meaning": "打开 (1)"
+  },
+  {
+    "id": 221,
+    "kana": "しめる1",
+    "kanji": "閉める1",
+    "group_type": "II ",
+    "meaning": "关闭 (1)"
+  },
+  {
+    "id": 222,
+    "kana": "つける1",
+    "kanji": "付ける1",
+    "group_type": "II ",
+    "meaning": "安装 (1)"
+  },
+  {
+    "id": 223,
+    "kana": "けす1",
+    "kanji": "消す1",
+    "group_type": "I  ",
+    "meaning": "关掉 (1)"
+  },
+  {
+    "id": 224,
+    "kana": "おしえる1",
+    "kanji": "教える1",
+    "group_type": "II ",
+    "meaning": "教 (1)"
+  },
+  {
+    "id": 225,
+    "kana": "おぼえる1",
+    "kanji": "覚える1",
+    "group_type": "II ",
+    "meaning": "记住 (1)"
+  },
+  {
+    "id": 226,
+    "kana": "わすれる1",
+    "kanji": "忘れる1",
+    "group_type": "II ",
+    "meaning": "忘记 (1)"
+  },
+  {
+    "id": 227,
+    "kana": "あげる1",
+    "kanji": "上げる1",
+    "group_type": "II ",
+    "meaning": "给 (1)"
+  },
+  {
+    "id": 228,
+    "kana": "もらう1",
+    "kanji": "もらう1",
+    "group_type": "I  ",
+    "meaning": "收到 (1)"
+  },
+  {
+    "id": 229,
+    "kana": "くれる1",
+    "kanji": "くれる1",
+    "group_type": "II ",
+    "meaning": "给我 (1)"
+  },
+  {
+    "id": 230,
+    "kana": "かりる1",
+    "kanji": "借りる1",
+    "group_type": "II ",
+    "meaning": "借 (1)"
+  },
+  {
+    "id": 231,
+    "kana": "かす1",
+    "kanji": "貸す1",
+    "group_type": "I  ",
+    "meaning": "借给 (1)"
+  },
+  {
+    "id": 232,
+    "kana": "すてる1",
+    "kanji": "捨てる1",
+    "group_type": "II ",
+    "meaning": "扔 (1)"
+  },
+  {
+    "id": 233,
+    "kana": "いく2",
+    "kanji": "行く2",
+    "group_type": "I  ",
+    "meaning": "去 (2)"
+  },
+  {
+    "id": 234,
+    "kana": "かく2",
+    "kanji": "書く2",
+    "group_type": "I  ",
+    "meaning": "写 (2)"
+  },
+  {
+    "id": 235,
+    "kana": "よむ2",
+    "kanji": "読む2",
+    "group_type": "I  ",
+    "meaning": "读 (2)"
+  },
+  {
+    "id": 236,
+    "kana": "のむ2",
+    "kanji": "飲む2",
+    "group_type": "I  ",
+    "meaning": "喝 (2)"
+  },
+  {
+    "id": 237,
+    "kana": "はなす2",
+    "kanji": "話す2",
+    "group_type": "I  ",
+    "meaning": "说话 (2)"
+  },
+  {
+    "id": 238,
+    "kana": "きく2",
+    "kanji": "聞く2",
+    "group_type": "I  ",
+    "meaning": "听 (2)"
+  },
+  {
+    "id": 239,
+    "kana": "あるく2",
+    "kanji": "歩く2",
+    "group_type": "I  ",
+    "meaning": "走路 (2)"
+  },
+  {
+    "id": 240,
+    "kana": "はたらく2",
+    "kanji": "働く2",
+    "group_type": "I  ",
+    "meaning": "工作 (2)"
+  },
+  {
+    "id": 241,
+    "kana": "およぐ2",
+    "kanji": "泳ぐ2",
+    "group_type": "I  ",
+    "meaning": "游泳 (2)"
+  },
+  {
+    "id": 242,
+    "kana": "あそぶ2",
+    "kanji": "遊ぶ2",
+    "group_type": "I  ",
+    "meaning": "玩 (2)"
+  },
+  {
+    "id": 243,
+    "kana": "よぶ2",
+    "kanji": "呼ぶ2",
+    "group_type": "I  ",
+    "meaning": "叫 (2)"
+  },
+  {
+    "id": 244,
+    "kana": "しぬ2",
+    "kanji": "死ぬ2",
+    "group_type": "I  ",
+    "meaning": "死 (2)"
+  },
+  {
+    "id": 245,
+    "kana": "たつ2",
+    "kanji": "立つ2",
+    "group_type": "I  ",
+    "meaning": "站 (2)"
+  },
+  {
+    "id": 246,
+    "kana": "まつ2",
+    "kanji": "待つ2",
+    "group_type": "I  ",
+    "meaning": "等 (2)"
+  },
+  {
+    "id": 247,
+    "kana": "もつ2",
+    "kanji": "持つ2",
+    "group_type": "I  ",
+    "meaning": "拿 (2)"
+  },
+  {
+    "id": 248,
+    "kana": "うつ2",
+    "kanji": "打つ2",
+    "group_type": "I  ",
+    "meaning": "打 (2)"
+  },
+  {
+    "id": 249,
+    "kana": "かう2",
+    "kanji": "買う2",
+    "group_type": "I  ",
+    "meaning": "买 (2)"
+  },
+  {
+    "id": 250,
+    "kana": "うる2",
+    "kanji": "売る2",
+    "group_type": "I  ",
+    "meaning": "卖 (2)"
+  },
+  {
+    "id": 251,
+    "kana": "つくる2",
+    "kanji": "作る2",
+    "group_type": "I  ",
+    "meaning": "做 (2)"
+  },
+  {
+    "id": 252,
+    "kana": "とる2",
+    "kanji": "取る2",
+    "group_type": "I  ",
+    "meaning": "拿 (2)"
+  },
+  {
+    "id": 253,
+    "kana": "はいる2",
+    "kanji": "入る2",
+    "group_type": "I  ",
+    "meaning": "进入 (2)"
+  },
+  {
+    "id": 254,
+    "kana": "かえる2",
+    "kanji": "帰る2",
+    "group_type": "I  ",
+    "meaning": "回去 (2)"
+  },
+  {
+    "id": 255,
+    "kana": "のる2",
+    "kanji": "乗る2",
+    "group_type": "I  ",
+    "meaning": "乘坐 (2)"
+  },
+  {
+    "id": 256,
+    "kana": "すわる2",
+    "kanji": "座る2",
+    "group_type": "I  ",
+    "meaning": "坐 (2)"
+  },
+  {
+    "id": 257,
+    "kana": "はしる2",
+    "kanji": "走る2",
+    "group_type": "I  ",
+    "meaning": "跑 (2)"
+  },
+  {
+    "id": 258,
+    "kana": "おわる2",
+    "kanji": "終わる2",
+    "group_type": "I  ",
+    "meaning": "结束 (2)"
+  },
+  {
+    "id": 259,
+    "kana": "はじまる2",
+    "kanji": "始まる2",
+    "group_type": "I  ",
+    "meaning": "开始 (2)"
+  },
+  {
+    "id": 260,
+    "kana": "わかる2",
+    "kanji": "分かる2",
+    "group_type": "I  ",
+    "meaning": "明白 (2)"
+  },
+  {
+    "id": 261,
+    "kana": "ある2",
+    "kanji": "ある2",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (2)"
+  },
+  {
+    "id": 262,
+    "kana": "なる2",
+    "kanji": "なる2",
+    "group_type": "I  ",
+    "meaning": "成为 (2)"
+  },
+  {
+    "id": 263,
+    "kana": "たべる2",
+    "kanji": "食べる2",
+    "group_type": "II ",
+    "meaning": "吃 (2)"
+  },
+  {
+    "id": 264,
+    "kana": "みる2",
+    "kanji": "見る2",
+    "group_type": "II ",
+    "meaning": "看 (2)"
+  },
+  {
+    "id": 265,
+    "kana": "ねる2",
+    "kanji": "寝る2",
+    "group_type": "II ",
+    "meaning": "睡觉 (2)"
+  },
+  {
+    "id": 266,
+    "kana": "おきる2",
+    "kanji": "起きる2",
+    "group_type": "II ",
+    "meaning": "起床 (2)"
+  },
+  {
+    "id": 267,
+    "kana": "でる2",
+    "kanji": "出る2",
+    "group_type": "II ",
+    "meaning": "出去 (2)"
+  },
+  {
+    "id": 268,
+    "kana": "いる2",
+    "kanji": "いる2",
+    "group_type": "II ",
+    "meaning": "有(生物) (2)"
+  },
+  {
+    "id": 269,
+    "kana": "きる2",
+    "kanji": "着る2",
+    "group_type": "II ",
+    "meaning": "穿 (2)"
+  },
+  {
+    "id": 270,
+    "kana": "あける2",
+    "kanji": "開ける2",
+    "group_type": "II ",
+    "meaning": "打开 (2)"
+  },
+  {
+    "id": 271,
+    "kana": "しめる2",
+    "kanji": "閉める2",
+    "group_type": "II ",
+    "meaning": "关闭 (2)"
+  },
+  {
+    "id": 272,
+    "kana": "つける2",
+    "kanji": "付ける2",
+    "group_type": "II ",
+    "meaning": "安装 (2)"
+  },
+  {
+    "id": 273,
+    "kana": "けす2",
+    "kanji": "消す2",
+    "group_type": "I  ",
+    "meaning": "关掉 (2)"
+  },
+  {
+    "id": 274,
+    "kana": "おしえる2",
+    "kanji": "教える2",
+    "group_type": "II ",
+    "meaning": "教 (2)"
+  },
+  {
+    "id": 275,
+    "kana": "おぼえる2",
+    "kanji": "覚える2",
+    "group_type": "II ",
+    "meaning": "记住 (2)"
+  },
+  {
+    "id": 276,
+    "kana": "わすれる2",
+    "kanji": "忘れる2",
+    "group_type": "II ",
+    "meaning": "忘记 (2)"
+  },
+  {
+    "id": 277,
+    "kana": "あげる2",
+    "kanji": "上げる2",
+    "group_type": "II ",
+    "meaning": "给 (2)"
+  },
+  {
+    "id": 278,
+    "kana": "もらう2",
+    "kanji": "もらう2",
+    "group_type": "I  ",
+    "meaning": "收到 (2)"
+  },
+  {
+    "id": 279,
+    "kana": "くれる2",
+    "kanji": "くれる2",
+    "group_type": "II ",
+    "meaning": "给我 (2)"
+  },
+  {
+    "id": 280,
+    "kana": "かりる2",
+    "kanji": "借りる2",
+    "group_type": "II ",
+    "meaning": "借 (2)"
+  },
+  {
+    "id": 281,
+    "kana": "かす2",
+    "kanji": "貸す2",
+    "group_type": "I  ",
+    "meaning": "借给 (2)"
+  },
+  {
+    "id": 282,
+    "kana": "すてる2",
+    "kanji": "捨てる2",
+    "group_type": "II ",
+    "meaning": "扔 (2)"
+  },
+  {
+    "id": 283,
+    "kana": "いく3",
+    "kanji": "行く3",
+    "group_type": "I  ",
+    "meaning": "去 (3)"
+  },
+  {
+    "id": 284,
+    "kana": "かく3",
+    "kanji": "書く3",
+    "group_type": "I  ",
+    "meaning": "写 (3)"
+  },
+  {
+    "id": 285,
+    "kana": "よむ3",
+    "kanji": "読む3",
+    "group_type": "I  ",
+    "meaning": "读 (3)"
+  },
+  {
+    "id": 286,
+    "kana": "のむ3",
+    "kanji": "飲む3",
+    "group_type": "I  ",
+    "meaning": "喝 (3)"
+  },
+  {
+    "id": 287,
+    "kana": "はなす3",
+    "kanji": "話す3",
+    "group_type": "I  ",
+    "meaning": "说话 (3)"
+  },
+  {
+    "id": 288,
+    "kana": "きく3",
+    "kanji": "聞く3",
+    "group_type": "I  ",
+    "meaning": "听 (3)"
+  },
+  {
+    "id": 289,
+    "kana": "あるく3",
+    "kanji": "歩く3",
+    "group_type": "I  ",
+    "meaning": "走路 (3)"
+  },
+  {
+    "id": 290,
+    "kana": "はたらく3",
+    "kanji": "働く3",
+    "group_type": "I  ",
+    "meaning": "工作 (3)"
+  },
+  {
+    "id": 291,
+    "kana": "およぐ3",
+    "kanji": "泳ぐ3",
+    "group_type": "I  ",
+    "meaning": "游泳 (3)"
+  },
+  {
+    "id": 292,
+    "kana": "あそぶ3",
+    "kanji": "遊ぶ3",
+    "group_type": "I  ",
+    "meaning": "玩 (3)"
+  },
+  {
+    "id": 293,
+    "kana": "よぶ3",
+    "kanji": "呼ぶ3",
+    "group_type": "I  ",
+    "meaning": "叫 (3)"
+  },
+  {
+    "id": 294,
+    "kana": "しぬ3",
+    "kanji": "死ぬ3",
+    "group_type": "I  ",
+    "meaning": "死 (3)"
+  },
+  {
+    "id": 295,
+    "kana": "たつ3",
+    "kanji": "立つ3",
+    "group_type": "I  ",
+    "meaning": "站 (3)"
+  },
+  {
+    "id": 296,
+    "kana": "まつ3",
+    "kanji": "待つ3",
+    "group_type": "I  ",
+    "meaning": "等 (3)"
+  },
+  {
+    "id": 297,
+    "kana": "もつ3",
+    "kanji": "持つ3",
+    "group_type": "I  ",
+    "meaning": "拿 (3)"
+  },
+  {
+    "id": 298,
+    "kana": "うつ3",
+    "kanji": "打つ3",
+    "group_type": "I  ",
+    "meaning": "打 (3)"
+  },
+  {
+    "id": 299,
+    "kana": "かう3",
+    "kanji": "買う3",
+    "group_type": "I  ",
+    "meaning": "买 (3)"
+  },
+  {
+    "id": 300,
+    "kana": "うる3",
+    "kanji": "売る3",
+    "group_type": "I  ",
+    "meaning": "卖 (3)"
+  },
+  {
+    "id": 301,
+    "kana": "つくる3",
+    "kanji": "作る3",
+    "group_type": "I  ",
+    "meaning": "做 (3)"
+  },
+  {
+    "id": 302,
+    "kana": "とる3",
+    "kanji": "取る3",
+    "group_type": "I  ",
+    "meaning": "拿 (3)"
+  },
+  {
+    "id": 303,
+    "kana": "はいる3",
+    "kanji": "入る3",
+    "group_type": "I  ",
+    "meaning": "进入 (3)"
+  },
+  {
+    "id": 304,
+    "kana": "かえる3",
+    "kanji": "帰る3",
+    "group_type": "I  ",
+    "meaning": "回去 (3)"
+  },
+  {
+    "id": 305,
+    "kana": "のる3",
+    "kanji": "乗る3",
+    "group_type": "I  ",
+    "meaning": "乘坐 (3)"
+  },
+  {
+    "id": 306,
+    "kana": "すわる3",
+    "kanji": "座る3",
+    "group_type": "I  ",
+    "meaning": "坐 (3)"
+  },
+  {
+    "id": 307,
+    "kana": "はしる3",
+    "kanji": "走る3",
+    "group_type": "I  ",
+    "meaning": "跑 (3)"
+  },
+  {
+    "id": 308,
+    "kana": "おわる3",
+    "kanji": "終わる3",
+    "group_type": "I  ",
+    "meaning": "结束 (3)"
+  },
+  {
+    "id": 309,
+    "kana": "はじまる3",
+    "kanji": "始まる3",
+    "group_type": "I  ",
+    "meaning": "开始 (3)"
+  },
+  {
+    "id": 310,
+    "kana": "わかる3",
+    "kanji": "分かる3",
+    "group_type": "I  ",
+    "meaning": "明白 (3)"
+  },
+  {
+    "id": 311,
+    "kana": "ある3",
+    "kanji": "ある3",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (3)"
+  },
+  {
+    "id": 312,
+    "kana": "なる3",
+    "kanji": "なる3",
+    "group_type": "I  ",
+    "meaning": "成为 (3)"
+  },
+  {
+    "id": 313,
+    "kana": "たべる3",
+    "kanji": "食べる3",
+    "group_type": "II ",
+    "meaning": "吃 (3)"
+  },
+  {
+    "id": 314,
+    "kana": "みる3",
+    "kanji": "見る3",
+    "group_type": "II ",
+    "meaning": "看 (3)"
+  },
+  {
+    "id": 315,
+    "kana": "ねる3",
+    "kanji": "寝る3",
+    "group_type": "II ",
+    "meaning": "睡觉 (3)"
+  },
+  {
+    "id": 316,
+    "kana": "おきる3",
+    "kanji": "起きる3",
+    "group_type": "II ",
+    "meaning": "起床 (3)"
+  },
+  {
+    "id": 317,
+    "kana": "でる3",
+    "kanji": "出る3",
+    "group_type": "II ",
+    "meaning": "出去 (3)"
+  },
+  {
+    "id": 318,
+    "kana": "いる3",
+    "kanji": "いる3",
+    "group_type": "II ",
+    "meaning": "有(生物) (3)"
+  },
+  {
+    "id": 319,
+    "kana": "きる3",
+    "kanji": "着る3",
+    "group_type": "II ",
+    "meaning": "穿 (3)"
+  },
+  {
+    "id": 320,
+    "kana": "あける3",
+    "kanji": "開ける3",
+    "group_type": "II ",
+    "meaning": "打开 (3)"
+  },
+  {
+    "id": 321,
+    "kana": "しめる3",
+    "kanji": "閉める3",
+    "group_type": "II ",
+    "meaning": "关闭 (3)"
+  },
+  {
+    "id": 322,
+    "kana": "つける3",
+    "kanji": "付ける3",
+    "group_type": "II ",
+    "meaning": "安装 (3)"
+  },
+  {
+    "id": 323,
+    "kana": "けす3",
+    "kanji": "消す3",
+    "group_type": "I  ",
+    "meaning": "关掉 (3)"
+  },
+  {
+    "id": 324,
+    "kana": "おしえる3",
+    "kanji": "教える3",
+    "group_type": "II ",
+    "meaning": "教 (3)"
+  },
+  {
+    "id": 325,
+    "kana": "おぼえる3",
+    "kanji": "覚える3",
+    "group_type": "II ",
+    "meaning": "记住 (3)"
+  },
+  {
+    "id": 326,
+    "kana": "わすれる3",
+    "kanji": "忘れる3",
+    "group_type": "II ",
+    "meaning": "忘记 (3)"
+  },
+  {
+    "id": 327,
+    "kana": "あげる3",
+    "kanji": "上げる3",
+    "group_type": "II ",
+    "meaning": "给 (3)"
+  },
+  {
+    "id": 328,
+    "kana": "もらう3",
+    "kanji": "もらう3",
+    "group_type": "I  ",
+    "meaning": "收到 (3)"
+  },
+  {
+    "id": 329,
+    "kana": "くれる3",
+    "kanji": "くれる3",
+    "group_type": "II ",
+    "meaning": "给我 (3)"
+  },
+  {
+    "id": 330,
+    "kana": "かりる3",
+    "kanji": "借りる3",
+    "group_type": "II ",
+    "meaning": "借 (3)"
+  },
+  {
+    "id": 331,
+    "kana": "かす3",
+    "kanji": "貸す3",
+    "group_type": "I  ",
+    "meaning": "借给 (3)"
+  },
+  {
+    "id": 332,
+    "kana": "すてる3",
+    "kanji": "捨てる3",
+    "group_type": "II ",
+    "meaning": "扔 (3)"
+  },
+  {
+    "id": 333,
+    "kana": "いく4",
+    "kanji": "行く4",
+    "group_type": "I  ",
+    "meaning": "去 (4)"
+  },
+  {
+    "id": 334,
+    "kana": "かく4",
+    "kanji": "書く4",
+    "group_type": "I  ",
+    "meaning": "写 (4)"
+  },
+  {
+    "id": 335,
+    "kana": "よむ4",
+    "kanji": "読む4",
+    "group_type": "I  ",
+    "meaning": "读 (4)"
+  },
+  {
+    "id": 336,
+    "kana": "のむ4",
+    "kanji": "飲む4",
+    "group_type": "I  ",
+    "meaning": "喝 (4)"
+  },
+  {
+    "id": 337,
+    "kana": "はなす4",
+    "kanji": "話す4",
+    "group_type": "I  ",
+    "meaning": "说话 (4)"
+  },
+  {
+    "id": 338,
+    "kana": "きく4",
+    "kanji": "聞く4",
+    "group_type": "I  ",
+    "meaning": "听 (4)"
+  },
+  {
+    "id": 339,
+    "kana": "あるく4",
+    "kanji": "歩く4",
+    "group_type": "I  ",
+    "meaning": "走路 (4)"
+  },
+  {
+    "id": 340,
+    "kana": "はたらく4",
+    "kanji": "働く4",
+    "group_type": "I  ",
+    "meaning": "工作 (4)"
+  },
+  {
+    "id": 341,
+    "kana": "およぐ4",
+    "kanji": "泳ぐ4",
+    "group_type": "I  ",
+    "meaning": "游泳 (4)"
+  },
+  {
+    "id": 342,
+    "kana": "あそぶ4",
+    "kanji": "遊ぶ4",
+    "group_type": "I  ",
+    "meaning": "玩 (4)"
+  },
+  {
+    "id": 343,
+    "kana": "よぶ4",
+    "kanji": "呼ぶ4",
+    "group_type": "I  ",
+    "meaning": "叫 (4)"
+  },
+  {
+    "id": 344,
+    "kana": "しぬ4",
+    "kanji": "死ぬ4",
+    "group_type": "I  ",
+    "meaning": "死 (4)"
+  },
+  {
+    "id": 345,
+    "kana": "たつ4",
+    "kanji": "立つ4",
+    "group_type": "I  ",
+    "meaning": "站 (4)"
+  },
+  {
+    "id": 346,
+    "kana": "まつ4",
+    "kanji": "待つ4",
+    "group_type": "I  ",
+    "meaning": "等 (4)"
+  },
+  {
+    "id": 347,
+    "kana": "もつ4",
+    "kanji": "持つ4",
+    "group_type": "I  ",
+    "meaning": "拿 (4)"
+  },
+  {
+    "id": 348,
+    "kana": "うつ4",
+    "kanji": "打つ4",
+    "group_type": "I  ",
+    "meaning": "打 (4)"
+  },
+  {
+    "id": 349,
+    "kana": "かう4",
+    "kanji": "買う4",
+    "group_type": "I  ",
+    "meaning": "买 (4)"
+  },
+  {
+    "id": 350,
+    "kana": "うる4",
+    "kanji": "売る4",
+    "group_type": "I  ",
+    "meaning": "卖 (4)"
+  },
+  {
+    "id": 351,
+    "kana": "つくる4",
+    "kanji": "作る4",
+    "group_type": "I  ",
+    "meaning": "做 (4)"
+  },
+  {
+    "id": 352,
+    "kana": "とる4",
+    "kanji": "取る4",
+    "group_type": "I  ",
+    "meaning": "拿 (4)"
+  },
+  {
+    "id": 353,
+    "kana": "はいる4",
+    "kanji": "入る4",
+    "group_type": "I  ",
+    "meaning": "进入 (4)"
+  },
+  {
+    "id": 354,
+    "kana": "かえる4",
+    "kanji": "帰る4",
+    "group_type": "I  ",
+    "meaning": "回去 (4)"
+  },
+  {
+    "id": 355,
+    "kana": "のる4",
+    "kanji": "乗る4",
+    "group_type": "I  ",
+    "meaning": "乘坐 (4)"
+  },
+  {
+    "id": 356,
+    "kana": "すわる4",
+    "kanji": "座る4",
+    "group_type": "I  ",
+    "meaning": "坐 (4)"
+  },
+  {
+    "id": 357,
+    "kana": "はしる4",
+    "kanji": "走る4",
+    "group_type": "I  ",
+    "meaning": "跑 (4)"
+  },
+  {
+    "id": 358,
+    "kana": "おわる4",
+    "kanji": "終わる4",
+    "group_type": "I  ",
+    "meaning": "结束 (4)"
+  },
+  {
+    "id": 359,
+    "kana": "はじまる4",
+    "kanji": "始まる4",
+    "group_type": "I  ",
+    "meaning": "开始 (4)"
+  },
+  {
+    "id": 360,
+    "kana": "わかる4",
+    "kanji": "分かる4",
+    "group_type": "I  ",
+    "meaning": "明白 (4)"
+  },
+  {
+    "id": 361,
+    "kana": "ある4",
+    "kanji": "ある4",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (4)"
+  },
+  {
+    "id": 362,
+    "kana": "なる4",
+    "kanji": "なる4",
+    "group_type": "I  ",
+    "meaning": "成为 (4)"
+  },
+  {
+    "id": 363,
+    "kana": "たべる4",
+    "kanji": "食べる4",
+    "group_type": "II ",
+    "meaning": "吃 (4)"
+  },
+  {
+    "id": 364,
+    "kana": "みる4",
+    "kanji": "見る4",
+    "group_type": "II ",
+    "meaning": "看 (4)"
+  },
+  {
+    "id": 365,
+    "kana": "ねる4",
+    "kanji": "寝る4",
+    "group_type": "II ",
+    "meaning": "睡觉 (4)"
+  },
+  {
+    "id": 366,
+    "kana": "おきる4",
+    "kanji": "起きる4",
+    "group_type": "II ",
+    "meaning": "起床 (4)"
+  },
+  {
+    "id": 367,
+    "kana": "でる4",
+    "kanji": "出る4",
+    "group_type": "II ",
+    "meaning": "出去 (4)"
+  },
+  {
+    "id": 368,
+    "kana": "いる4",
+    "kanji": "いる4",
+    "group_type": "II ",
+    "meaning": "有(生物) (4)"
+  },
+  {
+    "id": 369,
+    "kana": "きる4",
+    "kanji": "着る4",
+    "group_type": "II ",
+    "meaning": "穿 (4)"
+  },
+  {
+    "id": 370,
+    "kana": "あける4",
+    "kanji": "開ける4",
+    "group_type": "II ",
+    "meaning": "打开 (4)"
+  },
+  {
+    "id": 371,
+    "kana": "しめる4",
+    "kanji": "閉める4",
+    "group_type": "II ",
+    "meaning": "关闭 (4)"
+  },
+  {
+    "id": 372,
+    "kana": "つける4",
+    "kanji": "付ける4",
+    "group_type": "II ",
+    "meaning": "安装 (4)"
+  },
+  {
+    "id": 373,
+    "kana": "けす4",
+    "kanji": "消す4",
+    "group_type": "I  ",
+    "meaning": "关掉 (4)"
+  },
+  {
+    "id": 374,
+    "kana": "おしえる4",
+    "kanji": "教える4",
+    "group_type": "II ",
+    "meaning": "教 (4)"
+  },
+  {
+    "id": 375,
+    "kana": "おぼえる4",
+    "kanji": "覚える4",
+    "group_type": "II ",
+    "meaning": "记住 (4)"
+  },
+  {
+    "id": 376,
+    "kana": "わすれる4",
+    "kanji": "忘れる4",
+    "group_type": "II ",
+    "meaning": "忘记 (4)"
+  },
+  {
+    "id": 377,
+    "kana": "あげる4",
+    "kanji": "上げる4",
+    "group_type": "II ",
+    "meaning": "给 (4)"
+  },
+  {
+    "id": 378,
+    "kana": "もらう4",
+    "kanji": "もらう4",
+    "group_type": "I  ",
+    "meaning": "收到 (4)"
+  },
+  {
+    "id": 379,
+    "kana": "くれる4",
+    "kanji": "くれる4",
+    "group_type": "II ",
+    "meaning": "给我 (4)"
+  },
+  {
+    "id": 380,
+    "kana": "かりる4",
+    "kanji": "借りる4",
+    "group_type": "II ",
+    "meaning": "借 (4)"
+  },
+  {
+    "id": 381,
+    "kana": "かす4",
+    "kanji": "貸す4",
+    "group_type": "I  ",
+    "meaning": "借给 (4)"
+  },
+  {
+    "id": 382,
+    "kana": "すてる4",
+    "kanji": "捨てる4",
+    "group_type": "II ",
+    "meaning": "扔 (4)"
+  },
+  {
+    "id": 383,
+    "kana": "いく5",
+    "kanji": "行く5",
+    "group_type": "I  ",
+    "meaning": "去 (5)"
+  },
+  {
+    "id": 384,
+    "kana": "かく5",
+    "kanji": "書く5",
+    "group_type": "I  ",
+    "meaning": "写 (5)"
+  },
+  {
+    "id": 385,
+    "kana": "よむ5",
+    "kanji": "読む5",
+    "group_type": "I  ",
+    "meaning": "读 (5)"
+  },
+  {
+    "id": 386,
+    "kana": "のむ5",
+    "kanji": "飲む5",
+    "group_type": "I  ",
+    "meaning": "喝 (5)"
+  },
+  {
+    "id": 387,
+    "kana": "はなす5",
+    "kanji": "話す5",
+    "group_type": "I  ",
+    "meaning": "说话 (5)"
+  },
+  {
+    "id": 388,
+    "kana": "きく5",
+    "kanji": "聞く5",
+    "group_type": "I  ",
+    "meaning": "听 (5)"
+  },
+  {
+    "id": 389,
+    "kana": "あるく5",
+    "kanji": "歩く5",
+    "group_type": "I  ",
+    "meaning": "走路 (5)"
+  },
+  {
+    "id": 390,
+    "kana": "はたらく5",
+    "kanji": "働く5",
+    "group_type": "I  ",
+    "meaning": "工作 (5)"
+  },
+  {
+    "id": 391,
+    "kana": "およぐ5",
+    "kanji": "泳ぐ5",
+    "group_type": "I  ",
+    "meaning": "游泳 (5)"
+  },
+  {
+    "id": 392,
+    "kana": "あそぶ5",
+    "kanji": "遊ぶ5",
+    "group_type": "I  ",
+    "meaning": "玩 (5)"
+  },
+  {
+    "id": 393,
+    "kana": "よぶ5",
+    "kanji": "呼ぶ5",
+    "group_type": "I  ",
+    "meaning": "叫 (5)"
+  },
+  {
+    "id": 394,
+    "kana": "しぬ5",
+    "kanji": "死ぬ5",
+    "group_type": "I  ",
+    "meaning": "死 (5)"
+  },
+  {
+    "id": 395,
+    "kana": "たつ5",
+    "kanji": "立つ5",
+    "group_type": "I  ",
+    "meaning": "站 (5)"
+  },
+  {
+    "id": 396,
+    "kana": "まつ5",
+    "kanji": "待つ5",
+    "group_type": "I  ",
+    "meaning": "等 (5)"
+  },
+  {
+    "id": 397,
+    "kana": "もつ5",
+    "kanji": "持つ5",
+    "group_type": "I  ",
+    "meaning": "拿 (5)"
+  },
+  {
+    "id": 398,
+    "kana": "うつ5",
+    "kanji": "打つ5",
+    "group_type": "I  ",
+    "meaning": "打 (5)"
+  },
+  {
+    "id": 399,
+    "kana": "かう5",
+    "kanji": "買う5",
+    "group_type": "I  ",
+    "meaning": "买 (5)"
+  },
+  {
+    "id": 400,
+    "kana": "うる5",
+    "kanji": "売る5",
+    "group_type": "I  ",
+    "meaning": "卖 (5)"
+  },
+  {
+    "id": 401,
+    "kana": "つくる5",
+    "kanji": "作る5",
+    "group_type": "I  ",
+    "meaning": "做 (5)"
+  },
+  {
+    "id": 402,
+    "kana": "とる5",
+    "kanji": "取る5",
+    "group_type": "I  ",
+    "meaning": "拿 (5)"
+  },
+  {
+    "id": 403,
+    "kana": "はいる5",
+    "kanji": "入る5",
+    "group_type": "I  ",
+    "meaning": "进入 (5)"
+  },
+  {
+    "id": 404,
+    "kana": "かえる5",
+    "kanji": "帰る5",
+    "group_type": "I  ",
+    "meaning": "回去 (5)"
+  },
+  {
+    "id": 405,
+    "kana": "のる5",
+    "kanji": "乗る5",
+    "group_type": "I  ",
+    "meaning": "乘坐 (5)"
+  },
+  {
+    "id": 406,
+    "kana": "すわる5",
+    "kanji": "座る5",
+    "group_type": "I  ",
+    "meaning": "坐 (5)"
+  },
+  {
+    "id": 407,
+    "kana": "はしる5",
+    "kanji": "走る5",
+    "group_type": "I  ",
+    "meaning": "跑 (5)"
+  },
+  {
+    "id": 408,
+    "kana": "おわる5",
+    "kanji": "終わる5",
+    "group_type": "I  ",
+    "meaning": "结束 (5)"
+  },
+  {
+    "id": 409,
+    "kana": "はじまる5",
+    "kanji": "始まる5",
+    "group_type": "I  ",
+    "meaning": "开始 (5)"
+  },
+  {
+    "id": 410,
+    "kana": "わかる5",
+    "kanji": "分かる5",
+    "group_type": "I  ",
+    "meaning": "明白 (5)"
+  },
+  {
+    "id": 411,
+    "kana": "ある5",
+    "kanji": "ある5",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (5)"
+  },
+  {
+    "id": 412,
+    "kana": "なる5",
+    "kanji": "なる5",
+    "group_type": "I  ",
+    "meaning": "成为 (5)"
+  },
+  {
+    "id": 413,
+    "kana": "たべる5",
+    "kanji": "食べる5",
+    "group_type": "II ",
+    "meaning": "吃 (5)"
+  },
+  {
+    "id": 414,
+    "kana": "みる5",
+    "kanji": "見る5",
+    "group_type": "II ",
+    "meaning": "看 (5)"
+  },
+  {
+    "id": 415,
+    "kana": "ねる5",
+    "kanji": "寝る5",
+    "group_type": "II ",
+    "meaning": "睡觉 (5)"
+  },
+  {
+    "id": 416,
+    "kana": "おきる5",
+    "kanji": "起きる5",
+    "group_type": "II ",
+    "meaning": "起床 (5)"
+  },
+  {
+    "id": 417,
+    "kana": "でる5",
+    "kanji": "出る5",
+    "group_type": "II ",
+    "meaning": "出去 (5)"
+  },
+  {
+    "id": 418,
+    "kana": "いる5",
+    "kanji": "いる5",
+    "group_type": "II ",
+    "meaning": "有(生物) (5)"
+  },
+  {
+    "id": 419,
+    "kana": "きる5",
+    "kanji": "着る5",
+    "group_type": "II ",
+    "meaning": "穿 (5)"
+  },
+  {
+    "id": 420,
+    "kana": "あける5",
+    "kanji": "開ける5",
+    "group_type": "II ",
+    "meaning": "打开 (5)"
+  },
+  {
+    "id": 421,
+    "kana": "しめる5",
+    "kanji": "閉める5",
+    "group_type": "II ",
+    "meaning": "关闭 (5)"
+  },
+  {
+    "id": 422,
+    "kana": "つける5",
+    "kanji": "付ける5",
+    "group_type": "II ",
+    "meaning": "安装 (5)"
+  },
+  {
+    "id": 423,
+    "kana": "けす5",
+    "kanji": "消す5",
+    "group_type": "I  ",
+    "meaning": "关掉 (5)"
+  },
+  {
+    "id": 424,
+    "kana": "おしえる5",
+    "kanji": "教える5",
+    "group_type": "II ",
+    "meaning": "教 (5)"
+  },
+  {
+    "id": 425,
+    "kana": "おぼえる5",
+    "kanji": "覚える5",
+    "group_type": "II ",
+    "meaning": "记住 (5)"
+  },
+  {
+    "id": 426,
+    "kana": "わすれる5",
+    "kanji": "忘れる5",
+    "group_type": "II ",
+    "meaning": "忘记 (5)"
+  },
+  {
+    "id": 427,
+    "kana": "あげる5",
+    "kanji": "上げる5",
+    "group_type": "II ",
+    "meaning": "给 (5)"
+  },
+  {
+    "id": 428,
+    "kana": "もらう5",
+    "kanji": "もらう5",
+    "group_type": "I  ",
+    "meaning": "收到 (5)"
+  },
+  {
+    "id": 429,
+    "kana": "くれる5",
+    "kanji": "くれる5",
+    "group_type": "II ",
+    "meaning": "给我 (5)"
+  },
+  {
+    "id": 430,
+    "kana": "かりる5",
+    "kanji": "借りる5",
+    "group_type": "II ",
+    "meaning": "借 (5)"
+  },
+  {
+    "id": 431,
+    "kana": "かす5",
+    "kanji": "貸す5",
+    "group_type": "I  ",
+    "meaning": "借给 (5)"
+  },
+  {
+    "id": 432,
+    "kana": "すてる5",
+    "kanji": "捨てる5",
+    "group_type": "II ",
+    "meaning": "扔 (5)"
+  },
+  {
+    "id": 433,
+    "kana": "いく6",
+    "kanji": "行く6",
+    "group_type": "I  ",
+    "meaning": "去 (6)"
+  },
+  {
+    "id": 434,
+    "kana": "かく6",
+    "kanji": "書く6",
+    "group_type": "I  ",
+    "meaning": "写 (6)"
+  },
+  {
+    "id": 435,
+    "kana": "よむ6",
+    "kanji": "読む6",
+    "group_type": "I  ",
+    "meaning": "读 (6)"
+  },
+  {
+    "id": 436,
+    "kana": "のむ6",
+    "kanji": "飲む6",
+    "group_type": "I  ",
+    "meaning": "喝 (6)"
+  },
+  {
+    "id": 437,
+    "kana": "はなす6",
+    "kanji": "話す6",
+    "group_type": "I  ",
+    "meaning": "说话 (6)"
+  },
+  {
+    "id": 438,
+    "kana": "きく6",
+    "kanji": "聞く6",
+    "group_type": "I  ",
+    "meaning": "听 (6)"
+  },
+  {
+    "id": 439,
+    "kana": "あるく6",
+    "kanji": "歩く6",
+    "group_type": "I  ",
+    "meaning": "走路 (6)"
+  },
+  {
+    "id": 440,
+    "kana": "はたらく6",
+    "kanji": "働く6",
+    "group_type": "I  ",
+    "meaning": "工作 (6)"
+  },
+  {
+    "id": 441,
+    "kana": "およぐ6",
+    "kanji": "泳ぐ6",
+    "group_type": "I  ",
+    "meaning": "游泳 (6)"
+  },
+  {
+    "id": 442,
+    "kana": "あそぶ6",
+    "kanji": "遊ぶ6",
+    "group_type": "I  ",
+    "meaning": "玩 (6)"
+  },
+  {
+    "id": 443,
+    "kana": "よぶ6",
+    "kanji": "呼ぶ6",
+    "group_type": "I  ",
+    "meaning": "叫 (6)"
+  },
+  {
+    "id": 444,
+    "kana": "しぬ6",
+    "kanji": "死ぬ6",
+    "group_type": "I  ",
+    "meaning": "死 (6)"
+  },
+  {
+    "id": 445,
+    "kana": "たつ6",
+    "kanji": "立つ6",
+    "group_type": "I  ",
+    "meaning": "站 (6)"
+  },
+  {
+    "id": 446,
+    "kana": "まつ6",
+    "kanji": "待つ6",
+    "group_type": "I  ",
+    "meaning": "等 (6)"
+  },
+  {
+    "id": 447,
+    "kana": "もつ6",
+    "kanji": "持つ6",
+    "group_type": "I  ",
+    "meaning": "拿 (6)"
+  },
+  {
+    "id": 448,
+    "kana": "うつ6",
+    "kanji": "打つ6",
+    "group_type": "I  ",
+    "meaning": "打 (6)"
+  },
+  {
+    "id": 449,
+    "kana": "かう6",
+    "kanji": "買う6",
+    "group_type": "I  ",
+    "meaning": "买 (6)"
+  },
+  {
+    "id": 450,
+    "kana": "うる6",
+    "kanji": "売る6",
+    "group_type": "I  ",
+    "meaning": "卖 (6)"
+  },
+  {
+    "id": 451,
+    "kana": "つくる6",
+    "kanji": "作る6",
+    "group_type": "I  ",
+    "meaning": "做 (6)"
+  },
+  {
+    "id": 452,
+    "kana": "とる6",
+    "kanji": "取る6",
+    "group_type": "I  ",
+    "meaning": "拿 (6)"
+  },
+  {
+    "id": 453,
+    "kana": "はいる6",
+    "kanji": "入る6",
+    "group_type": "I  ",
+    "meaning": "进入 (6)"
+  },
+  {
+    "id": 454,
+    "kana": "かえる6",
+    "kanji": "帰る6",
+    "group_type": "I  ",
+    "meaning": "回去 (6)"
+  },
+  {
+    "id": 455,
+    "kana": "のる6",
+    "kanji": "乗る6",
+    "group_type": "I  ",
+    "meaning": "乘坐 (6)"
+  },
+  {
+    "id": 456,
+    "kana": "すわる6",
+    "kanji": "座る6",
+    "group_type": "I  ",
+    "meaning": "坐 (6)"
+  },
+  {
+    "id": 457,
+    "kana": "はしる6",
+    "kanji": "走る6",
+    "group_type": "I  ",
+    "meaning": "跑 (6)"
+  },
+  {
+    "id": 458,
+    "kana": "おわる6",
+    "kanji": "終わる6",
+    "group_type": "I  ",
+    "meaning": "结束 (6)"
+  },
+  {
+    "id": 459,
+    "kana": "はじまる6",
+    "kanji": "始まる6",
+    "group_type": "I  ",
+    "meaning": "开始 (6)"
+  },
+  {
+    "id": 460,
+    "kana": "わかる6",
+    "kanji": "分かる6",
+    "group_type": "I  ",
+    "meaning": "明白 (6)"
+  },
+  {
+    "id": 461,
+    "kana": "ある6",
+    "kanji": "ある6",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (6)"
+  },
+  {
+    "id": 462,
+    "kana": "なる6",
+    "kanji": "なる6",
+    "group_type": "I  ",
+    "meaning": "成为 (6)"
+  },
+  {
+    "id": 463,
+    "kana": "たべる6",
+    "kanji": "食べる6",
+    "group_type": "II ",
+    "meaning": "吃 (6)"
+  },
+  {
+    "id": 464,
+    "kana": "みる6",
+    "kanji": "見る6",
+    "group_type": "II ",
+    "meaning": "看 (6)"
+  },
+  {
+    "id": 465,
+    "kana": "ねる6",
+    "kanji": "寝る6",
+    "group_type": "II ",
+    "meaning": "睡觉 (6)"
+  },
+  {
+    "id": 466,
+    "kana": "おきる6",
+    "kanji": "起きる6",
+    "group_type": "II ",
+    "meaning": "起床 (6)"
+  },
+  {
+    "id": 467,
+    "kana": "でる6",
+    "kanji": "出る6",
+    "group_type": "II ",
+    "meaning": "出去 (6)"
+  },
+  {
+    "id": 468,
+    "kana": "いる6",
+    "kanji": "いる6",
+    "group_type": "II ",
+    "meaning": "有(生物) (6)"
+  },
+  {
+    "id": 469,
+    "kana": "きる6",
+    "kanji": "着る6",
+    "group_type": "II ",
+    "meaning": "穿 (6)"
+  },
+  {
+    "id": 470,
+    "kana": "あける6",
+    "kanji": "開ける6",
+    "group_type": "II ",
+    "meaning": "打开 (6)"
+  },
+  {
+    "id": 471,
+    "kana": "しめる6",
+    "kanji": "閉める6",
+    "group_type": "II ",
+    "meaning": "关闭 (6)"
+  },
+  {
+    "id": 472,
+    "kana": "つける6",
+    "kanji": "付ける6",
+    "group_type": "II ",
+    "meaning": "安装 (6)"
+  },
+  {
+    "id": 473,
+    "kana": "けす6",
+    "kanji": "消す6",
+    "group_type": "I  ",
+    "meaning": "关掉 (6)"
+  },
+  {
+    "id": 474,
+    "kana": "おしえる6",
+    "kanji": "教える6",
+    "group_type": "II ",
+    "meaning": "教 (6)"
+  },
+  {
+    "id": 475,
+    "kana": "おぼえる6",
+    "kanji": "覚える6",
+    "group_type": "II ",
+    "meaning": "记住 (6)"
+  },
+  {
+    "id": 476,
+    "kana": "わすれる6",
+    "kanji": "忘れる6",
+    "group_type": "II ",
+    "meaning": "忘记 (6)"
+  },
+  {
+    "id": 477,
+    "kana": "あげる6",
+    "kanji": "上げる6",
+    "group_type": "II ",
+    "meaning": "给 (6)"
+  },
+  {
+    "id": 478,
+    "kana": "もらう6",
+    "kanji": "もらう6",
+    "group_type": "I  ",
+    "meaning": "收到 (6)"
+  },
+  {
+    "id": 479,
+    "kana": "くれる6",
+    "kanji": "くれる6",
+    "group_type": "II ",
+    "meaning": "给我 (6)"
+  },
+  {
+    "id": 480,
+    "kana": "かりる6",
+    "kanji": "借りる6",
+    "group_type": "II ",
+    "meaning": "借 (6)"
+  },
+  {
+    "id": 481,
+    "kana": "かす6",
+    "kanji": "貸す6",
+    "group_type": "I  ",
+    "meaning": "借给 (6)"
+  },
+  {
+    "id": 482,
+    "kana": "すてる6",
+    "kanji": "捨てる6",
+    "group_type": "II ",
+    "meaning": "扔 (6)"
+  },
+  {
+    "id": 483,
+    "kana": "いく7",
+    "kanji": "行く7",
+    "group_type": "I  ",
+    "meaning": "去 (7)"
+  },
+  {
+    "id": 484,
+    "kana": "かく7",
+    "kanji": "書く7",
+    "group_type": "I  ",
+    "meaning": "写 (7)"
+  },
+  {
+    "id": 485,
+    "kana": "よむ7",
+    "kanji": "読む7",
+    "group_type": "I  ",
+    "meaning": "读 (7)"
+  },
+  {
+    "id": 486,
+    "kana": "のむ7",
+    "kanji": "飲む7",
+    "group_type": "I  ",
+    "meaning": "喝 (7)"
+  },
+  {
+    "id": 487,
+    "kana": "はなす7",
+    "kanji": "話す7",
+    "group_type": "I  ",
+    "meaning": "说话 (7)"
+  },
+  {
+    "id": 488,
+    "kana": "きく7",
+    "kanji": "聞く7",
+    "group_type": "I  ",
+    "meaning": "听 (7)"
+  },
+  {
+    "id": 489,
+    "kana": "あるく7",
+    "kanji": "歩く7",
+    "group_type": "I  ",
+    "meaning": "走路 (7)"
+  },
+  {
+    "id": 490,
+    "kana": "はたらく7",
+    "kanji": "働く7",
+    "group_type": "I  ",
+    "meaning": "工作 (7)"
+  },
+  {
+    "id": 491,
+    "kana": "およぐ7",
+    "kanji": "泳ぐ7",
+    "group_type": "I  ",
+    "meaning": "游泳 (7)"
+  },
+  {
+    "id": 492,
+    "kana": "あそぶ7",
+    "kanji": "遊ぶ7",
+    "group_type": "I  ",
+    "meaning": "玩 (7)"
+  },
+  {
+    "id": 493,
+    "kana": "よぶ7",
+    "kanji": "呼ぶ7",
+    "group_type": "I  ",
+    "meaning": "叫 (7)"
+  },
+  {
+    "id": 494,
+    "kana": "しぬ7",
+    "kanji": "死ぬ7",
+    "group_type": "I  ",
+    "meaning": "死 (7)"
+  },
+  {
+    "id": 495,
+    "kana": "たつ7",
+    "kanji": "立つ7",
+    "group_type": "I  ",
+    "meaning": "站 (7)"
+  },
+  {
+    "id": 496,
+    "kana": "まつ7",
+    "kanji": "待つ7",
+    "group_type": "I  ",
+    "meaning": "等 (7)"
+  },
+  {
+    "id": 497,
+    "kana": "もつ7",
+    "kanji": "持つ7",
+    "group_type": "I  ",
+    "meaning": "拿 (7)"
+  },
+  {
+    "id": 498,
+    "kana": "うつ7",
+    "kanji": "打つ7",
+    "group_type": "I  ",
+    "meaning": "打 (7)"
+  },
+  {
+    "id": 499,
+    "kana": "かう7",
+    "kanji": "買う7",
+    "group_type": "I  ",
+    "meaning": "买 (7)"
+  },
+  {
+    "id": 500,
+    "kana": "うる7",
+    "kanji": "売る7",
+    "group_type": "I  ",
+    "meaning": "卖 (7)"
+  },
+  {
+    "id": 501,
+    "kana": "つくる7",
+    "kanji": "作る7",
+    "group_type": "I  ",
+    "meaning": "做 (7)"
+  },
+  {
+    "id": 502,
+    "kana": "とる7",
+    "kanji": "取る7",
+    "group_type": "I  ",
+    "meaning": "拿 (7)"
+  },
+  {
+    "id": 503,
+    "kana": "はいる7",
+    "kanji": "入る7",
+    "group_type": "I  ",
+    "meaning": "进入 (7)"
+  },
+  {
+    "id": 504,
+    "kana": "かえる7",
+    "kanji": "帰る7",
+    "group_type": "I  ",
+    "meaning": "回去 (7)"
+  },
+  {
+    "id": 505,
+    "kana": "のる7",
+    "kanji": "乗る7",
+    "group_type": "I  ",
+    "meaning": "乘坐 (7)"
+  },
+  {
+    "id": 506,
+    "kana": "すわる7",
+    "kanji": "座る7",
+    "group_type": "I  ",
+    "meaning": "坐 (7)"
+  },
+  {
+    "id": 507,
+    "kana": "はしる7",
+    "kanji": "走る7",
+    "group_type": "I  ",
+    "meaning": "跑 (7)"
+  },
+  {
+    "id": 508,
+    "kana": "おわる7",
+    "kanji": "終わる7",
+    "group_type": "I  ",
+    "meaning": "结束 (7)"
+  },
+  {
+    "id": 509,
+    "kana": "はじまる7",
+    "kanji": "始まる7",
+    "group_type": "I  ",
+    "meaning": "开始 (7)"
+  },
+  {
+    "id": 510,
+    "kana": "わかる7",
+    "kanji": "分かる7",
+    "group_type": "I  ",
+    "meaning": "明白 (7)"
+  },
+  {
+    "id": 511,
+    "kana": "ある7",
+    "kanji": "ある7",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (7)"
+  },
+  {
+    "id": 512,
+    "kana": "なる7",
+    "kanji": "なる7",
+    "group_type": "I  ",
+    "meaning": "成为 (7)"
+  },
+  {
+    "id": 513,
+    "kana": "たべる7",
+    "kanji": "食べる7",
+    "group_type": "II ",
+    "meaning": "吃 (7)"
+  },
+  {
+    "id": 514,
+    "kana": "みる7",
+    "kanji": "見る7",
+    "group_type": "II ",
+    "meaning": "看 (7)"
+  },
+  {
+    "id": 515,
+    "kana": "ねる7",
+    "kanji": "寝る7",
+    "group_type": "II ",
+    "meaning": "睡觉 (7)"
+  },
+  {
+    "id": 516,
+    "kana": "おきる7",
+    "kanji": "起きる7",
+    "group_type": "II ",
+    "meaning": "起床 (7)"
+  },
+  {
+    "id": 517,
+    "kana": "でる7",
+    "kanji": "出る7",
+    "group_type": "II ",
+    "meaning": "出去 (7)"
+  },
+  {
+    "id": 518,
+    "kana": "いる7",
+    "kanji": "いる7",
+    "group_type": "II ",
+    "meaning": "有(生物) (7)"
+  },
+  {
+    "id": 519,
+    "kana": "きる7",
+    "kanji": "着る7",
+    "group_type": "II ",
+    "meaning": "穿 (7)"
+  },
+  {
+    "id": 520,
+    "kana": "あける7",
+    "kanji": "開ける7",
+    "group_type": "II ",
+    "meaning": "打开 (7)"
+  },
+  {
+    "id": 521,
+    "kana": "しめる7",
+    "kanji": "閉める7",
+    "group_type": "II ",
+    "meaning": "关闭 (7)"
+  },
+  {
+    "id": 522,
+    "kana": "つける7",
+    "kanji": "付ける7",
+    "group_type": "II ",
+    "meaning": "安装 (7)"
+  },
+  {
+    "id": 523,
+    "kana": "けす7",
+    "kanji": "消す7",
+    "group_type": "I  ",
+    "meaning": "关掉 (7)"
+  },
+  {
+    "id": 524,
+    "kana": "おしえる7",
+    "kanji": "教える7",
+    "group_type": "II ",
+    "meaning": "教 (7)"
+  },
+  {
+    "id": 525,
+    "kana": "おぼえる7",
+    "kanji": "覚える7",
+    "group_type": "II ",
+    "meaning": "记住 (7)"
+  },
+  {
+    "id": 526,
+    "kana": "わすれる7",
+    "kanji": "忘れる7",
+    "group_type": "II ",
+    "meaning": "忘记 (7)"
+  },
+  {
+    "id": 527,
+    "kana": "あげる7",
+    "kanji": "上げる7",
+    "group_type": "II ",
+    "meaning": "给 (7)"
+  },
+  {
+    "id": 528,
+    "kana": "もらう7",
+    "kanji": "もらう7",
+    "group_type": "I  ",
+    "meaning": "收到 (7)"
+  },
+  {
+    "id": 529,
+    "kana": "くれる7",
+    "kanji": "くれる7",
+    "group_type": "II ",
+    "meaning": "给我 (7)"
+  },
+  {
+    "id": 530,
+    "kana": "かりる7",
+    "kanji": "借りる7",
+    "group_type": "II ",
+    "meaning": "借 (7)"
+  },
+  {
+    "id": 531,
+    "kana": "かす7",
+    "kanji": "貸す7",
+    "group_type": "I  ",
+    "meaning": "借给 (7)"
+  },
+  {
+    "id": 532,
+    "kana": "すてる7",
+    "kanji": "捨てる7",
+    "group_type": "II ",
+    "meaning": "扔 (7)"
+  },
+  {
+    "id": 533,
+    "kana": "いく8",
+    "kanji": "行く8",
+    "group_type": "I  ",
+    "meaning": "去 (8)"
+  },
+  {
+    "id": 534,
+    "kana": "かく8",
+    "kanji": "書く8",
+    "group_type": "I  ",
+    "meaning": "写 (8)"
+  },
+  {
+    "id": 535,
+    "kana": "よむ8",
+    "kanji": "読む8",
+    "group_type": "I  ",
+    "meaning": "读 (8)"
+  },
+  {
+    "id": 536,
+    "kana": "のむ8",
+    "kanji": "飲む8",
+    "group_type": "I  ",
+    "meaning": "喝 (8)"
+  },
+  {
+    "id": 537,
+    "kana": "はなす8",
+    "kanji": "話す8",
+    "group_type": "I  ",
+    "meaning": "说话 (8)"
+  },
+  {
+    "id": 538,
+    "kana": "きく8",
+    "kanji": "聞く8",
+    "group_type": "I  ",
+    "meaning": "听 (8)"
+  },
+  {
+    "id": 539,
+    "kana": "あるく8",
+    "kanji": "歩く8",
+    "group_type": "I  ",
+    "meaning": "走路 (8)"
+  },
+  {
+    "id": 540,
+    "kana": "はたらく8",
+    "kanji": "働く8",
+    "group_type": "I  ",
+    "meaning": "工作 (8)"
+  },
+  {
+    "id": 541,
+    "kana": "およぐ8",
+    "kanji": "泳ぐ8",
+    "group_type": "I  ",
+    "meaning": "游泳 (8)"
+  },
+  {
+    "id": 542,
+    "kana": "あそぶ8",
+    "kanji": "遊ぶ8",
+    "group_type": "I  ",
+    "meaning": "玩 (8)"
+  },
+  {
+    "id": 543,
+    "kana": "よぶ8",
+    "kanji": "呼ぶ8",
+    "group_type": "I  ",
+    "meaning": "叫 (8)"
+  },
+  {
+    "id": 544,
+    "kana": "しぬ8",
+    "kanji": "死ぬ8",
+    "group_type": "I  ",
+    "meaning": "死 (8)"
+  },
+  {
+    "id": 545,
+    "kana": "たつ8",
+    "kanji": "立つ8",
+    "group_type": "I  ",
+    "meaning": "站 (8)"
+  },
+  {
+    "id": 546,
+    "kana": "まつ8",
+    "kanji": "待つ8",
+    "group_type": "I  ",
+    "meaning": "等 (8)"
+  },
+  {
+    "id": 547,
+    "kana": "もつ8",
+    "kanji": "持つ8",
+    "group_type": "I  ",
+    "meaning": "拿 (8)"
+  },
+  {
+    "id": 548,
+    "kana": "うつ8",
+    "kanji": "打つ8",
+    "group_type": "I  ",
+    "meaning": "打 (8)"
+  },
+  {
+    "id": 549,
+    "kana": "かう8",
+    "kanji": "買う8",
+    "group_type": "I  ",
+    "meaning": "买 (8)"
+  },
+  {
+    "id": 550,
+    "kana": "うる8",
+    "kanji": "売る8",
+    "group_type": "I  ",
+    "meaning": "卖 (8)"
+  },
+  {
+    "id": 551,
+    "kana": "つくる8",
+    "kanji": "作る8",
+    "group_type": "I  ",
+    "meaning": "做 (8)"
+  },
+  {
+    "id": 552,
+    "kana": "とる8",
+    "kanji": "取る8",
+    "group_type": "I  ",
+    "meaning": "拿 (8)"
+  },
+  {
+    "id": 553,
+    "kana": "はいる8",
+    "kanji": "入る8",
+    "group_type": "I  ",
+    "meaning": "进入 (8)"
+  },
+  {
+    "id": 554,
+    "kana": "かえる8",
+    "kanji": "帰る8",
+    "group_type": "I  ",
+    "meaning": "回去 (8)"
+  },
+  {
+    "id": 555,
+    "kana": "のる8",
+    "kanji": "乗る8",
+    "group_type": "I  ",
+    "meaning": "乘坐 (8)"
+  },
+  {
+    "id": 556,
+    "kana": "すわる8",
+    "kanji": "座る8",
+    "group_type": "I  ",
+    "meaning": "坐 (8)"
+  },
+  {
+    "id": 557,
+    "kana": "はしる8",
+    "kanji": "走る8",
+    "group_type": "I  ",
+    "meaning": "跑 (8)"
+  },
+  {
+    "id": 558,
+    "kana": "おわる8",
+    "kanji": "終わる8",
+    "group_type": "I  ",
+    "meaning": "结束 (8)"
+  },
+  {
+    "id": 559,
+    "kana": "はじまる8",
+    "kanji": "始まる8",
+    "group_type": "I  ",
+    "meaning": "开始 (8)"
+  },
+  {
+    "id": 560,
+    "kana": "わかる8",
+    "kanji": "分かる8",
+    "group_type": "I  ",
+    "meaning": "明白 (8)"
+  },
+  {
+    "id": 561,
+    "kana": "ある8",
+    "kanji": "ある8",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (8)"
+  },
+  {
+    "id": 562,
+    "kana": "なる8",
+    "kanji": "なる8",
+    "group_type": "I  ",
+    "meaning": "成为 (8)"
+  },
+  {
+    "id": 563,
+    "kana": "たべる8",
+    "kanji": "食べる8",
+    "group_type": "II ",
+    "meaning": "吃 (8)"
+  },
+  {
+    "id": 564,
+    "kana": "みる8",
+    "kanji": "見る8",
+    "group_type": "II ",
+    "meaning": "看 (8)"
+  },
+  {
+    "id": 565,
+    "kana": "ねる8",
+    "kanji": "寝る8",
+    "group_type": "II ",
+    "meaning": "睡觉 (8)"
+  },
+  {
+    "id": 566,
+    "kana": "おきる8",
+    "kanji": "起きる8",
+    "group_type": "II ",
+    "meaning": "起床 (8)"
+  },
+  {
+    "id": 567,
+    "kana": "でる8",
+    "kanji": "出る8",
+    "group_type": "II ",
+    "meaning": "出去 (8)"
+  },
+  {
+    "id": 568,
+    "kana": "いる8",
+    "kanji": "いる8",
+    "group_type": "II ",
+    "meaning": "有(生物) (8)"
+  },
+  {
+    "id": 569,
+    "kana": "きる8",
+    "kanji": "着る8",
+    "group_type": "II ",
+    "meaning": "穿 (8)"
+  },
+  {
+    "id": 570,
+    "kana": "あける8",
+    "kanji": "開ける8",
+    "group_type": "II ",
+    "meaning": "打开 (8)"
+  },
+  {
+    "id": 571,
+    "kana": "しめる8",
+    "kanji": "閉める8",
+    "group_type": "II ",
+    "meaning": "关闭 (8)"
+  },
+  {
+    "id": 572,
+    "kana": "つける8",
+    "kanji": "付ける8",
+    "group_type": "II ",
+    "meaning": "安装 (8)"
+  },
+  {
+    "id": 573,
+    "kana": "けす8",
+    "kanji": "消す8",
+    "group_type": "I  ",
+    "meaning": "关掉 (8)"
+  },
+  {
+    "id": 574,
+    "kana": "おしえる8",
+    "kanji": "教える8",
+    "group_type": "II ",
+    "meaning": "教 (8)"
+  },
+  {
+    "id": 575,
+    "kana": "おぼえる8",
+    "kanji": "覚える8",
+    "group_type": "II ",
+    "meaning": "记住 (8)"
+  },
+  {
+    "id": 576,
+    "kana": "わすれる8",
+    "kanji": "忘れる8",
+    "group_type": "II ",
+    "meaning": "忘记 (8)"
+  },
+  {
+    "id": 577,
+    "kana": "あげる8",
+    "kanji": "上げる8",
+    "group_type": "II ",
+    "meaning": "给 (8)"
+  },
+  {
+    "id": 578,
+    "kana": "もらう8",
+    "kanji": "もらう8",
+    "group_type": "I  ",
+    "meaning": "收到 (8)"
+  },
+  {
+    "id": 579,
+    "kana": "くれる8",
+    "kanji": "くれる8",
+    "group_type": "II ",
+    "meaning": "给我 (8)"
+  },
+  {
+    "id": 580,
+    "kana": "かりる8",
+    "kanji": "借りる8",
+    "group_type": "II ",
+    "meaning": "借 (8)"
+  },
+  {
+    "id": 581,
+    "kana": "かす8",
+    "kanji": "貸す8",
+    "group_type": "I  ",
+    "meaning": "借给 (8)"
+  },
+  {
+    "id": 582,
+    "kana": "すてる8",
+    "kanji": "捨てる8",
+    "group_type": "II ",
+    "meaning": "扔 (8)"
+  },
+  {
+    "id": 583,
+    "kana": "いく9",
+    "kanji": "行く9",
+    "group_type": "I  ",
+    "meaning": "去 (9)"
+  },
+  {
+    "id": 584,
+    "kana": "かく9",
+    "kanji": "書く9",
+    "group_type": "I  ",
+    "meaning": "写 (9)"
+  },
+  {
+    "id": 585,
+    "kana": "よむ9",
+    "kanji": "読む9",
+    "group_type": "I  ",
+    "meaning": "读 (9)"
+  },
+  {
+    "id": 586,
+    "kana": "のむ9",
+    "kanji": "飲む9",
+    "group_type": "I  ",
+    "meaning": "喝 (9)"
+  },
+  {
+    "id": 587,
+    "kana": "はなす9",
+    "kanji": "話す9",
+    "group_type": "I  ",
+    "meaning": "说话 (9)"
+  },
+  {
+    "id": 588,
+    "kana": "きく9",
+    "kanji": "聞く9",
+    "group_type": "I  ",
+    "meaning": "听 (9)"
+  },
+  {
+    "id": 589,
+    "kana": "あるく9",
+    "kanji": "歩く9",
+    "group_type": "I  ",
+    "meaning": "走路 (9)"
+  },
+  {
+    "id": 590,
+    "kana": "はたらく9",
+    "kanji": "働く9",
+    "group_type": "I  ",
+    "meaning": "工作 (9)"
+  },
+  {
+    "id": 591,
+    "kana": "およぐ9",
+    "kanji": "泳ぐ9",
+    "group_type": "I  ",
+    "meaning": "游泳 (9)"
+  },
+  {
+    "id": 592,
+    "kana": "あそぶ9",
+    "kanji": "遊ぶ9",
+    "group_type": "I  ",
+    "meaning": "玩 (9)"
+  },
+  {
+    "id": 593,
+    "kana": "よぶ9",
+    "kanji": "呼ぶ9",
+    "group_type": "I  ",
+    "meaning": "叫 (9)"
+  },
+  {
+    "id": 594,
+    "kana": "しぬ9",
+    "kanji": "死ぬ9",
+    "group_type": "I  ",
+    "meaning": "死 (9)"
+  },
+  {
+    "id": 595,
+    "kana": "たつ9",
+    "kanji": "立つ9",
+    "group_type": "I  ",
+    "meaning": "站 (9)"
+  },
+  {
+    "id": 596,
+    "kana": "まつ9",
+    "kanji": "待つ9",
+    "group_type": "I  ",
+    "meaning": "等 (9)"
+  },
+  {
+    "id": 597,
+    "kana": "もつ9",
+    "kanji": "持つ9",
+    "group_type": "I  ",
+    "meaning": "拿 (9)"
+  },
+  {
+    "id": 598,
+    "kana": "うつ9",
+    "kanji": "打つ9",
+    "group_type": "I  ",
+    "meaning": "打 (9)"
+  },
+  {
+    "id": 599,
+    "kana": "かう9",
+    "kanji": "買う9",
+    "group_type": "I  ",
+    "meaning": "买 (9)"
+  },
+  {
+    "id": 600,
+    "kana": "うる9",
+    "kanji": "売る9",
+    "group_type": "I  ",
+    "meaning": "卖 (9)"
+  },
+  {
+    "id": 601,
+    "kana": "つくる9",
+    "kanji": "作る9",
+    "group_type": "I  ",
+    "meaning": "做 (9)"
+  },
+  {
+    "id": 602,
+    "kana": "とる9",
+    "kanji": "取る9",
+    "group_type": "I  ",
+    "meaning": "拿 (9)"
+  },
+  {
+    "id": 603,
+    "kana": "はいる9",
+    "kanji": "入る9",
+    "group_type": "I  ",
+    "meaning": "进入 (9)"
+  },
+  {
+    "id": 604,
+    "kana": "かえる9",
+    "kanji": "帰る9",
+    "group_type": "I  ",
+    "meaning": "回去 (9)"
+  },
+  {
+    "id": 605,
+    "kana": "のる9",
+    "kanji": "乗る9",
+    "group_type": "I  ",
+    "meaning": "乘坐 (9)"
+  },
+  {
+    "id": 606,
+    "kana": "すわる9",
+    "kanji": "座る9",
+    "group_type": "I  ",
+    "meaning": "坐 (9)"
+  },
+  {
+    "id": 607,
+    "kana": "はしる9",
+    "kanji": "走る9",
+    "group_type": "I  ",
+    "meaning": "跑 (9)"
+  },
+  {
+    "id": 608,
+    "kana": "おわる9",
+    "kanji": "終わる9",
+    "group_type": "I  ",
+    "meaning": "结束 (9)"
+  },
+  {
+    "id": 609,
+    "kana": "はじまる9",
+    "kanji": "始まる9",
+    "group_type": "I  ",
+    "meaning": "开始 (9)"
+  },
+  {
+    "id": 610,
+    "kana": "わかる9",
+    "kanji": "分かる9",
+    "group_type": "I  ",
+    "meaning": "明白 (9)"
+  },
+  {
+    "id": 611,
+    "kana": "ある9",
+    "kanji": "ある9",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (9)"
+  },
+  {
+    "id": 612,
+    "kana": "なる9",
+    "kanji": "なる9",
+    "group_type": "I  ",
+    "meaning": "成为 (9)"
+  },
+  {
+    "id": 613,
+    "kana": "たべる9",
+    "kanji": "食べる9",
+    "group_type": "II ",
+    "meaning": "吃 (9)"
+  },
+  {
+    "id": 614,
+    "kana": "みる9",
+    "kanji": "見る9",
+    "group_type": "II ",
+    "meaning": "看 (9)"
+  },
+  {
+    "id": 615,
+    "kana": "ねる9",
+    "kanji": "寝る9",
+    "group_type": "II ",
+    "meaning": "睡觉 (9)"
+  },
+  {
+    "id": 616,
+    "kana": "おきる9",
+    "kanji": "起きる9",
+    "group_type": "II ",
+    "meaning": "起床 (9)"
+  },
+  {
+    "id": 617,
+    "kana": "でる9",
+    "kanji": "出る9",
+    "group_type": "II ",
+    "meaning": "出去 (9)"
+  },
+  {
+    "id": 618,
+    "kana": "いる9",
+    "kanji": "いる9",
+    "group_type": "II ",
+    "meaning": "有(生物) (9)"
+  },
+  {
+    "id": 619,
+    "kana": "きる9",
+    "kanji": "着る9",
+    "group_type": "II ",
+    "meaning": "穿 (9)"
+  },
+  {
+    "id": 620,
+    "kana": "あける9",
+    "kanji": "開ける9",
+    "group_type": "II ",
+    "meaning": "打开 (9)"
+  },
+  {
+    "id": 621,
+    "kana": "しめる9",
+    "kanji": "閉める9",
+    "group_type": "II ",
+    "meaning": "关闭 (9)"
+  },
+  {
+    "id": 622,
+    "kana": "つける9",
+    "kanji": "付ける9",
+    "group_type": "II ",
+    "meaning": "安装 (9)"
+  },
+  {
+    "id": 623,
+    "kana": "けす9",
+    "kanji": "消す9",
+    "group_type": "I  ",
+    "meaning": "关掉 (9)"
+  },
+  {
+    "id": 624,
+    "kana": "おしえる9",
+    "kanji": "教える9",
+    "group_type": "II ",
+    "meaning": "教 (9)"
+  },
+  {
+    "id": 625,
+    "kana": "おぼえる9",
+    "kanji": "覚える9",
+    "group_type": "II ",
+    "meaning": "记住 (9)"
+  },
+  {
+    "id": 626,
+    "kana": "わすれる9",
+    "kanji": "忘れる9",
+    "group_type": "II ",
+    "meaning": "忘记 (9)"
+  },
+  {
+    "id": 627,
+    "kana": "あげる9",
+    "kanji": "上げる9",
+    "group_type": "II ",
+    "meaning": "给 (9)"
+  },
+  {
+    "id": 628,
+    "kana": "もらう9",
+    "kanji": "もらう9",
+    "group_type": "I  ",
+    "meaning": "收到 (9)"
+  },
+  {
+    "id": 629,
+    "kana": "くれる9",
+    "kanji": "くれる9",
+    "group_type": "II ",
+    "meaning": "给我 (9)"
+  },
+  {
+    "id": 630,
+    "kana": "かりる9",
+    "kanji": "借りる9",
+    "group_type": "II ",
+    "meaning": "借 (9)"
+  },
+  {
+    "id": 631,
+    "kana": "かす9",
+    "kanji": "貸す9",
+    "group_type": "I  ",
+    "meaning": "借给 (9)"
+  },
+  {
+    "id": 632,
+    "kana": "すてる9",
+    "kanji": "捨てる9",
+    "group_type": "II ",
+    "meaning": "扔 (9)"
+  },
+  {
+    "id": 633,
+    "kana": "いく10",
+    "kanji": "行く10",
+    "group_type": "I  ",
+    "meaning": "去 (10)"
+  },
+  {
+    "id": 634,
+    "kana": "かく10",
+    "kanji": "書く10",
+    "group_type": "I  ",
+    "meaning": "写 (10)"
+  },
+  {
+    "id": 635,
+    "kana": "よむ10",
+    "kanji": "読む10",
+    "group_type": "I  ",
+    "meaning": "读 (10)"
+  },
+  {
+    "id": 636,
+    "kana": "のむ10",
+    "kanji": "飲む10",
+    "group_type": "I  ",
+    "meaning": "喝 (10)"
+  },
+  {
+    "id": 637,
+    "kana": "はなす10",
+    "kanji": "話す10",
+    "group_type": "I  ",
+    "meaning": "说话 (10)"
+  },
+  {
+    "id": 638,
+    "kana": "きく10",
+    "kanji": "聞く10",
+    "group_type": "I  ",
+    "meaning": "听 (10)"
+  },
+  {
+    "id": 639,
+    "kana": "あるく10",
+    "kanji": "歩く10",
+    "group_type": "I  ",
+    "meaning": "走路 (10)"
+  },
+  {
+    "id": 640,
+    "kana": "はたらく10",
+    "kanji": "働く10",
+    "group_type": "I  ",
+    "meaning": "工作 (10)"
+  },
+  {
+    "id": 641,
+    "kana": "およぐ10",
+    "kanji": "泳ぐ10",
+    "group_type": "I  ",
+    "meaning": "游泳 (10)"
+  },
+  {
+    "id": 642,
+    "kana": "あそぶ10",
+    "kanji": "遊ぶ10",
+    "group_type": "I  ",
+    "meaning": "玩 (10)"
+  },
+  {
+    "id": 643,
+    "kana": "よぶ10",
+    "kanji": "呼ぶ10",
+    "group_type": "I  ",
+    "meaning": "叫 (10)"
+  },
+  {
+    "id": 644,
+    "kana": "しぬ10",
+    "kanji": "死ぬ10",
+    "group_type": "I  ",
+    "meaning": "死 (10)"
+  },
+  {
+    "id": 645,
+    "kana": "たつ10",
+    "kanji": "立つ10",
+    "group_type": "I  ",
+    "meaning": "站 (10)"
+  },
+  {
+    "id": 646,
+    "kana": "まつ10",
+    "kanji": "待つ10",
+    "group_type": "I  ",
+    "meaning": "等 (10)"
+  },
+  {
+    "id": 647,
+    "kana": "もつ10",
+    "kanji": "持つ10",
+    "group_type": "I  ",
+    "meaning": "拿 (10)"
+  },
+  {
+    "id": 648,
+    "kana": "うつ10",
+    "kanji": "打つ10",
+    "group_type": "I  ",
+    "meaning": "打 (10)"
+  },
+  {
+    "id": 649,
+    "kana": "かう10",
+    "kanji": "買う10",
+    "group_type": "I  ",
+    "meaning": "买 (10)"
+  },
+  {
+    "id": 650,
+    "kana": "うる10",
+    "kanji": "売る10",
+    "group_type": "I  ",
+    "meaning": "卖 (10)"
+  },
+  {
+    "id": 651,
+    "kana": "つくる10",
+    "kanji": "作る10",
+    "group_type": "I  ",
+    "meaning": "做 (10)"
+  },
+  {
+    "id": 652,
+    "kana": "とる10",
+    "kanji": "取る10",
+    "group_type": "I  ",
+    "meaning": "拿 (10)"
+  },
+  {
+    "id": 653,
+    "kana": "はいる10",
+    "kanji": "入る10",
+    "group_type": "I  ",
+    "meaning": "进入 (10)"
+  },
+  {
+    "id": 654,
+    "kana": "かえる10",
+    "kanji": "帰る10",
+    "group_type": "I  ",
+    "meaning": "回去 (10)"
+  },
+  {
+    "id": 655,
+    "kana": "のる10",
+    "kanji": "乗る10",
+    "group_type": "I  ",
+    "meaning": "乘坐 (10)"
+  },
+  {
+    "id": 656,
+    "kana": "すわる10",
+    "kanji": "座る10",
+    "group_type": "I  ",
+    "meaning": "坐 (10)"
+  },
+  {
+    "id": 657,
+    "kana": "はしる10",
+    "kanji": "走る10",
+    "group_type": "I  ",
+    "meaning": "跑 (10)"
+  },
+  {
+    "id": 658,
+    "kana": "おわる10",
+    "kanji": "終わる10",
+    "group_type": "I  ",
+    "meaning": "结束 (10)"
+  },
+  {
+    "id": 659,
+    "kana": "はじまる10",
+    "kanji": "始まる10",
+    "group_type": "I  ",
+    "meaning": "开始 (10)"
+  },
+  {
+    "id": 660,
+    "kana": "わかる10",
+    "kanji": "分かる10",
+    "group_type": "I  ",
+    "meaning": "明白 (10)"
+  },
+  {
+    "id": 661,
+    "kana": "ある10",
+    "kanji": "ある10",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (10)"
+  },
+  {
+    "id": 662,
+    "kana": "なる10",
+    "kanji": "なる10",
+    "group_type": "I  ",
+    "meaning": "成为 (10)"
+  },
+  {
+    "id": 663,
+    "kana": "たべる10",
+    "kanji": "食べる10",
+    "group_type": "II ",
+    "meaning": "吃 (10)"
+  },
+  {
+    "id": 664,
+    "kana": "みる10",
+    "kanji": "見る10",
+    "group_type": "II ",
+    "meaning": "看 (10)"
+  },
+  {
+    "id": 665,
+    "kana": "ねる10",
+    "kanji": "寝る10",
+    "group_type": "II ",
+    "meaning": "睡觉 (10)"
+  },
+  {
+    "id": 666,
+    "kana": "おきる10",
+    "kanji": "起きる10",
+    "group_type": "II ",
+    "meaning": "起床 (10)"
+  },
+  {
+    "id": 667,
+    "kana": "でる10",
+    "kanji": "出る10",
+    "group_type": "II ",
+    "meaning": "出去 (10)"
+  },
+  {
+    "id": 668,
+    "kana": "いる10",
+    "kanji": "いる10",
+    "group_type": "II ",
+    "meaning": "有(生物) (10)"
+  },
+  {
+    "id": 669,
+    "kana": "きる10",
+    "kanji": "着る10",
+    "group_type": "II ",
+    "meaning": "穿 (10)"
+  },
+  {
+    "id": 670,
+    "kana": "あける10",
+    "kanji": "開ける10",
+    "group_type": "II ",
+    "meaning": "打开 (10)"
+  },
+  {
+    "id": 671,
+    "kana": "しめる10",
+    "kanji": "閉める10",
+    "group_type": "II ",
+    "meaning": "关闭 (10)"
+  },
+  {
+    "id": 672,
+    "kana": "つける10",
+    "kanji": "付ける10",
+    "group_type": "II ",
+    "meaning": "安装 (10)"
+  },
+  {
+    "id": 673,
+    "kana": "けす10",
+    "kanji": "消す10",
+    "group_type": "I  ",
+    "meaning": "关掉 (10)"
+  },
+  {
+    "id": 674,
+    "kana": "おしえる10",
+    "kanji": "教える10",
+    "group_type": "II ",
+    "meaning": "教 (10)"
+  },
+  {
+    "id": 675,
+    "kana": "おぼえる10",
+    "kanji": "覚える10",
+    "group_type": "II ",
+    "meaning": "记住 (10)"
+  },
+  {
+    "id": 676,
+    "kana": "わすれる10",
+    "kanji": "忘れる10",
+    "group_type": "II ",
+    "meaning": "忘记 (10)"
+  },
+  {
+    "id": 677,
+    "kana": "あげる10",
+    "kanji": "上げる10",
+    "group_type": "II ",
+    "meaning": "给 (10)"
+  },
+  {
+    "id": 678,
+    "kana": "もらう10",
+    "kanji": "もらう10",
+    "group_type": "I  ",
+    "meaning": "收到 (10)"
+  },
+  {
+    "id": 679,
+    "kana": "くれる10",
+    "kanji": "くれる10",
+    "group_type": "II ",
+    "meaning": "给我 (10)"
+  },
+  {
+    "id": 680,
+    "kana": "かりる10",
+    "kanji": "借りる10",
+    "group_type": "II ",
+    "meaning": "借 (10)"
+  },
+  {
+    "id": 681,
+    "kana": "かす10",
+    "kanji": "貸す10",
+    "group_type": "I  ",
+    "meaning": "借给 (10)"
+  },
+  {
+    "id": 682,
+    "kana": "すてる10",
+    "kanji": "捨てる10",
+    "group_type": "II ",
+    "meaning": "扔 (10)"
+  },
+  {
+    "id": 683,
+    "kana": "いく11",
+    "kanji": "行く11",
+    "group_type": "I  ",
+    "meaning": "去 (11)"
+  },
+  {
+    "id": 684,
+    "kana": "かく11",
+    "kanji": "書く11",
+    "group_type": "I  ",
+    "meaning": "写 (11)"
+  },
+  {
+    "id": 685,
+    "kana": "よむ11",
+    "kanji": "読む11",
+    "group_type": "I  ",
+    "meaning": "读 (11)"
+  },
+  {
+    "id": 686,
+    "kana": "のむ11",
+    "kanji": "飲む11",
+    "group_type": "I  ",
+    "meaning": "喝 (11)"
+  },
+  {
+    "id": 687,
+    "kana": "はなす11",
+    "kanji": "話す11",
+    "group_type": "I  ",
+    "meaning": "说话 (11)"
+  },
+  {
+    "id": 688,
+    "kana": "きく11",
+    "kanji": "聞く11",
+    "group_type": "I  ",
+    "meaning": "听 (11)"
+  },
+  {
+    "id": 689,
+    "kana": "あるく11",
+    "kanji": "歩く11",
+    "group_type": "I  ",
+    "meaning": "走路 (11)"
+  },
+  {
+    "id": 690,
+    "kana": "はたらく11",
+    "kanji": "働く11",
+    "group_type": "I  ",
+    "meaning": "工作 (11)"
+  },
+  {
+    "id": 691,
+    "kana": "およぐ11",
+    "kanji": "泳ぐ11",
+    "group_type": "I  ",
+    "meaning": "游泳 (11)"
+  },
+  {
+    "id": 692,
+    "kana": "あそぶ11",
+    "kanji": "遊ぶ11",
+    "group_type": "I  ",
+    "meaning": "玩 (11)"
+  },
+  {
+    "id": 693,
+    "kana": "よぶ11",
+    "kanji": "呼ぶ11",
+    "group_type": "I  ",
+    "meaning": "叫 (11)"
+  },
+  {
+    "id": 694,
+    "kana": "しぬ11",
+    "kanji": "死ぬ11",
+    "group_type": "I  ",
+    "meaning": "死 (11)"
+  },
+  {
+    "id": 695,
+    "kana": "たつ11",
+    "kanji": "立つ11",
+    "group_type": "I  ",
+    "meaning": "站 (11)"
+  },
+  {
+    "id": 696,
+    "kana": "まつ11",
+    "kanji": "待つ11",
+    "group_type": "I  ",
+    "meaning": "等 (11)"
+  },
+  {
+    "id": 697,
+    "kana": "もつ11",
+    "kanji": "持つ11",
+    "group_type": "I  ",
+    "meaning": "拿 (11)"
+  },
+  {
+    "id": 698,
+    "kana": "うつ11",
+    "kanji": "打つ11",
+    "group_type": "I  ",
+    "meaning": "打 (11)"
+  },
+  {
+    "id": 699,
+    "kana": "かう11",
+    "kanji": "買う11",
+    "group_type": "I  ",
+    "meaning": "买 (11)"
+  },
+  {
+    "id": 700,
+    "kana": "うる11",
+    "kanji": "売る11",
+    "group_type": "I  ",
+    "meaning": "卖 (11)"
+  },
+  {
+    "id": 701,
+    "kana": "つくる11",
+    "kanji": "作る11",
+    "group_type": "I  ",
+    "meaning": "做 (11)"
+  },
+  {
+    "id": 702,
+    "kana": "とる11",
+    "kanji": "取る11",
+    "group_type": "I  ",
+    "meaning": "拿 (11)"
+  },
+  {
+    "id": 703,
+    "kana": "はいる11",
+    "kanji": "入る11",
+    "group_type": "I  ",
+    "meaning": "进入 (11)"
+  },
+  {
+    "id": 704,
+    "kana": "かえる11",
+    "kanji": "帰る11",
+    "group_type": "I  ",
+    "meaning": "回去 (11)"
+  },
+  {
+    "id": 705,
+    "kana": "のる11",
+    "kanji": "乗る11",
+    "group_type": "I  ",
+    "meaning": "乘坐 (11)"
+  },
+  {
+    "id": 706,
+    "kana": "すわる11",
+    "kanji": "座る11",
+    "group_type": "I  ",
+    "meaning": "坐 (11)"
+  },
+  {
+    "id": 707,
+    "kana": "はしる11",
+    "kanji": "走る11",
+    "group_type": "I  ",
+    "meaning": "跑 (11)"
+  },
+  {
+    "id": 708,
+    "kana": "おわる11",
+    "kanji": "終わる11",
+    "group_type": "I  ",
+    "meaning": "结束 (11)"
+  },
+  {
+    "id": 709,
+    "kana": "はじまる11",
+    "kanji": "始まる11",
+    "group_type": "I  ",
+    "meaning": "开始 (11)"
+  },
+  {
+    "id": 710,
+    "kana": "わかる11",
+    "kanji": "分かる11",
+    "group_type": "I  ",
+    "meaning": "明白 (11)"
+  },
+  {
+    "id": 711,
+    "kana": "ある11",
+    "kanji": "ある11",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (11)"
+  },
+  {
+    "id": 712,
+    "kana": "なる11",
+    "kanji": "なる11",
+    "group_type": "I  ",
+    "meaning": "成为 (11)"
+  },
+  {
+    "id": 713,
+    "kana": "たべる11",
+    "kanji": "食べる11",
+    "group_type": "II ",
+    "meaning": "吃 (11)"
+  },
+  {
+    "id": 714,
+    "kana": "みる11",
+    "kanji": "見る11",
+    "group_type": "II ",
+    "meaning": "看 (11)"
+  },
+  {
+    "id": 715,
+    "kana": "ねる11",
+    "kanji": "寝る11",
+    "group_type": "II ",
+    "meaning": "睡觉 (11)"
+  },
+  {
+    "id": 716,
+    "kana": "おきる11",
+    "kanji": "起きる11",
+    "group_type": "II ",
+    "meaning": "起床 (11)"
+  },
+  {
+    "id": 717,
+    "kana": "でる11",
+    "kanji": "出る11",
+    "group_type": "II ",
+    "meaning": "出去 (11)"
+  },
+  {
+    "id": 718,
+    "kana": "いる11",
+    "kanji": "いる11",
+    "group_type": "II ",
+    "meaning": "有(生物) (11)"
+  },
+  {
+    "id": 719,
+    "kana": "きる11",
+    "kanji": "着る11",
+    "group_type": "II ",
+    "meaning": "穿 (11)"
+  },
+  {
+    "id": 720,
+    "kana": "あける11",
+    "kanji": "開ける11",
+    "group_type": "II ",
+    "meaning": "打开 (11)"
+  },
+  {
+    "id": 721,
+    "kana": "しめる11",
+    "kanji": "閉める11",
+    "group_type": "II ",
+    "meaning": "关闭 (11)"
+  },
+  {
+    "id": 722,
+    "kana": "つける11",
+    "kanji": "付ける11",
+    "group_type": "II ",
+    "meaning": "安装 (11)"
+  },
+  {
+    "id": 723,
+    "kana": "けす11",
+    "kanji": "消す11",
+    "group_type": "I  ",
+    "meaning": "关掉 (11)"
+  },
+  {
+    "id": 724,
+    "kana": "おしえる11",
+    "kanji": "教える11",
+    "group_type": "II ",
+    "meaning": "教 (11)"
+  },
+  {
+    "id": 725,
+    "kana": "おぼえる11",
+    "kanji": "覚える11",
+    "group_type": "II ",
+    "meaning": "记住 (11)"
+  },
+  {
+    "id": 726,
+    "kana": "わすれる11",
+    "kanji": "忘れる11",
+    "group_type": "II ",
+    "meaning": "忘记 (11)"
+  },
+  {
+    "id": 727,
+    "kana": "あげる11",
+    "kanji": "上げる11",
+    "group_type": "II ",
+    "meaning": "给 (11)"
+  },
+  {
+    "id": 728,
+    "kana": "もらう11",
+    "kanji": "もらう11",
+    "group_type": "I  ",
+    "meaning": "收到 (11)"
+  },
+  {
+    "id": 729,
+    "kana": "くれる11",
+    "kanji": "くれる11",
+    "group_type": "II ",
+    "meaning": "给我 (11)"
+  },
+  {
+    "id": 730,
+    "kana": "かりる11",
+    "kanji": "借りる11",
+    "group_type": "II ",
+    "meaning": "借 (11)"
+  },
+  {
+    "id": 731,
+    "kana": "かす11",
+    "kanji": "貸す11",
+    "group_type": "I  ",
+    "meaning": "借给 (11)"
+  },
+  {
+    "id": 732,
+    "kana": "すてる11",
+    "kanji": "捨てる11",
+    "group_type": "II ",
+    "meaning": "扔 (11)"
+  },
+  {
+    "id": 733,
+    "kana": "いく12",
+    "kanji": "行く12",
+    "group_type": "I  ",
+    "meaning": "去 (12)"
+  },
+  {
+    "id": 734,
+    "kana": "かく12",
+    "kanji": "書く12",
+    "group_type": "I  ",
+    "meaning": "写 (12)"
+  },
+  {
+    "id": 735,
+    "kana": "よむ12",
+    "kanji": "読む12",
+    "group_type": "I  ",
+    "meaning": "读 (12)"
+  },
+  {
+    "id": 736,
+    "kana": "のむ12",
+    "kanji": "飲む12",
+    "group_type": "I  ",
+    "meaning": "喝 (12)"
+  },
+  {
+    "id": 737,
+    "kana": "はなす12",
+    "kanji": "話す12",
+    "group_type": "I  ",
+    "meaning": "说话 (12)"
+  },
+  {
+    "id": 738,
+    "kana": "きく12",
+    "kanji": "聞く12",
+    "group_type": "I  ",
+    "meaning": "听 (12)"
+  },
+  {
+    "id": 739,
+    "kana": "あるく12",
+    "kanji": "歩く12",
+    "group_type": "I  ",
+    "meaning": "走路 (12)"
+  },
+  {
+    "id": 740,
+    "kana": "はたらく12",
+    "kanji": "働く12",
+    "group_type": "I  ",
+    "meaning": "工作 (12)"
+  },
+  {
+    "id": 741,
+    "kana": "およぐ12",
+    "kanji": "泳ぐ12",
+    "group_type": "I  ",
+    "meaning": "游泳 (12)"
+  },
+  {
+    "id": 742,
+    "kana": "あそぶ12",
+    "kanji": "遊ぶ12",
+    "group_type": "I  ",
+    "meaning": "玩 (12)"
+  },
+  {
+    "id": 743,
+    "kana": "よぶ12",
+    "kanji": "呼ぶ12",
+    "group_type": "I  ",
+    "meaning": "叫 (12)"
+  },
+  {
+    "id": 744,
+    "kana": "しぬ12",
+    "kanji": "死ぬ12",
+    "group_type": "I  ",
+    "meaning": "死 (12)"
+  },
+  {
+    "id": 745,
+    "kana": "たつ12",
+    "kanji": "立つ12",
+    "group_type": "I  ",
+    "meaning": "站 (12)"
+  },
+  {
+    "id": 746,
+    "kana": "まつ12",
+    "kanji": "待つ12",
+    "group_type": "I  ",
+    "meaning": "等 (12)"
+  },
+  {
+    "id": 747,
+    "kana": "もつ12",
+    "kanji": "持つ12",
+    "group_type": "I  ",
+    "meaning": "拿 (12)"
+  },
+  {
+    "id": 748,
+    "kana": "うつ12",
+    "kanji": "打つ12",
+    "group_type": "I  ",
+    "meaning": "打 (12)"
+  },
+  {
+    "id": 749,
+    "kana": "かう12",
+    "kanji": "買う12",
+    "group_type": "I  ",
+    "meaning": "买 (12)"
+  },
+  {
+    "id": 750,
+    "kana": "うる12",
+    "kanji": "売る12",
+    "group_type": "I  ",
+    "meaning": "卖 (12)"
+  },
+  {
+    "id": 751,
+    "kana": "つくる12",
+    "kanji": "作る12",
+    "group_type": "I  ",
+    "meaning": "做 (12)"
+  },
+  {
+    "id": 752,
+    "kana": "とる12",
+    "kanji": "取る12",
+    "group_type": "I  ",
+    "meaning": "拿 (12)"
+  },
+  {
+    "id": 753,
+    "kana": "はいる12",
+    "kanji": "入る12",
+    "group_type": "I  ",
+    "meaning": "进入 (12)"
+  },
+  {
+    "id": 754,
+    "kana": "かえる12",
+    "kanji": "帰る12",
+    "group_type": "I  ",
+    "meaning": "回去 (12)"
+  },
+  {
+    "id": 755,
+    "kana": "のる12",
+    "kanji": "乗る12",
+    "group_type": "I  ",
+    "meaning": "乘坐 (12)"
+  },
+  {
+    "id": 756,
+    "kana": "すわる12",
+    "kanji": "座る12",
+    "group_type": "I  ",
+    "meaning": "坐 (12)"
+  },
+  {
+    "id": 757,
+    "kana": "はしる12",
+    "kanji": "走る12",
+    "group_type": "I  ",
+    "meaning": "跑 (12)"
+  },
+  {
+    "id": 758,
+    "kana": "おわる12",
+    "kanji": "終わる12",
+    "group_type": "I  ",
+    "meaning": "结束 (12)"
+  },
+  {
+    "id": 759,
+    "kana": "はじまる12",
+    "kanji": "始まる12",
+    "group_type": "I  ",
+    "meaning": "开始 (12)"
+  },
+  {
+    "id": 760,
+    "kana": "わかる12",
+    "kanji": "分かる12",
+    "group_type": "I  ",
+    "meaning": "明白 (12)"
+  },
+  {
+    "id": 761,
+    "kana": "ある12",
+    "kanji": "ある12",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (12)"
+  },
+  {
+    "id": 762,
+    "kana": "なる12",
+    "kanji": "なる12",
+    "group_type": "I  ",
+    "meaning": "成为 (12)"
+  },
+  {
+    "id": 763,
+    "kana": "たべる12",
+    "kanji": "食べる12",
+    "group_type": "II ",
+    "meaning": "吃 (12)"
+  },
+  {
+    "id": 764,
+    "kana": "みる12",
+    "kanji": "見る12",
+    "group_type": "II ",
+    "meaning": "看 (12)"
+  },
+  {
+    "id": 765,
+    "kana": "ねる12",
+    "kanji": "寝る12",
+    "group_type": "II ",
+    "meaning": "睡觉 (12)"
+  },
+  {
+    "id": 766,
+    "kana": "おきる12",
+    "kanji": "起きる12",
+    "group_type": "II ",
+    "meaning": "起床 (12)"
+  },
+  {
+    "id": 767,
+    "kana": "でる12",
+    "kanji": "出る12",
+    "group_type": "II ",
+    "meaning": "出去 (12)"
+  },
+  {
+    "id": 768,
+    "kana": "いる12",
+    "kanji": "いる12",
+    "group_type": "II ",
+    "meaning": "有(生物) (12)"
+  },
+  {
+    "id": 769,
+    "kana": "きる12",
+    "kanji": "着る12",
+    "group_type": "II ",
+    "meaning": "穿 (12)"
+  },
+  {
+    "id": 770,
+    "kana": "あける12",
+    "kanji": "開ける12",
+    "group_type": "II ",
+    "meaning": "打开 (12)"
+  },
+  {
+    "id": 771,
+    "kana": "しめる12",
+    "kanji": "閉める12",
+    "group_type": "II ",
+    "meaning": "关闭 (12)"
+  },
+  {
+    "id": 772,
+    "kana": "つける12",
+    "kanji": "付ける12",
+    "group_type": "II ",
+    "meaning": "安装 (12)"
+  },
+  {
+    "id": 773,
+    "kana": "けす12",
+    "kanji": "消す12",
+    "group_type": "I  ",
+    "meaning": "关掉 (12)"
+  },
+  {
+    "id": 774,
+    "kana": "おしえる12",
+    "kanji": "教える12",
+    "group_type": "II ",
+    "meaning": "教 (12)"
+  },
+  {
+    "id": 775,
+    "kana": "おぼえる12",
+    "kanji": "覚える12",
+    "group_type": "II ",
+    "meaning": "记住 (12)"
+  },
+  {
+    "id": 776,
+    "kana": "わすれる12",
+    "kanji": "忘れる12",
+    "group_type": "II ",
+    "meaning": "忘记 (12)"
+  },
+  {
+    "id": 777,
+    "kana": "あげる12",
+    "kanji": "上げる12",
+    "group_type": "II ",
+    "meaning": "给 (12)"
+  },
+  {
+    "id": 778,
+    "kana": "もらう12",
+    "kanji": "もらう12",
+    "group_type": "I  ",
+    "meaning": "收到 (12)"
+  },
+  {
+    "id": 779,
+    "kana": "くれる12",
+    "kanji": "くれる12",
+    "group_type": "II ",
+    "meaning": "给我 (12)"
+  },
+  {
+    "id": 780,
+    "kana": "かりる12",
+    "kanji": "借りる12",
+    "group_type": "II ",
+    "meaning": "借 (12)"
+  },
+  {
+    "id": 781,
+    "kana": "かす12",
+    "kanji": "貸す12",
+    "group_type": "I  ",
+    "meaning": "借给 (12)"
+  },
+  {
+    "id": 782,
+    "kana": "すてる12",
+    "kanji": "捨てる12",
+    "group_type": "II ",
+    "meaning": "扔 (12)"
+  },
+  {
+    "id": 783,
+    "kana": "いく13",
+    "kanji": "行く13",
+    "group_type": "I  ",
+    "meaning": "去 (13)"
+  },
+  {
+    "id": 784,
+    "kana": "かく13",
+    "kanji": "書く13",
+    "group_type": "I  ",
+    "meaning": "写 (13)"
+  },
+  {
+    "id": 785,
+    "kana": "よむ13",
+    "kanji": "読む13",
+    "group_type": "I  ",
+    "meaning": "读 (13)"
+  },
+  {
+    "id": 786,
+    "kana": "のむ13",
+    "kanji": "飲む13",
+    "group_type": "I  ",
+    "meaning": "喝 (13)"
+  },
+  {
+    "id": 787,
+    "kana": "はなす13",
+    "kanji": "話す13",
+    "group_type": "I  ",
+    "meaning": "说话 (13)"
+  },
+  {
+    "id": 788,
+    "kana": "きく13",
+    "kanji": "聞く13",
+    "group_type": "I  ",
+    "meaning": "听 (13)"
+  },
+  {
+    "id": 789,
+    "kana": "あるく13",
+    "kanji": "歩く13",
+    "group_type": "I  ",
+    "meaning": "走路 (13)"
+  },
+  {
+    "id": 790,
+    "kana": "はたらく13",
+    "kanji": "働く13",
+    "group_type": "I  ",
+    "meaning": "工作 (13)"
+  },
+  {
+    "id": 791,
+    "kana": "およぐ13",
+    "kanji": "泳ぐ13",
+    "group_type": "I  ",
+    "meaning": "游泳 (13)"
+  },
+  {
+    "id": 792,
+    "kana": "あそぶ13",
+    "kanji": "遊ぶ13",
+    "group_type": "I  ",
+    "meaning": "玩 (13)"
+  },
+  {
+    "id": 793,
+    "kana": "よぶ13",
+    "kanji": "呼ぶ13",
+    "group_type": "I  ",
+    "meaning": "叫 (13)"
+  },
+  {
+    "id": 794,
+    "kana": "しぬ13",
+    "kanji": "死ぬ13",
+    "group_type": "I  ",
+    "meaning": "死 (13)"
+  },
+  {
+    "id": 795,
+    "kana": "たつ13",
+    "kanji": "立つ13",
+    "group_type": "I  ",
+    "meaning": "站 (13)"
+  },
+  {
+    "id": 796,
+    "kana": "まつ13",
+    "kanji": "待つ13",
+    "group_type": "I  ",
+    "meaning": "等 (13)"
+  },
+  {
+    "id": 797,
+    "kana": "もつ13",
+    "kanji": "持つ13",
+    "group_type": "I  ",
+    "meaning": "拿 (13)"
+  },
+  {
+    "id": 798,
+    "kana": "うつ13",
+    "kanji": "打つ13",
+    "group_type": "I  ",
+    "meaning": "打 (13)"
+  },
+  {
+    "id": 799,
+    "kana": "かう13",
+    "kanji": "買う13",
+    "group_type": "I  ",
+    "meaning": "买 (13)"
+  },
+  {
+    "id": 800,
+    "kana": "うる13",
+    "kanji": "売る13",
+    "group_type": "I  ",
+    "meaning": "卖 (13)"
+  },
+  {
+    "id": 801,
+    "kana": "つくる13",
+    "kanji": "作る13",
+    "group_type": "I  ",
+    "meaning": "做 (13)"
+  },
+  {
+    "id": 802,
+    "kana": "とる13",
+    "kanji": "取る13",
+    "group_type": "I  ",
+    "meaning": "拿 (13)"
+  },
+  {
+    "id": 803,
+    "kana": "はいる13",
+    "kanji": "入る13",
+    "group_type": "I  ",
+    "meaning": "进入 (13)"
+  },
+  {
+    "id": 804,
+    "kana": "かえる13",
+    "kanji": "帰る13",
+    "group_type": "I  ",
+    "meaning": "回去 (13)"
+  },
+  {
+    "id": 805,
+    "kana": "のる13",
+    "kanji": "乗る13",
+    "group_type": "I  ",
+    "meaning": "乘坐 (13)"
+  },
+  {
+    "id": 806,
+    "kana": "すわる13",
+    "kanji": "座る13",
+    "group_type": "I  ",
+    "meaning": "坐 (13)"
+  },
+  {
+    "id": 807,
+    "kana": "はしる13",
+    "kanji": "走る13",
+    "group_type": "I  ",
+    "meaning": "跑 (13)"
+  },
+  {
+    "id": 808,
+    "kana": "おわる13",
+    "kanji": "終わる13",
+    "group_type": "I  ",
+    "meaning": "结束 (13)"
+  },
+  {
+    "id": 809,
+    "kana": "はじまる13",
+    "kanji": "始まる13",
+    "group_type": "I  ",
+    "meaning": "开始 (13)"
+  },
+  {
+    "id": 810,
+    "kana": "わかる13",
+    "kanji": "分かる13",
+    "group_type": "I  ",
+    "meaning": "明白 (13)"
+  },
+  {
+    "id": 811,
+    "kana": "ある13",
+    "kanji": "ある13",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (13)"
+  },
+  {
+    "id": 812,
+    "kana": "なる13",
+    "kanji": "なる13",
+    "group_type": "I  ",
+    "meaning": "成为 (13)"
+  },
+  {
+    "id": 813,
+    "kana": "たべる13",
+    "kanji": "食べる13",
+    "group_type": "II ",
+    "meaning": "吃 (13)"
+  },
+  {
+    "id": 814,
+    "kana": "みる13",
+    "kanji": "見る13",
+    "group_type": "II ",
+    "meaning": "看 (13)"
+  },
+  {
+    "id": 815,
+    "kana": "ねる13",
+    "kanji": "寝る13",
+    "group_type": "II ",
+    "meaning": "睡觉 (13)"
+  },
+  {
+    "id": 816,
+    "kana": "おきる13",
+    "kanji": "起きる13",
+    "group_type": "II ",
+    "meaning": "起床 (13)"
+  },
+  {
+    "id": 817,
+    "kana": "でる13",
+    "kanji": "出る13",
+    "group_type": "II ",
+    "meaning": "出去 (13)"
+  },
+  {
+    "id": 818,
+    "kana": "いる13",
+    "kanji": "いる13",
+    "group_type": "II ",
+    "meaning": "有(生物) (13)"
+  },
+  {
+    "id": 819,
+    "kana": "きる13",
+    "kanji": "着る13",
+    "group_type": "II ",
+    "meaning": "穿 (13)"
+  },
+  {
+    "id": 820,
+    "kana": "あける13",
+    "kanji": "開ける13",
+    "group_type": "II ",
+    "meaning": "打开 (13)"
+  },
+  {
+    "id": 821,
+    "kana": "しめる13",
+    "kanji": "閉める13",
+    "group_type": "II ",
+    "meaning": "关闭 (13)"
+  },
+  {
+    "id": 822,
+    "kana": "つける13",
+    "kanji": "付ける13",
+    "group_type": "II ",
+    "meaning": "安装 (13)"
+  },
+  {
+    "id": 823,
+    "kana": "けす13",
+    "kanji": "消す13",
+    "group_type": "I  ",
+    "meaning": "关掉 (13)"
+  },
+  {
+    "id": 824,
+    "kana": "おしえる13",
+    "kanji": "教える13",
+    "group_type": "II ",
+    "meaning": "教 (13)"
+  },
+  {
+    "id": 825,
+    "kana": "おぼえる13",
+    "kanji": "覚える13",
+    "group_type": "II ",
+    "meaning": "记住 (13)"
+  },
+  {
+    "id": 826,
+    "kana": "わすれる13",
+    "kanji": "忘れる13",
+    "group_type": "II ",
+    "meaning": "忘记 (13)"
+  },
+  {
+    "id": 827,
+    "kana": "あげる13",
+    "kanji": "上げる13",
+    "group_type": "II ",
+    "meaning": "给 (13)"
+  },
+  {
+    "id": 828,
+    "kana": "もらう13",
+    "kanji": "もらう13",
+    "group_type": "I  ",
+    "meaning": "收到 (13)"
+  },
+  {
+    "id": 829,
+    "kana": "くれる13",
+    "kanji": "くれる13",
+    "group_type": "II ",
+    "meaning": "给我 (13)"
+  },
+  {
+    "id": 830,
+    "kana": "かりる13",
+    "kanji": "借りる13",
+    "group_type": "II ",
+    "meaning": "借 (13)"
+  },
+  {
+    "id": 831,
+    "kana": "かす13",
+    "kanji": "貸す13",
+    "group_type": "I  ",
+    "meaning": "借给 (13)"
+  },
+  {
+    "id": 832,
+    "kana": "すてる13",
+    "kanji": "捨てる13",
+    "group_type": "II ",
+    "meaning": "扔 (13)"
+  },
+  {
+    "id": 833,
+    "kana": "いく14",
+    "kanji": "行く14",
+    "group_type": "I  ",
+    "meaning": "去 (14)"
+  },
+  {
+    "id": 834,
+    "kana": "かく14",
+    "kanji": "書く14",
+    "group_type": "I  ",
+    "meaning": "写 (14)"
+  },
+  {
+    "id": 835,
+    "kana": "よむ14",
+    "kanji": "読む14",
+    "group_type": "I  ",
+    "meaning": "读 (14)"
+  },
+  {
+    "id": 836,
+    "kana": "のむ14",
+    "kanji": "飲む14",
+    "group_type": "I  ",
+    "meaning": "喝 (14)"
+  },
+  {
+    "id": 837,
+    "kana": "はなす14",
+    "kanji": "話す14",
+    "group_type": "I  ",
+    "meaning": "说话 (14)"
+  },
+  {
+    "id": 838,
+    "kana": "きく14",
+    "kanji": "聞く14",
+    "group_type": "I  ",
+    "meaning": "听 (14)"
+  },
+  {
+    "id": 839,
+    "kana": "あるく14",
+    "kanji": "歩く14",
+    "group_type": "I  ",
+    "meaning": "走路 (14)"
+  },
+  {
+    "id": 840,
+    "kana": "はたらく14",
+    "kanji": "働く14",
+    "group_type": "I  ",
+    "meaning": "工作 (14)"
+  },
+  {
+    "id": 841,
+    "kana": "およぐ14",
+    "kanji": "泳ぐ14",
+    "group_type": "I  ",
+    "meaning": "游泳 (14)"
+  },
+  {
+    "id": 842,
+    "kana": "あそぶ14",
+    "kanji": "遊ぶ14",
+    "group_type": "I  ",
+    "meaning": "玩 (14)"
+  },
+  {
+    "id": 843,
+    "kana": "よぶ14",
+    "kanji": "呼ぶ14",
+    "group_type": "I  ",
+    "meaning": "叫 (14)"
+  },
+  {
+    "id": 844,
+    "kana": "しぬ14",
+    "kanji": "死ぬ14",
+    "group_type": "I  ",
+    "meaning": "死 (14)"
+  },
+  {
+    "id": 845,
+    "kana": "たつ14",
+    "kanji": "立つ14",
+    "group_type": "I  ",
+    "meaning": "站 (14)"
+  },
+  {
+    "id": 846,
+    "kana": "まつ14",
+    "kanji": "待つ14",
+    "group_type": "I  ",
+    "meaning": "等 (14)"
+  },
+  {
+    "id": 847,
+    "kana": "もつ14",
+    "kanji": "持つ14",
+    "group_type": "I  ",
+    "meaning": "拿 (14)"
+  },
+  {
+    "id": 848,
+    "kana": "うつ14",
+    "kanji": "打つ14",
+    "group_type": "I  ",
+    "meaning": "打 (14)"
+  },
+  {
+    "id": 849,
+    "kana": "かう14",
+    "kanji": "買う14",
+    "group_type": "I  ",
+    "meaning": "买 (14)"
+  },
+  {
+    "id": 850,
+    "kana": "うる14",
+    "kanji": "売る14",
+    "group_type": "I  ",
+    "meaning": "卖 (14)"
+  },
+  {
+    "id": 851,
+    "kana": "つくる14",
+    "kanji": "作る14",
+    "group_type": "I  ",
+    "meaning": "做 (14)"
+  },
+  {
+    "id": 852,
+    "kana": "とる14",
+    "kanji": "取る14",
+    "group_type": "I  ",
+    "meaning": "拿 (14)"
+  },
+  {
+    "id": 853,
+    "kana": "はいる14",
+    "kanji": "入る14",
+    "group_type": "I  ",
+    "meaning": "进入 (14)"
+  },
+  {
+    "id": 854,
+    "kana": "かえる14",
+    "kanji": "帰る14",
+    "group_type": "I  ",
+    "meaning": "回去 (14)"
+  },
+  {
+    "id": 855,
+    "kana": "のる14",
+    "kanji": "乗る14",
+    "group_type": "I  ",
+    "meaning": "乘坐 (14)"
+  },
+  {
+    "id": 856,
+    "kana": "すわる14",
+    "kanji": "座る14",
+    "group_type": "I  ",
+    "meaning": "坐 (14)"
+  },
+  {
+    "id": 857,
+    "kana": "はしる14",
+    "kanji": "走る14",
+    "group_type": "I  ",
+    "meaning": "跑 (14)"
+  },
+  {
+    "id": 858,
+    "kana": "おわる14",
+    "kanji": "終わる14",
+    "group_type": "I  ",
+    "meaning": "结束 (14)"
+  },
+  {
+    "id": 859,
+    "kana": "はじまる14",
+    "kanji": "始まる14",
+    "group_type": "I  ",
+    "meaning": "开始 (14)"
+  },
+  {
+    "id": 860,
+    "kana": "わかる14",
+    "kanji": "分かる14",
+    "group_type": "I  ",
+    "meaning": "明白 (14)"
+  },
+  {
+    "id": 861,
+    "kana": "ある14",
+    "kanji": "ある14",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (14)"
+  },
+  {
+    "id": 862,
+    "kana": "なる14",
+    "kanji": "なる14",
+    "group_type": "I  ",
+    "meaning": "成为 (14)"
+  },
+  {
+    "id": 863,
+    "kana": "たべる14",
+    "kanji": "食べる14",
+    "group_type": "II ",
+    "meaning": "吃 (14)"
+  },
+  {
+    "id": 864,
+    "kana": "みる14",
+    "kanji": "見る14",
+    "group_type": "II ",
+    "meaning": "看 (14)"
+  },
+  {
+    "id": 865,
+    "kana": "ねる14",
+    "kanji": "寝る14",
+    "group_type": "II ",
+    "meaning": "睡觉 (14)"
+  },
+  {
+    "id": 866,
+    "kana": "おきる14",
+    "kanji": "起きる14",
+    "group_type": "II ",
+    "meaning": "起床 (14)"
+  },
+  {
+    "id": 867,
+    "kana": "でる14",
+    "kanji": "出る14",
+    "group_type": "II ",
+    "meaning": "出去 (14)"
+  },
+  {
+    "id": 868,
+    "kana": "いる14",
+    "kanji": "いる14",
+    "group_type": "II ",
+    "meaning": "有(生物) (14)"
+  },
+  {
+    "id": 869,
+    "kana": "きる14",
+    "kanji": "着る14",
+    "group_type": "II ",
+    "meaning": "穿 (14)"
+  },
+  {
+    "id": 870,
+    "kana": "あける14",
+    "kanji": "開ける14",
+    "group_type": "II ",
+    "meaning": "打开 (14)"
+  },
+  {
+    "id": 871,
+    "kana": "しめる14",
+    "kanji": "閉める14",
+    "group_type": "II ",
+    "meaning": "关闭 (14)"
+  },
+  {
+    "id": 872,
+    "kana": "つける14",
+    "kanji": "付ける14",
+    "group_type": "II ",
+    "meaning": "安装 (14)"
+  },
+  {
+    "id": 873,
+    "kana": "けす14",
+    "kanji": "消す14",
+    "group_type": "I  ",
+    "meaning": "关掉 (14)"
+  },
+  {
+    "id": 874,
+    "kana": "おしえる14",
+    "kanji": "教える14",
+    "group_type": "II ",
+    "meaning": "教 (14)"
+  },
+  {
+    "id": 875,
+    "kana": "おぼえる14",
+    "kanji": "覚える14",
+    "group_type": "II ",
+    "meaning": "记住 (14)"
+  },
+  {
+    "id": 876,
+    "kana": "わすれる14",
+    "kanji": "忘れる14",
+    "group_type": "II ",
+    "meaning": "忘记 (14)"
+  },
+  {
+    "id": 877,
+    "kana": "あげる14",
+    "kanji": "上げる14",
+    "group_type": "II ",
+    "meaning": "给 (14)"
+  },
+  {
+    "id": 878,
+    "kana": "もらう14",
+    "kanji": "もらう14",
+    "group_type": "I  ",
+    "meaning": "收到 (14)"
+  },
+  {
+    "id": 879,
+    "kana": "くれる14",
+    "kanji": "くれる14",
+    "group_type": "II ",
+    "meaning": "给我 (14)"
+  },
+  {
+    "id": 880,
+    "kana": "かりる14",
+    "kanji": "借りる14",
+    "group_type": "II ",
+    "meaning": "借 (14)"
+  },
+  {
+    "id": 881,
+    "kana": "かす14",
+    "kanji": "貸す14",
+    "group_type": "I  ",
+    "meaning": "借给 (14)"
+  },
+  {
+    "id": 882,
+    "kana": "すてる14",
+    "kanji": "捨てる14",
+    "group_type": "II ",
+    "meaning": "扔 (14)"
+  },
+  {
+    "id": 883,
+    "kana": "いく15",
+    "kanji": "行く15",
+    "group_type": "I  ",
+    "meaning": "去 (15)"
+  },
+  {
+    "id": 884,
+    "kana": "かく15",
+    "kanji": "書く15",
+    "group_type": "I  ",
+    "meaning": "写 (15)"
+  },
+  {
+    "id": 885,
+    "kana": "よむ15",
+    "kanji": "読む15",
+    "group_type": "I  ",
+    "meaning": "读 (15)"
+  },
+  {
+    "id": 886,
+    "kana": "のむ15",
+    "kanji": "飲む15",
+    "group_type": "I  ",
+    "meaning": "喝 (15)"
+  },
+  {
+    "id": 887,
+    "kana": "はなす15",
+    "kanji": "話す15",
+    "group_type": "I  ",
+    "meaning": "说话 (15)"
+  },
+  {
+    "id": 888,
+    "kana": "きく15",
+    "kanji": "聞く15",
+    "group_type": "I  ",
+    "meaning": "听 (15)"
+  },
+  {
+    "id": 889,
+    "kana": "あるく15",
+    "kanji": "歩く15",
+    "group_type": "I  ",
+    "meaning": "走路 (15)"
+  },
+  {
+    "id": 890,
+    "kana": "はたらく15",
+    "kanji": "働く15",
+    "group_type": "I  ",
+    "meaning": "工作 (15)"
+  },
+  {
+    "id": 891,
+    "kana": "およぐ15",
+    "kanji": "泳ぐ15",
+    "group_type": "I  ",
+    "meaning": "游泳 (15)"
+  },
+  {
+    "id": 892,
+    "kana": "あそぶ15",
+    "kanji": "遊ぶ15",
+    "group_type": "I  ",
+    "meaning": "玩 (15)"
+  },
+  {
+    "id": 893,
+    "kana": "よぶ15",
+    "kanji": "呼ぶ15",
+    "group_type": "I  ",
+    "meaning": "叫 (15)"
+  },
+  {
+    "id": 894,
+    "kana": "しぬ15",
+    "kanji": "死ぬ15",
+    "group_type": "I  ",
+    "meaning": "死 (15)"
+  },
+  {
+    "id": 895,
+    "kana": "たつ15",
+    "kanji": "立つ15",
+    "group_type": "I  ",
+    "meaning": "站 (15)"
+  },
+  {
+    "id": 896,
+    "kana": "まつ15",
+    "kanji": "待つ15",
+    "group_type": "I  ",
+    "meaning": "等 (15)"
+  },
+  {
+    "id": 897,
+    "kana": "もつ15",
+    "kanji": "持つ15",
+    "group_type": "I  ",
+    "meaning": "拿 (15)"
+  },
+  {
+    "id": 898,
+    "kana": "うつ15",
+    "kanji": "打つ15",
+    "group_type": "I  ",
+    "meaning": "打 (15)"
+  },
+  {
+    "id": 899,
+    "kana": "かう15",
+    "kanji": "買う15",
+    "group_type": "I  ",
+    "meaning": "买 (15)"
+  },
+  {
+    "id": 900,
+    "kana": "うる15",
+    "kanji": "売る15",
+    "group_type": "I  ",
+    "meaning": "卖 (15)"
+  },
+  {
+    "id": 901,
+    "kana": "つくる15",
+    "kanji": "作る15",
+    "group_type": "I  ",
+    "meaning": "做 (15)"
+  },
+  {
+    "id": 902,
+    "kana": "とる15",
+    "kanji": "取る15",
+    "group_type": "I  ",
+    "meaning": "拿 (15)"
+  },
+  {
+    "id": 903,
+    "kana": "はいる15",
+    "kanji": "入る15",
+    "group_type": "I  ",
+    "meaning": "进入 (15)"
+  },
+  {
+    "id": 904,
+    "kana": "かえる15",
+    "kanji": "帰る15",
+    "group_type": "I  ",
+    "meaning": "回去 (15)"
+  },
+  {
+    "id": 905,
+    "kana": "のる15",
+    "kanji": "乗る15",
+    "group_type": "I  ",
+    "meaning": "乘坐 (15)"
+  },
+  {
+    "id": 906,
+    "kana": "すわる15",
+    "kanji": "座る15",
+    "group_type": "I  ",
+    "meaning": "坐 (15)"
+  },
+  {
+    "id": 907,
+    "kana": "はしる15",
+    "kanji": "走る15",
+    "group_type": "I  ",
+    "meaning": "跑 (15)"
+  },
+  {
+    "id": 908,
+    "kana": "おわる15",
+    "kanji": "終わる15",
+    "group_type": "I  ",
+    "meaning": "结束 (15)"
+  },
+  {
+    "id": 909,
+    "kana": "はじまる15",
+    "kanji": "始まる15",
+    "group_type": "I  ",
+    "meaning": "开始 (15)"
+  },
+  {
+    "id": 910,
+    "kana": "わかる15",
+    "kanji": "分かる15",
+    "group_type": "I  ",
+    "meaning": "明白 (15)"
+  },
+  {
+    "id": 911,
+    "kana": "ある15",
+    "kanji": "ある15",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (15)"
+  },
+  {
+    "id": 912,
+    "kana": "なる15",
+    "kanji": "なる15",
+    "group_type": "I  ",
+    "meaning": "成为 (15)"
+  },
+  {
+    "id": 913,
+    "kana": "たべる15",
+    "kanji": "食べる15",
+    "group_type": "II ",
+    "meaning": "吃 (15)"
+  },
+  {
+    "id": 914,
+    "kana": "みる15",
+    "kanji": "見る15",
+    "group_type": "II ",
+    "meaning": "看 (15)"
+  },
+  {
+    "id": 915,
+    "kana": "ねる15",
+    "kanji": "寝る15",
+    "group_type": "II ",
+    "meaning": "睡觉 (15)"
+  },
+  {
+    "id": 916,
+    "kana": "おきる15",
+    "kanji": "起きる15",
+    "group_type": "II ",
+    "meaning": "起床 (15)"
+  },
+  {
+    "id": 917,
+    "kana": "でる15",
+    "kanji": "出る15",
+    "group_type": "II ",
+    "meaning": "出去 (15)"
+  },
+  {
+    "id": 918,
+    "kana": "いる15",
+    "kanji": "いる15",
+    "group_type": "II ",
+    "meaning": "有(生物) (15)"
+  },
+  {
+    "id": 919,
+    "kana": "きる15",
+    "kanji": "着る15",
+    "group_type": "II ",
+    "meaning": "穿 (15)"
+  },
+  {
+    "id": 920,
+    "kana": "あける15",
+    "kanji": "開ける15",
+    "group_type": "II ",
+    "meaning": "打开 (15)"
+  },
+  {
+    "id": 921,
+    "kana": "しめる15",
+    "kanji": "閉める15",
+    "group_type": "II ",
+    "meaning": "关闭 (15)"
+  },
+  {
+    "id": 922,
+    "kana": "つける15",
+    "kanji": "付ける15",
+    "group_type": "II ",
+    "meaning": "安装 (15)"
+  },
+  {
+    "id": 923,
+    "kana": "けす15",
+    "kanji": "消す15",
+    "group_type": "I  ",
+    "meaning": "关掉 (15)"
+  },
+  {
+    "id": 924,
+    "kana": "おしえる15",
+    "kanji": "教える15",
+    "group_type": "II ",
+    "meaning": "教 (15)"
+  },
+  {
+    "id": 925,
+    "kana": "おぼえる15",
+    "kanji": "覚える15",
+    "group_type": "II ",
+    "meaning": "记住 (15)"
+  },
+  {
+    "id": 926,
+    "kana": "わすれる15",
+    "kanji": "忘れる15",
+    "group_type": "II ",
+    "meaning": "忘记 (15)"
+  },
+  {
+    "id": 927,
+    "kana": "あげる15",
+    "kanji": "上げる15",
+    "group_type": "II ",
+    "meaning": "给 (15)"
+  },
+  {
+    "id": 928,
+    "kana": "もらう15",
+    "kanji": "もらう15",
+    "group_type": "I  ",
+    "meaning": "收到 (15)"
+  },
+  {
+    "id": 929,
+    "kana": "くれる15",
+    "kanji": "くれる15",
+    "group_type": "II ",
+    "meaning": "给我 (15)"
+  },
+  {
+    "id": 930,
+    "kana": "かりる15",
+    "kanji": "借りる15",
+    "group_type": "II ",
+    "meaning": "借 (15)"
+  },
+  {
+    "id": 931,
+    "kana": "かす15",
+    "kanji": "貸す15",
+    "group_type": "I  ",
+    "meaning": "借给 (15)"
+  },
+  {
+    "id": 932,
+    "kana": "すてる15",
+    "kanji": "捨てる15",
+    "group_type": "II ",
+    "meaning": "扔 (15)"
+  },
+  {
+    "id": 933,
+    "kana": "いく16",
+    "kanji": "行く16",
+    "group_type": "I  ",
+    "meaning": "去 (16)"
+  },
+  {
+    "id": 934,
+    "kana": "かく16",
+    "kanji": "書く16",
+    "group_type": "I  ",
+    "meaning": "写 (16)"
+  },
+  {
+    "id": 935,
+    "kana": "よむ16",
+    "kanji": "読む16",
+    "group_type": "I  ",
+    "meaning": "读 (16)"
+  },
+  {
+    "id": 936,
+    "kana": "のむ16",
+    "kanji": "飲む16",
+    "group_type": "I  ",
+    "meaning": "喝 (16)"
+  },
+  {
+    "id": 937,
+    "kana": "はなす16",
+    "kanji": "話す16",
+    "group_type": "I  ",
+    "meaning": "说话 (16)"
+  },
+  {
+    "id": 938,
+    "kana": "きく16",
+    "kanji": "聞く16",
+    "group_type": "I  ",
+    "meaning": "听 (16)"
+  },
+  {
+    "id": 939,
+    "kana": "あるく16",
+    "kanji": "歩く16",
+    "group_type": "I  ",
+    "meaning": "走路 (16)"
+  },
+  {
+    "id": 940,
+    "kana": "はたらく16",
+    "kanji": "働く16",
+    "group_type": "I  ",
+    "meaning": "工作 (16)"
+  },
+  {
+    "id": 941,
+    "kana": "およぐ16",
+    "kanji": "泳ぐ16",
+    "group_type": "I  ",
+    "meaning": "游泳 (16)"
+  },
+  {
+    "id": 942,
+    "kana": "あそぶ16",
+    "kanji": "遊ぶ16",
+    "group_type": "I  ",
+    "meaning": "玩 (16)"
+  },
+  {
+    "id": 943,
+    "kana": "よぶ16",
+    "kanji": "呼ぶ16",
+    "group_type": "I  ",
+    "meaning": "叫 (16)"
+  },
+  {
+    "id": 944,
+    "kana": "しぬ16",
+    "kanji": "死ぬ16",
+    "group_type": "I  ",
+    "meaning": "死 (16)"
+  },
+  {
+    "id": 945,
+    "kana": "たつ16",
+    "kanji": "立つ16",
+    "group_type": "I  ",
+    "meaning": "站 (16)"
+  },
+  {
+    "id": 946,
+    "kana": "まつ16",
+    "kanji": "待つ16",
+    "group_type": "I  ",
+    "meaning": "等 (16)"
+  },
+  {
+    "id": 947,
+    "kana": "もつ16",
+    "kanji": "持つ16",
+    "group_type": "I  ",
+    "meaning": "拿 (16)"
+  },
+  {
+    "id": 948,
+    "kana": "うつ16",
+    "kanji": "打つ16",
+    "group_type": "I  ",
+    "meaning": "打 (16)"
+  },
+  {
+    "id": 949,
+    "kana": "かう16",
+    "kanji": "買う16",
+    "group_type": "I  ",
+    "meaning": "买 (16)"
+  },
+  {
+    "id": 950,
+    "kana": "うる16",
+    "kanji": "売る16",
+    "group_type": "I  ",
+    "meaning": "卖 (16)"
+  },
+  {
+    "id": 951,
+    "kana": "つくる16",
+    "kanji": "作る16",
+    "group_type": "I  ",
+    "meaning": "做 (16)"
+  },
+  {
+    "id": 952,
+    "kana": "とる16",
+    "kanji": "取る16",
+    "group_type": "I  ",
+    "meaning": "拿 (16)"
+  },
+  {
+    "id": 953,
+    "kana": "はいる16",
+    "kanji": "入る16",
+    "group_type": "I  ",
+    "meaning": "进入 (16)"
+  },
+  {
+    "id": 954,
+    "kana": "かえる16",
+    "kanji": "帰る16",
+    "group_type": "I  ",
+    "meaning": "回去 (16)"
+  },
+  {
+    "id": 955,
+    "kana": "のる16",
+    "kanji": "乗る16",
+    "group_type": "I  ",
+    "meaning": "乘坐 (16)"
+  },
+  {
+    "id": 956,
+    "kana": "すわる16",
+    "kanji": "座る16",
+    "group_type": "I  ",
+    "meaning": "坐 (16)"
+  },
+  {
+    "id": 957,
+    "kana": "はしる16",
+    "kanji": "走る16",
+    "group_type": "I  ",
+    "meaning": "跑 (16)"
+  },
+  {
+    "id": 958,
+    "kana": "おわる16",
+    "kanji": "終わる16",
+    "group_type": "I  ",
+    "meaning": "结束 (16)"
+  },
+  {
+    "id": 959,
+    "kana": "はじまる16",
+    "kanji": "始まる16",
+    "group_type": "I  ",
+    "meaning": "开始 (16)"
+  },
+  {
+    "id": 960,
+    "kana": "わかる16",
+    "kanji": "分かる16",
+    "group_type": "I  ",
+    "meaning": "明白 (16)"
+  },
+  {
+    "id": 961,
+    "kana": "ある16",
+    "kanji": "ある16",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (16)"
+  },
+  {
+    "id": 962,
+    "kana": "なる16",
+    "kanji": "なる16",
+    "group_type": "I  ",
+    "meaning": "成为 (16)"
+  },
+  {
+    "id": 963,
+    "kana": "たべる16",
+    "kanji": "食べる16",
+    "group_type": "II ",
+    "meaning": "吃 (16)"
+  },
+  {
+    "id": 964,
+    "kana": "みる16",
+    "kanji": "見る16",
+    "group_type": "II ",
+    "meaning": "看 (16)"
+  },
+  {
+    "id": 965,
+    "kana": "ねる16",
+    "kanji": "寝る16",
+    "group_type": "II ",
+    "meaning": "睡觉 (16)"
+  },
+  {
+    "id": 966,
+    "kana": "おきる16",
+    "kanji": "起きる16",
+    "group_type": "II ",
+    "meaning": "起床 (16)"
+  },
+  {
+    "id": 967,
+    "kana": "でる16",
+    "kanji": "出る16",
+    "group_type": "II ",
+    "meaning": "出去 (16)"
+  },
+  {
+    "id": 968,
+    "kana": "いる16",
+    "kanji": "いる16",
+    "group_type": "II ",
+    "meaning": "有(生物) (16)"
+  },
+  {
+    "id": 969,
+    "kana": "きる16",
+    "kanji": "着る16",
+    "group_type": "II ",
+    "meaning": "穿 (16)"
+  },
+  {
+    "id": 970,
+    "kana": "あける16",
+    "kanji": "開ける16",
+    "group_type": "II ",
+    "meaning": "打开 (16)"
+  },
+  {
+    "id": 971,
+    "kana": "しめる16",
+    "kanji": "閉める16",
+    "group_type": "II ",
+    "meaning": "关闭 (16)"
+  },
+  {
+    "id": 972,
+    "kana": "つける16",
+    "kanji": "付ける16",
+    "group_type": "II ",
+    "meaning": "安装 (16)"
+  },
+  {
+    "id": 973,
+    "kana": "けす16",
+    "kanji": "消す16",
+    "group_type": "I  ",
+    "meaning": "关掉 (16)"
+  },
+  {
+    "id": 974,
+    "kana": "おしえる16",
+    "kanji": "教える16",
+    "group_type": "II ",
+    "meaning": "教 (16)"
+  },
+  {
+    "id": 975,
+    "kana": "おぼえる16",
+    "kanji": "覚える16",
+    "group_type": "II ",
+    "meaning": "记住 (16)"
+  },
+  {
+    "id": 976,
+    "kana": "わすれる16",
+    "kanji": "忘れる16",
+    "group_type": "II ",
+    "meaning": "忘记 (16)"
+  },
+  {
+    "id": 977,
+    "kana": "あげる16",
+    "kanji": "上げる16",
+    "group_type": "II ",
+    "meaning": "给 (16)"
+  },
+  {
+    "id": 978,
+    "kana": "もらう16",
+    "kanji": "もらう16",
+    "group_type": "I  ",
+    "meaning": "收到 (16)"
+  },
+  {
+    "id": 979,
+    "kana": "くれる16",
+    "kanji": "くれる16",
+    "group_type": "II ",
+    "meaning": "给我 (16)"
+  },
+  {
+    "id": 980,
+    "kana": "かりる16",
+    "kanji": "借りる16",
+    "group_type": "II ",
+    "meaning": "借 (16)"
+  },
+  {
+    "id": 981,
+    "kana": "かす16",
+    "kanji": "貸す16",
+    "group_type": "I  ",
+    "meaning": "借给 (16)"
+  },
+  {
+    "id": 982,
+    "kana": "すてる16",
+    "kanji": "捨てる16",
+    "group_type": "II ",
+    "meaning": "扔 (16)"
+  },
+  {
+    "id": 983,
+    "kana": "いく17",
+    "kanji": "行く17",
+    "group_type": "I  ",
+    "meaning": "去 (17)"
+  },
+  {
+    "id": 984,
+    "kana": "かく17",
+    "kanji": "書く17",
+    "group_type": "I  ",
+    "meaning": "写 (17)"
+  },
+  {
+    "id": 985,
+    "kana": "よむ17",
+    "kanji": "読む17",
+    "group_type": "I  ",
+    "meaning": "读 (17)"
+  },
+  {
+    "id": 986,
+    "kana": "のむ17",
+    "kanji": "飲む17",
+    "group_type": "I  ",
+    "meaning": "喝 (17)"
+  },
+  {
+    "id": 987,
+    "kana": "はなす17",
+    "kanji": "話す17",
+    "group_type": "I  ",
+    "meaning": "说话 (17)"
+  },
+  {
+    "id": 988,
+    "kana": "きく17",
+    "kanji": "聞く17",
+    "group_type": "I  ",
+    "meaning": "听 (17)"
+  },
+  {
+    "id": 989,
+    "kana": "あるく17",
+    "kanji": "歩く17",
+    "group_type": "I  ",
+    "meaning": "走路 (17)"
+  },
+  {
+    "id": 990,
+    "kana": "はたらく17",
+    "kanji": "働く17",
+    "group_type": "I  ",
+    "meaning": "工作 (17)"
+  },
+  {
+    "id": 991,
+    "kana": "およぐ17",
+    "kanji": "泳ぐ17",
+    "group_type": "I  ",
+    "meaning": "游泳 (17)"
+  },
+  {
+    "id": 992,
+    "kana": "あそぶ17",
+    "kanji": "遊ぶ17",
+    "group_type": "I  ",
+    "meaning": "玩 (17)"
+  },
+  {
+    "id": 993,
+    "kana": "よぶ17",
+    "kanji": "呼ぶ17",
+    "group_type": "I  ",
+    "meaning": "叫 (17)"
+  },
+  {
+    "id": 994,
+    "kana": "しぬ17",
+    "kanji": "死ぬ17",
+    "group_type": "I  ",
+    "meaning": "死 (17)"
+  },
+  {
+    "id": 995,
+    "kana": "たつ17",
+    "kanji": "立つ17",
+    "group_type": "I  ",
+    "meaning": "站 (17)"
+  },
+  {
+    "id": 996,
+    "kana": "まつ17",
+    "kanji": "待つ17",
+    "group_type": "I  ",
+    "meaning": "等 (17)"
+  },
+  {
+    "id": 997,
+    "kana": "もつ17",
+    "kanji": "持つ17",
+    "group_type": "I  ",
+    "meaning": "拿 (17)"
+  },
+  {
+    "id": 998,
+    "kana": "うつ17",
+    "kanji": "打つ17",
+    "group_type": "I  ",
+    "meaning": "打 (17)"
+  },
+  {
+    "id": 999,
+    "kana": "かう17",
+    "kanji": "買う17",
+    "group_type": "I  ",
+    "meaning": "买 (17)"
+  },
+  {
+    "id": 1000,
+    "kana": "うる17",
+    "kanji": "売る17",
+    "group_type": "I  ",
+    "meaning": "卖 (17)"
+  },
+  {
+    "id": 1001,
+    "kana": "つくる17",
+    "kanji": "作る17",
+    "group_type": "I  ",
+    "meaning": "做 (17)"
+  },
+  {
+    "id": 1002,
+    "kana": "とる17",
+    "kanji": "取る17",
+    "group_type": "I  ",
+    "meaning": "拿 (17)"
+  },
+  {
+    "id": 1003,
+    "kana": "はいる17",
+    "kanji": "入る17",
+    "group_type": "I  ",
+    "meaning": "进入 (17)"
+  },
+  {
+    "id": 1004,
+    "kana": "かえる17",
+    "kanji": "帰る17",
+    "group_type": "I  ",
+    "meaning": "回去 (17)"
+  },
+  {
+    "id": 1005,
+    "kana": "のる17",
+    "kanji": "乗る17",
+    "group_type": "I  ",
+    "meaning": "乘坐 (17)"
+  },
+  {
+    "id": 1006,
+    "kana": "すわる17",
+    "kanji": "座る17",
+    "group_type": "I  ",
+    "meaning": "坐 (17)"
+  },
+  {
+    "id": 1007,
+    "kana": "はしる17",
+    "kanji": "走る17",
+    "group_type": "I  ",
+    "meaning": "跑 (17)"
+  },
+  {
+    "id": 1008,
+    "kana": "おわる17",
+    "kanji": "終わる17",
+    "group_type": "I  ",
+    "meaning": "结束 (17)"
+  },
+  {
+    "id": 1009,
+    "kana": "はじまる17",
+    "kanji": "始まる17",
+    "group_type": "I  ",
+    "meaning": "开始 (17)"
+  },
+  {
+    "id": 1010,
+    "kana": "わかる17",
+    "kanji": "分かる17",
+    "group_type": "I  ",
+    "meaning": "明白 (17)"
+  },
+  {
+    "id": 1011,
+    "kana": "ある17",
+    "kanji": "ある17",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (17)"
+  },
+  {
+    "id": 1012,
+    "kana": "なる17",
+    "kanji": "なる17",
+    "group_type": "I  ",
+    "meaning": "成为 (17)"
+  },
+  {
+    "id": 1013,
+    "kana": "たべる17",
+    "kanji": "食べる17",
+    "group_type": "II ",
+    "meaning": "吃 (17)"
+  },
+  {
+    "id": 1014,
+    "kana": "みる17",
+    "kanji": "見る17",
+    "group_type": "II ",
+    "meaning": "看 (17)"
+  },
+  {
+    "id": 1015,
+    "kana": "ねる17",
+    "kanji": "寝る17",
+    "group_type": "II ",
+    "meaning": "睡觉 (17)"
+  },
+  {
+    "id": 1016,
+    "kana": "おきる17",
+    "kanji": "起きる17",
+    "group_type": "II ",
+    "meaning": "起床 (17)"
+  },
+  {
+    "id": 1017,
+    "kana": "でる17",
+    "kanji": "出る17",
+    "group_type": "II ",
+    "meaning": "出去 (17)"
+  },
+  {
+    "id": 1018,
+    "kana": "いる17",
+    "kanji": "いる17",
+    "group_type": "II ",
+    "meaning": "有(生物) (17)"
+  },
+  {
+    "id": 1019,
+    "kana": "きる17",
+    "kanji": "着る17",
+    "group_type": "II ",
+    "meaning": "穿 (17)"
+  },
+  {
+    "id": 1020,
+    "kana": "あける17",
+    "kanji": "開ける17",
+    "group_type": "II ",
+    "meaning": "打开 (17)"
+  },
+  {
+    "id": 1021,
+    "kana": "しめる17",
+    "kanji": "閉める17",
+    "group_type": "II ",
+    "meaning": "关闭 (17)"
+  },
+  {
+    "id": 1022,
+    "kana": "つける17",
+    "kanji": "付ける17",
+    "group_type": "II ",
+    "meaning": "安装 (17)"
+  },
+  {
+    "id": 1023,
+    "kana": "けす17",
+    "kanji": "消す17",
+    "group_type": "I  ",
+    "meaning": "关掉 (17)"
+  },
+  {
+    "id": 1024,
+    "kana": "おしえる17",
+    "kanji": "教える17",
+    "group_type": "II ",
+    "meaning": "教 (17)"
+  },
+  {
+    "id": 1025,
+    "kana": "おぼえる17",
+    "kanji": "覚える17",
+    "group_type": "II ",
+    "meaning": "记住 (17)"
+  },
+  {
+    "id": 1026,
+    "kana": "わすれる17",
+    "kanji": "忘れる17",
+    "group_type": "II ",
+    "meaning": "忘记 (17)"
+  },
+  {
+    "id": 1027,
+    "kana": "あげる17",
+    "kanji": "上げる17",
+    "group_type": "II ",
+    "meaning": "给 (17)"
+  },
+  {
+    "id": 1028,
+    "kana": "もらう17",
+    "kanji": "もらう17",
+    "group_type": "I  ",
+    "meaning": "收到 (17)"
+  },
+  {
+    "id": 1029,
+    "kana": "くれる17",
+    "kanji": "くれる17",
+    "group_type": "II ",
+    "meaning": "给我 (17)"
+  },
+  {
+    "id": 1030,
+    "kana": "かりる17",
+    "kanji": "借りる17",
+    "group_type": "II ",
+    "meaning": "借 (17)"
+  },
+  {
+    "id": 1031,
+    "kana": "かす17",
+    "kanji": "貸す17",
+    "group_type": "I  ",
+    "meaning": "借给 (17)"
+  },
+  {
+    "id": 1032,
+    "kana": "すてる17",
+    "kanji": "捨てる17",
+    "group_type": "II ",
+    "meaning": "扔 (17)"
+  },
+  {
+    "id": 1033,
+    "kana": "いく18",
+    "kanji": "行く18",
+    "group_type": "I  ",
+    "meaning": "去 (18)"
+  },
+  {
+    "id": 1034,
+    "kana": "かく18",
+    "kanji": "書く18",
+    "group_type": "I  ",
+    "meaning": "写 (18)"
+  },
+  {
+    "id": 1035,
+    "kana": "よむ18",
+    "kanji": "読む18",
+    "group_type": "I  ",
+    "meaning": "读 (18)"
+  },
+  {
+    "id": 1036,
+    "kana": "のむ18",
+    "kanji": "飲む18",
+    "group_type": "I  ",
+    "meaning": "喝 (18)"
+  },
+  {
+    "id": 1037,
+    "kana": "はなす18",
+    "kanji": "話す18",
+    "group_type": "I  ",
+    "meaning": "说话 (18)"
+  },
+  {
+    "id": 1038,
+    "kana": "きく18",
+    "kanji": "聞く18",
+    "group_type": "I  ",
+    "meaning": "听 (18)"
+  },
+  {
+    "id": 1039,
+    "kana": "あるく18",
+    "kanji": "歩く18",
+    "group_type": "I  ",
+    "meaning": "走路 (18)"
+  },
+  {
+    "id": 1040,
+    "kana": "はたらく18",
+    "kanji": "働く18",
+    "group_type": "I  ",
+    "meaning": "工作 (18)"
+  },
+  {
+    "id": 1041,
+    "kana": "およぐ18",
+    "kanji": "泳ぐ18",
+    "group_type": "I  ",
+    "meaning": "游泳 (18)"
+  },
+  {
+    "id": 1042,
+    "kana": "あそぶ18",
+    "kanji": "遊ぶ18",
+    "group_type": "I  ",
+    "meaning": "玩 (18)"
+  },
+  {
+    "id": 1043,
+    "kana": "よぶ18",
+    "kanji": "呼ぶ18",
+    "group_type": "I  ",
+    "meaning": "叫 (18)"
+  },
+  {
+    "id": 1044,
+    "kana": "しぬ18",
+    "kanji": "死ぬ18",
+    "group_type": "I  ",
+    "meaning": "死 (18)"
+  },
+  {
+    "id": 1045,
+    "kana": "たつ18",
+    "kanji": "立つ18",
+    "group_type": "I  ",
+    "meaning": "站 (18)"
+  },
+  {
+    "id": 1046,
+    "kana": "まつ18",
+    "kanji": "待つ18",
+    "group_type": "I  ",
+    "meaning": "等 (18)"
+  },
+  {
+    "id": 1047,
+    "kana": "もつ18",
+    "kanji": "持つ18",
+    "group_type": "I  ",
+    "meaning": "拿 (18)"
+  },
+  {
+    "id": 1048,
+    "kana": "うつ18",
+    "kanji": "打つ18",
+    "group_type": "I  ",
+    "meaning": "打 (18)"
+  },
+  {
+    "id": 1049,
+    "kana": "かう18",
+    "kanji": "買う18",
+    "group_type": "I  ",
+    "meaning": "买 (18)"
+  },
+  {
+    "id": 1050,
+    "kana": "うる18",
+    "kanji": "売る18",
+    "group_type": "I  ",
+    "meaning": "卖 (18)"
+  },
+  {
+    "id": 1051,
+    "kana": "つくる18",
+    "kanji": "作る18",
+    "group_type": "I  ",
+    "meaning": "做 (18)"
+  },
+  {
+    "id": 1052,
+    "kana": "とる18",
+    "kanji": "取る18",
+    "group_type": "I  ",
+    "meaning": "拿 (18)"
+  },
+  {
+    "id": 1053,
+    "kana": "はいる18",
+    "kanji": "入る18",
+    "group_type": "I  ",
+    "meaning": "进入 (18)"
+  },
+  {
+    "id": 1054,
+    "kana": "かえる18",
+    "kanji": "帰る18",
+    "group_type": "I  ",
+    "meaning": "回去 (18)"
+  },
+  {
+    "id": 1055,
+    "kana": "のる18",
+    "kanji": "乗る18",
+    "group_type": "I  ",
+    "meaning": "乘坐 (18)"
+  },
+  {
+    "id": 1056,
+    "kana": "すわる18",
+    "kanji": "座る18",
+    "group_type": "I  ",
+    "meaning": "坐 (18)"
+  },
+  {
+    "id": 1057,
+    "kana": "はしる18",
+    "kanji": "走る18",
+    "group_type": "I  ",
+    "meaning": "跑 (18)"
+  },
+  {
+    "id": 1058,
+    "kana": "おわる18",
+    "kanji": "終わる18",
+    "group_type": "I  ",
+    "meaning": "结束 (18)"
+  },
+  {
+    "id": 1059,
+    "kana": "はじまる18",
+    "kanji": "始まる18",
+    "group_type": "I  ",
+    "meaning": "开始 (18)"
+  },
+  {
+    "id": 1060,
+    "kana": "わかる18",
+    "kanji": "分かる18",
+    "group_type": "I  ",
+    "meaning": "明白 (18)"
+  },
+  {
+    "id": 1061,
+    "kana": "ある18",
+    "kanji": "ある18",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (18)"
+  },
+  {
+    "id": 1062,
+    "kana": "なる18",
+    "kanji": "なる18",
+    "group_type": "I  ",
+    "meaning": "成为 (18)"
+  },
+  {
+    "id": 1063,
+    "kana": "たべる18",
+    "kanji": "食べる18",
+    "group_type": "II ",
+    "meaning": "吃 (18)"
+  },
+  {
+    "id": 1064,
+    "kana": "みる18",
+    "kanji": "見る18",
+    "group_type": "II ",
+    "meaning": "看 (18)"
+  },
+  {
+    "id": 1065,
+    "kana": "ねる18",
+    "kanji": "寝る18",
+    "group_type": "II ",
+    "meaning": "睡觉 (18)"
+  },
+  {
+    "id": 1066,
+    "kana": "おきる18",
+    "kanji": "起きる18",
+    "group_type": "II ",
+    "meaning": "起床 (18)"
+  },
+  {
+    "id": 1067,
+    "kana": "でる18",
+    "kanji": "出る18",
+    "group_type": "II ",
+    "meaning": "出去 (18)"
+  },
+  {
+    "id": 1068,
+    "kana": "いる18",
+    "kanji": "いる18",
+    "group_type": "II ",
+    "meaning": "有(生物) (18)"
+  },
+  {
+    "id": 1069,
+    "kana": "きる18",
+    "kanji": "着る18",
+    "group_type": "II ",
+    "meaning": "穿 (18)"
+  },
+  {
+    "id": 1070,
+    "kana": "あける18",
+    "kanji": "開ける18",
+    "group_type": "II ",
+    "meaning": "打开 (18)"
+  },
+  {
+    "id": 1071,
+    "kana": "しめる18",
+    "kanji": "閉める18",
+    "group_type": "II ",
+    "meaning": "关闭 (18)"
+  },
+  {
+    "id": 1072,
+    "kana": "つける18",
+    "kanji": "付ける18",
+    "group_type": "II ",
+    "meaning": "安装 (18)"
+  },
+  {
+    "id": 1073,
+    "kana": "けす18",
+    "kanji": "消す18",
+    "group_type": "I  ",
+    "meaning": "关掉 (18)"
+  },
+  {
+    "id": 1074,
+    "kana": "おしえる18",
+    "kanji": "教える18",
+    "group_type": "II ",
+    "meaning": "教 (18)"
+  },
+  {
+    "id": 1075,
+    "kana": "おぼえる18",
+    "kanji": "覚える18",
+    "group_type": "II ",
+    "meaning": "记住 (18)"
+  },
+  {
+    "id": 1076,
+    "kana": "わすれる18",
+    "kanji": "忘れる18",
+    "group_type": "II ",
+    "meaning": "忘记 (18)"
+  },
+  {
+    "id": 1077,
+    "kana": "あげる18",
+    "kanji": "上げる18",
+    "group_type": "II ",
+    "meaning": "给 (18)"
+  },
+  {
+    "id": 1078,
+    "kana": "もらう18",
+    "kanji": "もらう18",
+    "group_type": "I  ",
+    "meaning": "收到 (18)"
+  },
+  {
+    "id": 1079,
+    "kana": "くれる18",
+    "kanji": "くれる18",
+    "group_type": "II ",
+    "meaning": "给我 (18)"
+  },
+  {
+    "id": 1080,
+    "kana": "かりる18",
+    "kanji": "借りる18",
+    "group_type": "II ",
+    "meaning": "借 (18)"
+  },
+  {
+    "id": 1081,
+    "kana": "かす18",
+    "kanji": "貸す18",
+    "group_type": "I  ",
+    "meaning": "借给 (18)"
+  },
+  {
+    "id": 1082,
+    "kana": "すてる18",
+    "kanji": "捨てる18",
+    "group_type": "II ",
+    "meaning": "扔 (18)"
+  },
+  {
+    "id": 1083,
+    "kana": "いく19",
+    "kanji": "行く19",
+    "group_type": "I  ",
+    "meaning": "去 (19)"
+  },
+  {
+    "id": 1084,
+    "kana": "かく19",
+    "kanji": "書く19",
+    "group_type": "I  ",
+    "meaning": "写 (19)"
+  },
+  {
+    "id": 1085,
+    "kana": "よむ19",
+    "kanji": "読む19",
+    "group_type": "I  ",
+    "meaning": "读 (19)"
+  },
+  {
+    "id": 1086,
+    "kana": "のむ19",
+    "kanji": "飲む19",
+    "group_type": "I  ",
+    "meaning": "喝 (19)"
+  },
+  {
+    "id": 1087,
+    "kana": "はなす19",
+    "kanji": "話す19",
+    "group_type": "I  ",
+    "meaning": "说话 (19)"
+  },
+  {
+    "id": 1088,
+    "kana": "きく19",
+    "kanji": "聞く19",
+    "group_type": "I  ",
+    "meaning": "听 (19)"
+  },
+  {
+    "id": 1089,
+    "kana": "あるく19",
+    "kanji": "歩く19",
+    "group_type": "I  ",
+    "meaning": "走路 (19)"
+  },
+  {
+    "id": 1090,
+    "kana": "はたらく19",
+    "kanji": "働く19",
+    "group_type": "I  ",
+    "meaning": "工作 (19)"
+  },
+  {
+    "id": 1091,
+    "kana": "およぐ19",
+    "kanji": "泳ぐ19",
+    "group_type": "I  ",
+    "meaning": "游泳 (19)"
+  },
+  {
+    "id": 1092,
+    "kana": "あそぶ19",
+    "kanji": "遊ぶ19",
+    "group_type": "I  ",
+    "meaning": "玩 (19)"
+  },
+  {
+    "id": 1093,
+    "kana": "よぶ19",
+    "kanji": "呼ぶ19",
+    "group_type": "I  ",
+    "meaning": "叫 (19)"
+  },
+  {
+    "id": 1094,
+    "kana": "しぬ19",
+    "kanji": "死ぬ19",
+    "group_type": "I  ",
+    "meaning": "死 (19)"
+  },
+  {
+    "id": 1095,
+    "kana": "たつ19",
+    "kanji": "立つ19",
+    "group_type": "I  ",
+    "meaning": "站 (19)"
+  },
+  {
+    "id": 1096,
+    "kana": "まつ19",
+    "kanji": "待つ19",
+    "group_type": "I  ",
+    "meaning": "等 (19)"
+  },
+  {
+    "id": 1097,
+    "kana": "もつ19",
+    "kanji": "持つ19",
+    "group_type": "I  ",
+    "meaning": "拿 (19)"
+  },
+  {
+    "id": 1098,
+    "kana": "うつ19",
+    "kanji": "打つ19",
+    "group_type": "I  ",
+    "meaning": "打 (19)"
+  },
+  {
+    "id": 1099,
+    "kana": "かう19",
+    "kanji": "買う19",
+    "group_type": "I  ",
+    "meaning": "买 (19)"
+  },
+  {
+    "id": 1100,
+    "kana": "うる19",
+    "kanji": "売る19",
+    "group_type": "I  ",
+    "meaning": "卖 (19)"
+  },
+  {
+    "id": 1101,
+    "kana": "つくる19",
+    "kanji": "作る19",
+    "group_type": "I  ",
+    "meaning": "做 (19)"
+  },
+  {
+    "id": 1102,
+    "kana": "とる19",
+    "kanji": "取る19",
+    "group_type": "I  ",
+    "meaning": "拿 (19)"
+  },
+  {
+    "id": 1103,
+    "kana": "はいる19",
+    "kanji": "入る19",
+    "group_type": "I  ",
+    "meaning": "进入 (19)"
+  },
+  {
+    "id": 1104,
+    "kana": "かえる19",
+    "kanji": "帰る19",
+    "group_type": "I  ",
+    "meaning": "回去 (19)"
+  },
+  {
+    "id": 1105,
+    "kana": "のる19",
+    "kanji": "乗る19",
+    "group_type": "I  ",
+    "meaning": "乘坐 (19)"
+  },
+  {
+    "id": 1106,
+    "kana": "すわる19",
+    "kanji": "座る19",
+    "group_type": "I  ",
+    "meaning": "坐 (19)"
+  },
+  {
+    "id": 1107,
+    "kana": "はしる19",
+    "kanji": "走る19",
+    "group_type": "I  ",
+    "meaning": "跑 (19)"
+  },
+  {
+    "id": 1108,
+    "kana": "おわる19",
+    "kanji": "終わる19",
+    "group_type": "I  ",
+    "meaning": "结束 (19)"
+  },
+  {
+    "id": 1109,
+    "kana": "はじまる19",
+    "kanji": "始まる19",
+    "group_type": "I  ",
+    "meaning": "开始 (19)"
+  },
+  {
+    "id": 1110,
+    "kana": "わかる19",
+    "kanji": "分かる19",
+    "group_type": "I  ",
+    "meaning": "明白 (19)"
+  },
+  {
+    "id": 1111,
+    "kana": "ある19",
+    "kanji": "ある19",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (19)"
+  },
+  {
+    "id": 1112,
+    "kana": "なる19",
+    "kanji": "なる19",
+    "group_type": "I  ",
+    "meaning": "成为 (19)"
+  },
+  {
+    "id": 1113,
+    "kana": "たべる19",
+    "kanji": "食べる19",
+    "group_type": "II ",
+    "meaning": "吃 (19)"
+  },
+  {
+    "id": 1114,
+    "kana": "みる19",
+    "kanji": "見る19",
+    "group_type": "II ",
+    "meaning": "看 (19)"
+  },
+  {
+    "id": 1115,
+    "kana": "ねる19",
+    "kanji": "寝る19",
+    "group_type": "II ",
+    "meaning": "睡觉 (19)"
+  },
+  {
+    "id": 1116,
+    "kana": "おきる19",
+    "kanji": "起きる19",
+    "group_type": "II ",
+    "meaning": "起床 (19)"
+  },
+  {
+    "id": 1117,
+    "kana": "でる19",
+    "kanji": "出る19",
+    "group_type": "II ",
+    "meaning": "出去 (19)"
+  },
+  {
+    "id": 1118,
+    "kana": "いる19",
+    "kanji": "いる19",
+    "group_type": "II ",
+    "meaning": "有(生物) (19)"
+  },
+  {
+    "id": 1119,
+    "kana": "きる19",
+    "kanji": "着る19",
+    "group_type": "II ",
+    "meaning": "穿 (19)"
+  },
+  {
+    "id": 1120,
+    "kana": "あける19",
+    "kanji": "開ける19",
+    "group_type": "II ",
+    "meaning": "打开 (19)"
+  },
+  {
+    "id": 1121,
+    "kana": "しめる19",
+    "kanji": "閉める19",
+    "group_type": "II ",
+    "meaning": "关闭 (19)"
+  },
+  {
+    "id": 1122,
+    "kana": "つける19",
+    "kanji": "付ける19",
+    "group_type": "II ",
+    "meaning": "安装 (19)"
+  },
+  {
+    "id": 1123,
+    "kana": "けす19",
+    "kanji": "消す19",
+    "group_type": "I  ",
+    "meaning": "关掉 (19)"
+  },
+  {
+    "id": 1124,
+    "kana": "おしえる19",
+    "kanji": "教える19",
+    "group_type": "II ",
+    "meaning": "教 (19)"
+  },
+  {
+    "id": 1125,
+    "kana": "おぼえる19",
+    "kanji": "覚える19",
+    "group_type": "II ",
+    "meaning": "记住 (19)"
+  },
+  {
+    "id": 1126,
+    "kana": "わすれる19",
+    "kanji": "忘れる19",
+    "group_type": "II ",
+    "meaning": "忘记 (19)"
+  },
+  {
+    "id": 1127,
+    "kana": "あげる19",
+    "kanji": "上げる19",
+    "group_type": "II ",
+    "meaning": "给 (19)"
+  },
+  {
+    "id": 1128,
+    "kana": "もらう19",
+    "kanji": "もらう19",
+    "group_type": "I  ",
+    "meaning": "收到 (19)"
+  },
+  {
+    "id": 1129,
+    "kana": "くれる19",
+    "kanji": "くれる19",
+    "group_type": "II ",
+    "meaning": "给我 (19)"
+  },
+  {
+    "id": 1130,
+    "kana": "かりる19",
+    "kanji": "借りる19",
+    "group_type": "II ",
+    "meaning": "借 (19)"
+  },
+  {
+    "id": 1131,
+    "kana": "かす19",
+    "kanji": "貸す19",
+    "group_type": "I  ",
+    "meaning": "借给 (19)"
+  },
+  {
+    "id": 1132,
+    "kana": "すてる19",
+    "kanji": "捨てる19",
+    "group_type": "II ",
+    "meaning": "扔 (19)"
+  },
+  {
+    "id": 1133,
+    "kana": "いく20",
+    "kanji": "行く20",
+    "group_type": "I  ",
+    "meaning": "去 (20)"
+  },
+  {
+    "id": 1134,
+    "kana": "かく20",
+    "kanji": "書く20",
+    "group_type": "I  ",
+    "meaning": "写 (20)"
+  },
+  {
+    "id": 1135,
+    "kana": "よむ20",
+    "kanji": "読む20",
+    "group_type": "I  ",
+    "meaning": "读 (20)"
+  },
+  {
+    "id": 1136,
+    "kana": "のむ20",
+    "kanji": "飲む20",
+    "group_type": "I  ",
+    "meaning": "喝 (20)"
+  },
+  {
+    "id": 1137,
+    "kana": "はなす20",
+    "kanji": "話す20",
+    "group_type": "I  ",
+    "meaning": "说话 (20)"
+  },
+  {
+    "id": 1138,
+    "kana": "きく20",
+    "kanji": "聞く20",
+    "group_type": "I  ",
+    "meaning": "听 (20)"
+  },
+  {
+    "id": 1139,
+    "kana": "あるく20",
+    "kanji": "歩く20",
+    "group_type": "I  ",
+    "meaning": "走路 (20)"
+  },
+  {
+    "id": 1140,
+    "kana": "はたらく20",
+    "kanji": "働く20",
+    "group_type": "I  ",
+    "meaning": "工作 (20)"
+  },
+  {
+    "id": 1141,
+    "kana": "およぐ20",
+    "kanji": "泳ぐ20",
+    "group_type": "I  ",
+    "meaning": "游泳 (20)"
+  },
+  {
+    "id": 1142,
+    "kana": "あそぶ20",
+    "kanji": "遊ぶ20",
+    "group_type": "I  ",
+    "meaning": "玩 (20)"
+  },
+  {
+    "id": 1143,
+    "kana": "よぶ20",
+    "kanji": "呼ぶ20",
+    "group_type": "I  ",
+    "meaning": "叫 (20)"
+  },
+  {
+    "id": 1144,
+    "kana": "しぬ20",
+    "kanji": "死ぬ20",
+    "group_type": "I  ",
+    "meaning": "死 (20)"
+  },
+  {
+    "id": 1145,
+    "kana": "たつ20",
+    "kanji": "立つ20",
+    "group_type": "I  ",
+    "meaning": "站 (20)"
+  },
+  {
+    "id": 1146,
+    "kana": "まつ20",
+    "kanji": "待つ20",
+    "group_type": "I  ",
+    "meaning": "等 (20)"
+  },
+  {
+    "id": 1147,
+    "kana": "もつ20",
+    "kanji": "持つ20",
+    "group_type": "I  ",
+    "meaning": "拿 (20)"
+  },
+  {
+    "id": 1148,
+    "kana": "うつ20",
+    "kanji": "打つ20",
+    "group_type": "I  ",
+    "meaning": "打 (20)"
+  },
+  {
+    "id": 1149,
+    "kana": "かう20",
+    "kanji": "買う20",
+    "group_type": "I  ",
+    "meaning": "买 (20)"
+  },
+  {
+    "id": 1150,
+    "kana": "うる20",
+    "kanji": "売る20",
+    "group_type": "I  ",
+    "meaning": "卖 (20)"
+  },
+  {
+    "id": 1151,
+    "kana": "つくる20",
+    "kanji": "作る20",
+    "group_type": "I  ",
+    "meaning": "做 (20)"
+  },
+  {
+    "id": 1152,
+    "kana": "とる20",
+    "kanji": "取る20",
+    "group_type": "I  ",
+    "meaning": "拿 (20)"
+  },
+  {
+    "id": 1153,
+    "kana": "はいる20",
+    "kanji": "入る20",
+    "group_type": "I  ",
+    "meaning": "进入 (20)"
+  },
+  {
+    "id": 1154,
+    "kana": "かえる20",
+    "kanji": "帰る20",
+    "group_type": "I  ",
+    "meaning": "回去 (20)"
+  },
+  {
+    "id": 1155,
+    "kana": "のる20",
+    "kanji": "乗る20",
+    "group_type": "I  ",
+    "meaning": "乘坐 (20)"
+  },
+  {
+    "id": 1156,
+    "kana": "すわる20",
+    "kanji": "座る20",
+    "group_type": "I  ",
+    "meaning": "坐 (20)"
+  },
+  {
+    "id": 1157,
+    "kana": "はしる20",
+    "kanji": "走る20",
+    "group_type": "I  ",
+    "meaning": "跑 (20)"
+  },
+  {
+    "id": 1158,
+    "kana": "おわる20",
+    "kanji": "終わる20",
+    "group_type": "I  ",
+    "meaning": "结束 (20)"
+  },
+  {
+    "id": 1159,
+    "kana": "はじまる20",
+    "kanji": "始まる20",
+    "group_type": "I  ",
+    "meaning": "开始 (20)"
+  },
+  {
+    "id": 1160,
+    "kana": "わかる20",
+    "kanji": "分かる20",
+    "group_type": "I  ",
+    "meaning": "明白 (20)"
+  },
+  {
+    "id": 1161,
+    "kana": "ある20",
+    "kanji": "ある20",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (20)"
+  },
+  {
+    "id": 1162,
+    "kana": "なる20",
+    "kanji": "なる20",
+    "group_type": "I  ",
+    "meaning": "成为 (20)"
+  },
+  {
+    "id": 1163,
+    "kana": "たべる20",
+    "kanji": "食べる20",
+    "group_type": "II ",
+    "meaning": "吃 (20)"
+  },
+  {
+    "id": 1164,
+    "kana": "みる20",
+    "kanji": "見る20",
+    "group_type": "II ",
+    "meaning": "看 (20)"
+  },
+  {
+    "id": 1165,
+    "kana": "ねる20",
+    "kanji": "寝る20",
+    "group_type": "II ",
+    "meaning": "睡觉 (20)"
+  },
+  {
+    "id": 1166,
+    "kana": "おきる20",
+    "kanji": "起きる20",
+    "group_type": "II ",
+    "meaning": "起床 (20)"
+  },
+  {
+    "id": 1167,
+    "kana": "でる20",
+    "kanji": "出る20",
+    "group_type": "II ",
+    "meaning": "出去 (20)"
+  },
+  {
+    "id": 1168,
+    "kana": "いる20",
+    "kanji": "いる20",
+    "group_type": "II ",
+    "meaning": "有(生物) (20)"
+  },
+  {
+    "id": 1169,
+    "kana": "きる20",
+    "kanji": "着る20",
+    "group_type": "II ",
+    "meaning": "穿 (20)"
+  },
+  {
+    "id": 1170,
+    "kana": "あける20",
+    "kanji": "開ける20",
+    "group_type": "II ",
+    "meaning": "打开 (20)"
+  },
+  {
+    "id": 1171,
+    "kana": "しめる20",
+    "kanji": "閉める20",
+    "group_type": "II ",
+    "meaning": "关闭 (20)"
+  },
+  {
+    "id": 1172,
+    "kana": "つける20",
+    "kanji": "付ける20",
+    "group_type": "II ",
+    "meaning": "安装 (20)"
+  },
+  {
+    "id": 1173,
+    "kana": "けす20",
+    "kanji": "消す20",
+    "group_type": "I  ",
+    "meaning": "关掉 (20)"
+  },
+  {
+    "id": 1174,
+    "kana": "おしえる20",
+    "kanji": "教える20",
+    "group_type": "II ",
+    "meaning": "教 (20)"
+  },
+  {
+    "id": 1175,
+    "kana": "おぼえる20",
+    "kanji": "覚える20",
+    "group_type": "II ",
+    "meaning": "记住 (20)"
+  },
+  {
+    "id": 1176,
+    "kana": "わすれる20",
+    "kanji": "忘れる20",
+    "group_type": "II ",
+    "meaning": "忘记 (20)"
+  },
+  {
+    "id": 1177,
+    "kana": "あげる20",
+    "kanji": "上げる20",
+    "group_type": "II ",
+    "meaning": "给 (20)"
+  },
+  {
+    "id": 1178,
+    "kana": "もらう20",
+    "kanji": "もらう20",
+    "group_type": "I  ",
+    "meaning": "收到 (20)"
+  },
+  {
+    "id": 1179,
+    "kana": "くれる20",
+    "kanji": "くれる20",
+    "group_type": "II ",
+    "meaning": "给我 (20)"
+  },
+  {
+    "id": 1180,
+    "kana": "かりる20",
+    "kanji": "借りる20",
+    "group_type": "II ",
+    "meaning": "借 (20)"
+  },
+  {
+    "id": 1181,
+    "kana": "かす20",
+    "kanji": "貸す20",
+    "group_type": "I  ",
+    "meaning": "借给 (20)"
+  },
+  {
+    "id": 1182,
+    "kana": "すてる20",
+    "kanji": "捨てる20",
+    "group_type": "II ",
+    "meaning": "扔 (20)"
+  },
+  {
+    "id": 1183,
+    "kana": "いく21",
+    "kanji": "行く21",
+    "group_type": "I  ",
+    "meaning": "去 (21)"
+  },
+  {
+    "id": 1184,
+    "kana": "かく21",
+    "kanji": "書く21",
+    "group_type": "I  ",
+    "meaning": "写 (21)"
+  },
+  {
+    "id": 1185,
+    "kana": "よむ21",
+    "kanji": "読む21",
+    "group_type": "I  ",
+    "meaning": "读 (21)"
+  },
+  {
+    "id": 1186,
+    "kana": "のむ21",
+    "kanji": "飲む21",
+    "group_type": "I  ",
+    "meaning": "喝 (21)"
+  },
+  {
+    "id": 1187,
+    "kana": "はなす21",
+    "kanji": "話す21",
+    "group_type": "I  ",
+    "meaning": "说话 (21)"
+  },
+  {
+    "id": 1188,
+    "kana": "きく21",
+    "kanji": "聞く21",
+    "group_type": "I  ",
+    "meaning": "听 (21)"
+  },
+  {
+    "id": 1189,
+    "kana": "あるく21",
+    "kanji": "歩く21",
+    "group_type": "I  ",
+    "meaning": "走路 (21)"
+  },
+  {
+    "id": 1190,
+    "kana": "はたらく21",
+    "kanji": "働く21",
+    "group_type": "I  ",
+    "meaning": "工作 (21)"
+  },
+  {
+    "id": 1191,
+    "kana": "およぐ21",
+    "kanji": "泳ぐ21",
+    "group_type": "I  ",
+    "meaning": "游泳 (21)"
+  },
+  {
+    "id": 1192,
+    "kana": "あそぶ21",
+    "kanji": "遊ぶ21",
+    "group_type": "I  ",
+    "meaning": "玩 (21)"
+  },
+  {
+    "id": 1193,
+    "kana": "よぶ21",
+    "kanji": "呼ぶ21",
+    "group_type": "I  ",
+    "meaning": "叫 (21)"
+  },
+  {
+    "id": 1194,
+    "kana": "しぬ21",
+    "kanji": "死ぬ21",
+    "group_type": "I  ",
+    "meaning": "死 (21)"
+  },
+  {
+    "id": 1195,
+    "kana": "たつ21",
+    "kanji": "立つ21",
+    "group_type": "I  ",
+    "meaning": "站 (21)"
+  },
+  {
+    "id": 1196,
+    "kana": "まつ21",
+    "kanji": "待つ21",
+    "group_type": "I  ",
+    "meaning": "等 (21)"
+  },
+  {
+    "id": 1197,
+    "kana": "もつ21",
+    "kanji": "持つ21",
+    "group_type": "I  ",
+    "meaning": "拿 (21)"
+  },
+  {
+    "id": 1198,
+    "kana": "うつ21",
+    "kanji": "打つ21",
+    "group_type": "I  ",
+    "meaning": "打 (21)"
+  },
+  {
+    "id": 1199,
+    "kana": "かう21",
+    "kanji": "買う21",
+    "group_type": "I  ",
+    "meaning": "买 (21)"
+  },
+  {
+    "id": 1200,
+    "kana": "うる21",
+    "kanji": "売る21",
+    "group_type": "I  ",
+    "meaning": "卖 (21)"
+  },
+  {
+    "id": 1201,
+    "kana": "つくる21",
+    "kanji": "作る21",
+    "group_type": "I  ",
+    "meaning": "做 (21)"
+  },
+  {
+    "id": 1202,
+    "kana": "とる21",
+    "kanji": "取る21",
+    "group_type": "I  ",
+    "meaning": "拿 (21)"
+  },
+  {
+    "id": 1203,
+    "kana": "はいる21",
+    "kanji": "入る21",
+    "group_type": "I  ",
+    "meaning": "进入 (21)"
+  },
+  {
+    "id": 1204,
+    "kana": "かえる21",
+    "kanji": "帰る21",
+    "group_type": "I  ",
+    "meaning": "回去 (21)"
+  },
+  {
+    "id": 1205,
+    "kana": "のる21",
+    "kanji": "乗る21",
+    "group_type": "I  ",
+    "meaning": "乘坐 (21)"
+  },
+  {
+    "id": 1206,
+    "kana": "すわる21",
+    "kanji": "座る21",
+    "group_type": "I  ",
+    "meaning": "坐 (21)"
+  },
+  {
+    "id": 1207,
+    "kana": "はしる21",
+    "kanji": "走る21",
+    "group_type": "I  ",
+    "meaning": "跑 (21)"
+  },
+  {
+    "id": 1208,
+    "kana": "おわる21",
+    "kanji": "終わる21",
+    "group_type": "I  ",
+    "meaning": "结束 (21)"
+  },
+  {
+    "id": 1209,
+    "kana": "はじまる21",
+    "kanji": "始まる21",
+    "group_type": "I  ",
+    "meaning": "开始 (21)"
+  },
+  {
+    "id": 1210,
+    "kana": "わかる21",
+    "kanji": "分かる21",
+    "group_type": "I  ",
+    "meaning": "明白 (21)"
+  },
+  {
+    "id": 1211,
+    "kana": "ある21",
+    "kanji": "ある21",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (21)"
+  },
+  {
+    "id": 1212,
+    "kana": "なる21",
+    "kanji": "なる21",
+    "group_type": "I  ",
+    "meaning": "成为 (21)"
+  },
+  {
+    "id": 1213,
+    "kana": "たべる21",
+    "kanji": "食べる21",
+    "group_type": "II ",
+    "meaning": "吃 (21)"
+  },
+  {
+    "id": 1214,
+    "kana": "みる21",
+    "kanji": "見る21",
+    "group_type": "II ",
+    "meaning": "看 (21)"
+  },
+  {
+    "id": 1215,
+    "kana": "ねる21",
+    "kanji": "寝る21",
+    "group_type": "II ",
+    "meaning": "睡觉 (21)"
+  },
+  {
+    "id": 1216,
+    "kana": "おきる21",
+    "kanji": "起きる21",
+    "group_type": "II ",
+    "meaning": "起床 (21)"
+  },
+  {
+    "id": 1217,
+    "kana": "でる21",
+    "kanji": "出る21",
+    "group_type": "II ",
+    "meaning": "出去 (21)"
+  },
+  {
+    "id": 1218,
+    "kana": "いる21",
+    "kanji": "いる21",
+    "group_type": "II ",
+    "meaning": "有(生物) (21)"
+  },
+  {
+    "id": 1219,
+    "kana": "きる21",
+    "kanji": "着る21",
+    "group_type": "II ",
+    "meaning": "穿 (21)"
+  },
+  {
+    "id": 1220,
+    "kana": "あける21",
+    "kanji": "開ける21",
+    "group_type": "II ",
+    "meaning": "打开 (21)"
+  },
+  {
+    "id": 1221,
+    "kana": "しめる21",
+    "kanji": "閉める21",
+    "group_type": "II ",
+    "meaning": "关闭 (21)"
+  },
+  {
+    "id": 1222,
+    "kana": "つける21",
+    "kanji": "付ける21",
+    "group_type": "II ",
+    "meaning": "安装 (21)"
+  },
+  {
+    "id": 1223,
+    "kana": "けす21",
+    "kanji": "消す21",
+    "group_type": "I  ",
+    "meaning": "关掉 (21)"
+  },
+  {
+    "id": 1224,
+    "kana": "おしえる21",
+    "kanji": "教える21",
+    "group_type": "II ",
+    "meaning": "教 (21)"
+  },
+  {
+    "id": 1225,
+    "kana": "おぼえる21",
+    "kanji": "覚える21",
+    "group_type": "II ",
+    "meaning": "记住 (21)"
+  },
+  {
+    "id": 1226,
+    "kana": "わすれる21",
+    "kanji": "忘れる21",
+    "group_type": "II ",
+    "meaning": "忘记 (21)"
+  },
+  {
+    "id": 1227,
+    "kana": "あげる21",
+    "kanji": "上げる21",
+    "group_type": "II ",
+    "meaning": "给 (21)"
+  },
+  {
+    "id": 1228,
+    "kana": "もらう21",
+    "kanji": "もらう21",
+    "group_type": "I  ",
+    "meaning": "收到 (21)"
+  },
+  {
+    "id": 1229,
+    "kana": "くれる21",
+    "kanji": "くれる21",
+    "group_type": "II ",
+    "meaning": "给我 (21)"
+  },
+  {
+    "id": 1230,
+    "kana": "かりる21",
+    "kanji": "借りる21",
+    "group_type": "II ",
+    "meaning": "借 (21)"
+  },
+  {
+    "id": 1231,
+    "kana": "かす21",
+    "kanji": "貸す21",
+    "group_type": "I  ",
+    "meaning": "借给 (21)"
+  },
+  {
+    "id": 1232,
+    "kana": "すてる21",
+    "kanji": "捨てる21",
+    "group_type": "II ",
+    "meaning": "扔 (21)"
+  },
+  {
+    "id": 1233,
+    "kana": "いく22",
+    "kanji": "行く22",
+    "group_type": "I  ",
+    "meaning": "去 (22)"
+  },
+  {
+    "id": 1234,
+    "kana": "かく22",
+    "kanji": "書く22",
+    "group_type": "I  ",
+    "meaning": "写 (22)"
+  },
+  {
+    "id": 1235,
+    "kana": "よむ22",
+    "kanji": "読む22",
+    "group_type": "I  ",
+    "meaning": "读 (22)"
+  },
+  {
+    "id": 1236,
+    "kana": "のむ22",
+    "kanji": "飲む22",
+    "group_type": "I  ",
+    "meaning": "喝 (22)"
+  },
+  {
+    "id": 1237,
+    "kana": "はなす22",
+    "kanji": "話す22",
+    "group_type": "I  ",
+    "meaning": "说话 (22)"
+  },
+  {
+    "id": 1238,
+    "kana": "きく22",
+    "kanji": "聞く22",
+    "group_type": "I  ",
+    "meaning": "听 (22)"
+  },
+  {
+    "id": 1239,
+    "kana": "あるく22",
+    "kanji": "歩く22",
+    "group_type": "I  ",
+    "meaning": "走路 (22)"
+  },
+  {
+    "id": 1240,
+    "kana": "はたらく22",
+    "kanji": "働く22",
+    "group_type": "I  ",
+    "meaning": "工作 (22)"
+  },
+  {
+    "id": 1241,
+    "kana": "およぐ22",
+    "kanji": "泳ぐ22",
+    "group_type": "I  ",
+    "meaning": "游泳 (22)"
+  },
+  {
+    "id": 1242,
+    "kana": "あそぶ22",
+    "kanji": "遊ぶ22",
+    "group_type": "I  ",
+    "meaning": "玩 (22)"
+  },
+  {
+    "id": 1243,
+    "kana": "よぶ22",
+    "kanji": "呼ぶ22",
+    "group_type": "I  ",
+    "meaning": "叫 (22)"
+  },
+  {
+    "id": 1244,
+    "kana": "しぬ22",
+    "kanji": "死ぬ22",
+    "group_type": "I  ",
+    "meaning": "死 (22)"
+  },
+  {
+    "id": 1245,
+    "kana": "たつ22",
+    "kanji": "立つ22",
+    "group_type": "I  ",
+    "meaning": "站 (22)"
+  },
+  {
+    "id": 1246,
+    "kana": "まつ22",
+    "kanji": "待つ22",
+    "group_type": "I  ",
+    "meaning": "等 (22)"
+  },
+  {
+    "id": 1247,
+    "kana": "もつ22",
+    "kanji": "持つ22",
+    "group_type": "I  ",
+    "meaning": "拿 (22)"
+  },
+  {
+    "id": 1248,
+    "kana": "うつ22",
+    "kanji": "打つ22",
+    "group_type": "I  ",
+    "meaning": "打 (22)"
+  },
+  {
+    "id": 1249,
+    "kana": "かう22",
+    "kanji": "買う22",
+    "group_type": "I  ",
+    "meaning": "买 (22)"
+  },
+  {
+    "id": 1250,
+    "kana": "うる22",
+    "kanji": "売る22",
+    "group_type": "I  ",
+    "meaning": "卖 (22)"
+  },
+  {
+    "id": 1251,
+    "kana": "つくる22",
+    "kanji": "作る22",
+    "group_type": "I  ",
+    "meaning": "做 (22)"
+  },
+  {
+    "id": 1252,
+    "kana": "とる22",
+    "kanji": "取る22",
+    "group_type": "I  ",
+    "meaning": "拿 (22)"
+  },
+  {
+    "id": 1253,
+    "kana": "はいる22",
+    "kanji": "入る22",
+    "group_type": "I  ",
+    "meaning": "进入 (22)"
+  },
+  {
+    "id": 1254,
+    "kana": "かえる22",
+    "kanji": "帰る22",
+    "group_type": "I  ",
+    "meaning": "回去 (22)"
+  },
+  {
+    "id": 1255,
+    "kana": "のる22",
+    "kanji": "乗る22",
+    "group_type": "I  ",
+    "meaning": "乘坐 (22)"
+  },
+  {
+    "id": 1256,
+    "kana": "すわる22",
+    "kanji": "座る22",
+    "group_type": "I  ",
+    "meaning": "坐 (22)"
+  },
+  {
+    "id": 1257,
+    "kana": "はしる22",
+    "kanji": "走る22",
+    "group_type": "I  ",
+    "meaning": "跑 (22)"
+  },
+  {
+    "id": 1258,
+    "kana": "おわる22",
+    "kanji": "終わる22",
+    "group_type": "I  ",
+    "meaning": "结束 (22)"
+  },
+  {
+    "id": 1259,
+    "kana": "はじまる22",
+    "kanji": "始まる22",
+    "group_type": "I  ",
+    "meaning": "开始 (22)"
+  },
+  {
+    "id": 1260,
+    "kana": "わかる22",
+    "kanji": "分かる22",
+    "group_type": "I  ",
+    "meaning": "明白 (22)"
+  },
+  {
+    "id": 1261,
+    "kana": "ある22",
+    "kanji": "ある22",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (22)"
+  },
+  {
+    "id": 1262,
+    "kana": "なる22",
+    "kanji": "なる22",
+    "group_type": "I  ",
+    "meaning": "成为 (22)"
+  },
+  {
+    "id": 1263,
+    "kana": "たべる22",
+    "kanji": "食べる22",
+    "group_type": "II ",
+    "meaning": "吃 (22)"
+  },
+  {
+    "id": 1264,
+    "kana": "みる22",
+    "kanji": "見る22",
+    "group_type": "II ",
+    "meaning": "看 (22)"
+  },
+  {
+    "id": 1265,
+    "kana": "ねる22",
+    "kanji": "寝る22",
+    "group_type": "II ",
+    "meaning": "睡觉 (22)"
+  },
+  {
+    "id": 1266,
+    "kana": "おきる22",
+    "kanji": "起きる22",
+    "group_type": "II ",
+    "meaning": "起床 (22)"
+  },
+  {
+    "id": 1267,
+    "kana": "でる22",
+    "kanji": "出る22",
+    "group_type": "II ",
+    "meaning": "出去 (22)"
+  },
+  {
+    "id": 1268,
+    "kana": "いる22",
+    "kanji": "いる22",
+    "group_type": "II ",
+    "meaning": "有(生物) (22)"
+  },
+  {
+    "id": 1269,
+    "kana": "きる22",
+    "kanji": "着る22",
+    "group_type": "II ",
+    "meaning": "穿 (22)"
+  },
+  {
+    "id": 1270,
+    "kana": "あける22",
+    "kanji": "開ける22",
+    "group_type": "II ",
+    "meaning": "打开 (22)"
+  },
+  {
+    "id": 1271,
+    "kana": "しめる22",
+    "kanji": "閉める22",
+    "group_type": "II ",
+    "meaning": "关闭 (22)"
+  },
+  {
+    "id": 1272,
+    "kana": "つける22",
+    "kanji": "付ける22",
+    "group_type": "II ",
+    "meaning": "安装 (22)"
+  },
+  {
+    "id": 1273,
+    "kana": "けす22",
+    "kanji": "消す22",
+    "group_type": "I  ",
+    "meaning": "关掉 (22)"
+  },
+  {
+    "id": 1274,
+    "kana": "おしえる22",
+    "kanji": "教える22",
+    "group_type": "II ",
+    "meaning": "教 (22)"
+  },
+  {
+    "id": 1275,
+    "kana": "おぼえる22",
+    "kanji": "覚える22",
+    "group_type": "II ",
+    "meaning": "记住 (22)"
+  },
+  {
+    "id": 1276,
+    "kana": "わすれる22",
+    "kanji": "忘れる22",
+    "group_type": "II ",
+    "meaning": "忘记 (22)"
+  },
+  {
+    "id": 1277,
+    "kana": "あげる22",
+    "kanji": "上げる22",
+    "group_type": "II ",
+    "meaning": "给 (22)"
+  },
+  {
+    "id": 1278,
+    "kana": "もらう22",
+    "kanji": "もらう22",
+    "group_type": "I  ",
+    "meaning": "收到 (22)"
+  },
+  {
+    "id": 1279,
+    "kana": "くれる22",
+    "kanji": "くれる22",
+    "group_type": "II ",
+    "meaning": "给我 (22)"
+  },
+  {
+    "id": 1280,
+    "kana": "かりる22",
+    "kanji": "借りる22",
+    "group_type": "II ",
+    "meaning": "借 (22)"
+  },
+  {
+    "id": 1281,
+    "kana": "かす22",
+    "kanji": "貸す22",
+    "group_type": "I  ",
+    "meaning": "借给 (22)"
+  },
+  {
+    "id": 1282,
+    "kana": "すてる22",
+    "kanji": "捨てる22",
+    "group_type": "II ",
+    "meaning": "扔 (22)"
+  },
+  {
+    "id": 1283,
+    "kana": "いく23",
+    "kanji": "行く23",
+    "group_type": "I  ",
+    "meaning": "去 (23)"
+  },
+  {
+    "id": 1284,
+    "kana": "かく23",
+    "kanji": "書く23",
+    "group_type": "I  ",
+    "meaning": "写 (23)"
+  },
+  {
+    "id": 1285,
+    "kana": "よむ23",
+    "kanji": "読む23",
+    "group_type": "I  ",
+    "meaning": "读 (23)"
+  },
+  {
+    "id": 1286,
+    "kana": "のむ23",
+    "kanji": "飲む23",
+    "group_type": "I  ",
+    "meaning": "喝 (23)"
+  },
+  {
+    "id": 1287,
+    "kana": "はなす23",
+    "kanji": "話す23",
+    "group_type": "I  ",
+    "meaning": "说话 (23)"
+  },
+  {
+    "id": 1288,
+    "kana": "きく23",
+    "kanji": "聞く23",
+    "group_type": "I  ",
+    "meaning": "听 (23)"
+  },
+  {
+    "id": 1289,
+    "kana": "あるく23",
+    "kanji": "歩く23",
+    "group_type": "I  ",
+    "meaning": "走路 (23)"
+  },
+  {
+    "id": 1290,
+    "kana": "はたらく23",
+    "kanji": "働く23",
+    "group_type": "I  ",
+    "meaning": "工作 (23)"
+  },
+  {
+    "id": 1291,
+    "kana": "およぐ23",
+    "kanji": "泳ぐ23",
+    "group_type": "I  ",
+    "meaning": "游泳 (23)"
+  },
+  {
+    "id": 1292,
+    "kana": "あそぶ23",
+    "kanji": "遊ぶ23",
+    "group_type": "I  ",
+    "meaning": "玩 (23)"
+  },
+  {
+    "id": 1293,
+    "kana": "よぶ23",
+    "kanji": "呼ぶ23",
+    "group_type": "I  ",
+    "meaning": "叫 (23)"
+  },
+  {
+    "id": 1294,
+    "kana": "しぬ23",
+    "kanji": "死ぬ23",
+    "group_type": "I  ",
+    "meaning": "死 (23)"
+  },
+  {
+    "id": 1295,
+    "kana": "たつ23",
+    "kanji": "立つ23",
+    "group_type": "I  ",
+    "meaning": "站 (23)"
+  },
+  {
+    "id": 1296,
+    "kana": "まつ23",
+    "kanji": "待つ23",
+    "group_type": "I  ",
+    "meaning": "等 (23)"
+  },
+  {
+    "id": 1297,
+    "kana": "もつ23",
+    "kanji": "持つ23",
+    "group_type": "I  ",
+    "meaning": "拿 (23)"
+  },
+  {
+    "id": 1298,
+    "kana": "うつ23",
+    "kanji": "打つ23",
+    "group_type": "I  ",
+    "meaning": "打 (23)"
+  },
+  {
+    "id": 1299,
+    "kana": "かう23",
+    "kanji": "買う23",
+    "group_type": "I  ",
+    "meaning": "买 (23)"
+  },
+  {
+    "id": 1300,
+    "kana": "うる23",
+    "kanji": "売る23",
+    "group_type": "I  ",
+    "meaning": "卖 (23)"
+  },
+  {
+    "id": 1301,
+    "kana": "つくる23",
+    "kanji": "作る23",
+    "group_type": "I  ",
+    "meaning": "做 (23)"
+  },
+  {
+    "id": 1302,
+    "kana": "とる23",
+    "kanji": "取る23",
+    "group_type": "I  ",
+    "meaning": "拿 (23)"
+  },
+  {
+    "id": 1303,
+    "kana": "はいる23",
+    "kanji": "入る23",
+    "group_type": "I  ",
+    "meaning": "进入 (23)"
+  },
+  {
+    "id": 1304,
+    "kana": "かえる23",
+    "kanji": "帰る23",
+    "group_type": "I  ",
+    "meaning": "回去 (23)"
+  },
+  {
+    "id": 1305,
+    "kana": "のる23",
+    "kanji": "乗る23",
+    "group_type": "I  ",
+    "meaning": "乘坐 (23)"
+  },
+  {
+    "id": 1306,
+    "kana": "すわる23",
+    "kanji": "座る23",
+    "group_type": "I  ",
+    "meaning": "坐 (23)"
+  },
+  {
+    "id": 1307,
+    "kana": "はしる23",
+    "kanji": "走る23",
+    "group_type": "I  ",
+    "meaning": "跑 (23)"
+  },
+  {
+    "id": 1308,
+    "kana": "おわる23",
+    "kanji": "終わる23",
+    "group_type": "I  ",
+    "meaning": "结束 (23)"
+  },
+  {
+    "id": 1309,
+    "kana": "はじまる23",
+    "kanji": "始まる23",
+    "group_type": "I  ",
+    "meaning": "开始 (23)"
+  },
+  {
+    "id": 1310,
+    "kana": "わかる23",
+    "kanji": "分かる23",
+    "group_type": "I  ",
+    "meaning": "明白 (23)"
+  },
+  {
+    "id": 1311,
+    "kana": "ある23",
+    "kanji": "ある23",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (23)"
+  },
+  {
+    "id": 1312,
+    "kana": "なる23",
+    "kanji": "なる23",
+    "group_type": "I  ",
+    "meaning": "成为 (23)"
+  },
+  {
+    "id": 1313,
+    "kana": "たべる23",
+    "kanji": "食べる23",
+    "group_type": "II ",
+    "meaning": "吃 (23)"
+  },
+  {
+    "id": 1314,
+    "kana": "みる23",
+    "kanji": "見る23",
+    "group_type": "II ",
+    "meaning": "看 (23)"
+  },
+  {
+    "id": 1315,
+    "kana": "ねる23",
+    "kanji": "寝る23",
+    "group_type": "II ",
+    "meaning": "睡觉 (23)"
+  },
+  {
+    "id": 1316,
+    "kana": "おきる23",
+    "kanji": "起きる23",
+    "group_type": "II ",
+    "meaning": "起床 (23)"
+  },
+  {
+    "id": 1317,
+    "kana": "でる23",
+    "kanji": "出る23",
+    "group_type": "II ",
+    "meaning": "出去 (23)"
+  },
+  {
+    "id": 1318,
+    "kana": "いる23",
+    "kanji": "いる23",
+    "group_type": "II ",
+    "meaning": "有(生物) (23)"
+  },
+  {
+    "id": 1319,
+    "kana": "きる23",
+    "kanji": "着る23",
+    "group_type": "II ",
+    "meaning": "穿 (23)"
+  },
+  {
+    "id": 1320,
+    "kana": "あける23",
+    "kanji": "開ける23",
+    "group_type": "II ",
+    "meaning": "打开 (23)"
+  },
+  {
+    "id": 1321,
+    "kana": "しめる23",
+    "kanji": "閉める23",
+    "group_type": "II ",
+    "meaning": "关闭 (23)"
+  },
+  {
+    "id": 1322,
+    "kana": "つける23",
+    "kanji": "付ける23",
+    "group_type": "II ",
+    "meaning": "安装 (23)"
+  },
+  {
+    "id": 1323,
+    "kana": "けす23",
+    "kanji": "消す23",
+    "group_type": "I  ",
+    "meaning": "关掉 (23)"
+  },
+  {
+    "id": 1324,
+    "kana": "おしえる23",
+    "kanji": "教える23",
+    "group_type": "II ",
+    "meaning": "教 (23)"
+  },
+  {
+    "id": 1325,
+    "kana": "おぼえる23",
+    "kanji": "覚える23",
+    "group_type": "II ",
+    "meaning": "记住 (23)"
+  },
+  {
+    "id": 1326,
+    "kana": "わすれる23",
+    "kanji": "忘れる23",
+    "group_type": "II ",
+    "meaning": "忘记 (23)"
+  },
+  {
+    "id": 1327,
+    "kana": "あげる23",
+    "kanji": "上げる23",
+    "group_type": "II ",
+    "meaning": "给 (23)"
+  },
+  {
+    "id": 1328,
+    "kana": "もらう23",
+    "kanji": "もらう23",
+    "group_type": "I  ",
+    "meaning": "收到 (23)"
+  },
+  {
+    "id": 1329,
+    "kana": "くれる23",
+    "kanji": "くれる23",
+    "group_type": "II ",
+    "meaning": "给我 (23)"
+  },
+  {
+    "id": 1330,
+    "kana": "かりる23",
+    "kanji": "借りる23",
+    "group_type": "II ",
+    "meaning": "借 (23)"
+  },
+  {
+    "id": 1331,
+    "kana": "かす23",
+    "kanji": "貸す23",
+    "group_type": "I  ",
+    "meaning": "借给 (23)"
+  },
+  {
+    "id": 1332,
+    "kana": "すてる23",
+    "kanji": "捨てる23",
+    "group_type": "II ",
+    "meaning": "扔 (23)"
+  },
+  {
+    "id": 1333,
+    "kana": "いく24",
+    "kanji": "行く24",
+    "group_type": "I  ",
+    "meaning": "去 (24)"
+  },
+  {
+    "id": 1334,
+    "kana": "かく24",
+    "kanji": "書く24",
+    "group_type": "I  ",
+    "meaning": "写 (24)"
+  },
+  {
+    "id": 1335,
+    "kana": "よむ24",
+    "kanji": "読む24",
+    "group_type": "I  ",
+    "meaning": "读 (24)"
+  },
+  {
+    "id": 1336,
+    "kana": "のむ24",
+    "kanji": "飲む24",
+    "group_type": "I  ",
+    "meaning": "喝 (24)"
+  },
+  {
+    "id": 1337,
+    "kana": "はなす24",
+    "kanji": "話す24",
+    "group_type": "I  ",
+    "meaning": "说话 (24)"
+  },
+  {
+    "id": 1338,
+    "kana": "きく24",
+    "kanji": "聞く24",
+    "group_type": "I  ",
+    "meaning": "听 (24)"
+  },
+  {
+    "id": 1339,
+    "kana": "あるく24",
+    "kanji": "歩く24",
+    "group_type": "I  ",
+    "meaning": "走路 (24)"
+  },
+  {
+    "id": 1340,
+    "kana": "はたらく24",
+    "kanji": "働く24",
+    "group_type": "I  ",
+    "meaning": "工作 (24)"
+  },
+  {
+    "id": 1341,
+    "kana": "およぐ24",
+    "kanji": "泳ぐ24",
+    "group_type": "I  ",
+    "meaning": "游泳 (24)"
+  },
+  {
+    "id": 1342,
+    "kana": "あそぶ24",
+    "kanji": "遊ぶ24",
+    "group_type": "I  ",
+    "meaning": "玩 (24)"
+  },
+  {
+    "id": 1343,
+    "kana": "よぶ24",
+    "kanji": "呼ぶ24",
+    "group_type": "I  ",
+    "meaning": "叫 (24)"
+  },
+  {
+    "id": 1344,
+    "kana": "しぬ24",
+    "kanji": "死ぬ24",
+    "group_type": "I  ",
+    "meaning": "死 (24)"
+  },
+  {
+    "id": 1345,
+    "kana": "たつ24",
+    "kanji": "立つ24",
+    "group_type": "I  ",
+    "meaning": "站 (24)"
+  },
+  {
+    "id": 1346,
+    "kana": "まつ24",
+    "kanji": "待つ24",
+    "group_type": "I  ",
+    "meaning": "等 (24)"
+  },
+  {
+    "id": 1347,
+    "kana": "もつ24",
+    "kanji": "持つ24",
+    "group_type": "I  ",
+    "meaning": "拿 (24)"
+  },
+  {
+    "id": 1348,
+    "kana": "うつ24",
+    "kanji": "打つ24",
+    "group_type": "I  ",
+    "meaning": "打 (24)"
+  },
+  {
+    "id": 1349,
+    "kana": "かう24",
+    "kanji": "買う24",
+    "group_type": "I  ",
+    "meaning": "买 (24)"
+  },
+  {
+    "id": 1350,
+    "kana": "うる24",
+    "kanji": "売る24",
+    "group_type": "I  ",
+    "meaning": "卖 (24)"
+  },
+  {
+    "id": 1351,
+    "kana": "つくる24",
+    "kanji": "作る24",
+    "group_type": "I  ",
+    "meaning": "做 (24)"
+  },
+  {
+    "id": 1352,
+    "kana": "とる24",
+    "kanji": "取る24",
+    "group_type": "I  ",
+    "meaning": "拿 (24)"
+  },
+  {
+    "id": 1353,
+    "kana": "はいる24",
+    "kanji": "入る24",
+    "group_type": "I  ",
+    "meaning": "进入 (24)"
+  },
+  {
+    "id": 1354,
+    "kana": "かえる24",
+    "kanji": "帰る24",
+    "group_type": "I  ",
+    "meaning": "回去 (24)"
+  },
+  {
+    "id": 1355,
+    "kana": "のる24",
+    "kanji": "乗る24",
+    "group_type": "I  ",
+    "meaning": "乘坐 (24)"
+  },
+  {
+    "id": 1356,
+    "kana": "すわる24",
+    "kanji": "座る24",
+    "group_type": "I  ",
+    "meaning": "坐 (24)"
+  },
+  {
+    "id": 1357,
+    "kana": "はしる24",
+    "kanji": "走る24",
+    "group_type": "I  ",
+    "meaning": "跑 (24)"
+  },
+  {
+    "id": 1358,
+    "kana": "おわる24",
+    "kanji": "終わる24",
+    "group_type": "I  ",
+    "meaning": "结束 (24)"
+  },
+  {
+    "id": 1359,
+    "kana": "はじまる24",
+    "kanji": "始まる24",
+    "group_type": "I  ",
+    "meaning": "开始 (24)"
+  },
+  {
+    "id": 1360,
+    "kana": "わかる24",
+    "kanji": "分かる24",
+    "group_type": "I  ",
+    "meaning": "明白 (24)"
+  },
+  {
+    "id": 1361,
+    "kana": "ある24",
+    "kanji": "ある24",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (24)"
+  },
+  {
+    "id": 1362,
+    "kana": "なる24",
+    "kanji": "なる24",
+    "group_type": "I  ",
+    "meaning": "成为 (24)"
+  },
+  {
+    "id": 1363,
+    "kana": "たべる24",
+    "kanji": "食べる24",
+    "group_type": "II ",
+    "meaning": "吃 (24)"
+  },
+  {
+    "id": 1364,
+    "kana": "みる24",
+    "kanji": "見る24",
+    "group_type": "II ",
+    "meaning": "看 (24)"
+  },
+  {
+    "id": 1365,
+    "kana": "ねる24",
+    "kanji": "寝る24",
+    "group_type": "II ",
+    "meaning": "睡觉 (24)"
+  },
+  {
+    "id": 1366,
+    "kana": "おきる24",
+    "kanji": "起きる24",
+    "group_type": "II ",
+    "meaning": "起床 (24)"
+  },
+  {
+    "id": 1367,
+    "kana": "でる24",
+    "kanji": "出る24",
+    "group_type": "II ",
+    "meaning": "出去 (24)"
+  },
+  {
+    "id": 1368,
+    "kana": "いる24",
+    "kanji": "いる24",
+    "group_type": "II ",
+    "meaning": "有(生物) (24)"
+  },
+  {
+    "id": 1369,
+    "kana": "きる24",
+    "kanji": "着る24",
+    "group_type": "II ",
+    "meaning": "穿 (24)"
+  },
+  {
+    "id": 1370,
+    "kana": "あける24",
+    "kanji": "開ける24",
+    "group_type": "II ",
+    "meaning": "打开 (24)"
+  },
+  {
+    "id": 1371,
+    "kana": "しめる24",
+    "kanji": "閉める24",
+    "group_type": "II ",
+    "meaning": "关闭 (24)"
+  },
+  {
+    "id": 1372,
+    "kana": "つける24",
+    "kanji": "付ける24",
+    "group_type": "II ",
+    "meaning": "安装 (24)"
+  },
+  {
+    "id": 1373,
+    "kana": "けす24",
+    "kanji": "消す24",
+    "group_type": "I  ",
+    "meaning": "关掉 (24)"
+  },
+  {
+    "id": 1374,
+    "kana": "おしえる24",
+    "kanji": "教える24",
+    "group_type": "II ",
+    "meaning": "教 (24)"
+  },
+  {
+    "id": 1375,
+    "kana": "おぼえる24",
+    "kanji": "覚える24",
+    "group_type": "II ",
+    "meaning": "记住 (24)"
+  },
+  {
+    "id": 1376,
+    "kana": "わすれる24",
+    "kanji": "忘れる24",
+    "group_type": "II ",
+    "meaning": "忘记 (24)"
+  },
+  {
+    "id": 1377,
+    "kana": "あげる24",
+    "kanji": "上げる24",
+    "group_type": "II ",
+    "meaning": "给 (24)"
+  },
+  {
+    "id": 1378,
+    "kana": "もらう24",
+    "kanji": "もらう24",
+    "group_type": "I  ",
+    "meaning": "收到 (24)"
+  },
+  {
+    "id": 1379,
+    "kana": "くれる24",
+    "kanji": "くれる24",
+    "group_type": "II ",
+    "meaning": "给我 (24)"
+  },
+  {
+    "id": 1380,
+    "kana": "かりる24",
+    "kanji": "借りる24",
+    "group_type": "II ",
+    "meaning": "借 (24)"
+  },
+  {
+    "id": 1381,
+    "kana": "かす24",
+    "kanji": "貸す24",
+    "group_type": "I  ",
+    "meaning": "借给 (24)"
+  },
+  {
+    "id": 1382,
+    "kana": "すてる24",
+    "kanji": "捨てる24",
+    "group_type": "II ",
+    "meaning": "扔 (24)"
+  },
+  {
+    "id": 1383,
+    "kana": "いく25",
+    "kanji": "行く25",
+    "group_type": "I  ",
+    "meaning": "去 (25)"
+  },
+  {
+    "id": 1384,
+    "kana": "かく25",
+    "kanji": "書く25",
+    "group_type": "I  ",
+    "meaning": "写 (25)"
+  },
+  {
+    "id": 1385,
+    "kana": "よむ25",
+    "kanji": "読む25",
+    "group_type": "I  ",
+    "meaning": "读 (25)"
+  },
+  {
+    "id": 1386,
+    "kana": "のむ25",
+    "kanji": "飲む25",
+    "group_type": "I  ",
+    "meaning": "喝 (25)"
+  },
+  {
+    "id": 1387,
+    "kana": "はなす25",
+    "kanji": "話す25",
+    "group_type": "I  ",
+    "meaning": "说话 (25)"
+  },
+  {
+    "id": 1388,
+    "kana": "きく25",
+    "kanji": "聞く25",
+    "group_type": "I  ",
+    "meaning": "听 (25)"
+  },
+  {
+    "id": 1389,
+    "kana": "あるく25",
+    "kanji": "歩く25",
+    "group_type": "I  ",
+    "meaning": "走路 (25)"
+  },
+  {
+    "id": 1390,
+    "kana": "はたらく25",
+    "kanji": "働く25",
+    "group_type": "I  ",
+    "meaning": "工作 (25)"
+  },
+  {
+    "id": 1391,
+    "kana": "およぐ25",
+    "kanji": "泳ぐ25",
+    "group_type": "I  ",
+    "meaning": "游泳 (25)"
+  },
+  {
+    "id": 1392,
+    "kana": "あそぶ25",
+    "kanji": "遊ぶ25",
+    "group_type": "I  ",
+    "meaning": "玩 (25)"
+  },
+  {
+    "id": 1393,
+    "kana": "よぶ25",
+    "kanji": "呼ぶ25",
+    "group_type": "I  ",
+    "meaning": "叫 (25)"
+  },
+  {
+    "id": 1394,
+    "kana": "しぬ25",
+    "kanji": "死ぬ25",
+    "group_type": "I  ",
+    "meaning": "死 (25)"
+  },
+  {
+    "id": 1395,
+    "kana": "たつ25",
+    "kanji": "立つ25",
+    "group_type": "I  ",
+    "meaning": "站 (25)"
+  },
+  {
+    "id": 1396,
+    "kana": "まつ25",
+    "kanji": "待つ25",
+    "group_type": "I  ",
+    "meaning": "等 (25)"
+  },
+  {
+    "id": 1397,
+    "kana": "もつ25",
+    "kanji": "持つ25",
+    "group_type": "I  ",
+    "meaning": "拿 (25)"
+  },
+  {
+    "id": 1398,
+    "kana": "うつ25",
+    "kanji": "打つ25",
+    "group_type": "I  ",
+    "meaning": "打 (25)"
+  },
+  {
+    "id": 1399,
+    "kana": "かう25",
+    "kanji": "買う25",
+    "group_type": "I  ",
+    "meaning": "买 (25)"
+  },
+  {
+    "id": 1400,
+    "kana": "うる25",
+    "kanji": "売る25",
+    "group_type": "I  ",
+    "meaning": "卖 (25)"
+  },
+  {
+    "id": 1401,
+    "kana": "つくる25",
+    "kanji": "作る25",
+    "group_type": "I  ",
+    "meaning": "做 (25)"
+  },
+  {
+    "id": 1402,
+    "kana": "とる25",
+    "kanji": "取る25",
+    "group_type": "I  ",
+    "meaning": "拿 (25)"
+  },
+  {
+    "id": 1403,
+    "kana": "はいる25",
+    "kanji": "入る25",
+    "group_type": "I  ",
+    "meaning": "进入 (25)"
+  },
+  {
+    "id": 1404,
+    "kana": "かえる25",
+    "kanji": "帰る25",
+    "group_type": "I  ",
+    "meaning": "回去 (25)"
+  },
+  {
+    "id": 1405,
+    "kana": "のる25",
+    "kanji": "乗る25",
+    "group_type": "I  ",
+    "meaning": "乘坐 (25)"
+  },
+  {
+    "id": 1406,
+    "kana": "すわる25",
+    "kanji": "座る25",
+    "group_type": "I  ",
+    "meaning": "坐 (25)"
+  },
+  {
+    "id": 1407,
+    "kana": "はしる25",
+    "kanji": "走る25",
+    "group_type": "I  ",
+    "meaning": "跑 (25)"
+  },
+  {
+    "id": 1408,
+    "kana": "おわる25",
+    "kanji": "終わる25",
+    "group_type": "I  ",
+    "meaning": "结束 (25)"
+  },
+  {
+    "id": 1409,
+    "kana": "はじまる25",
+    "kanji": "始まる25",
+    "group_type": "I  ",
+    "meaning": "开始 (25)"
+  },
+  {
+    "id": 1410,
+    "kana": "わかる25",
+    "kanji": "分かる25",
+    "group_type": "I  ",
+    "meaning": "明白 (25)"
+  },
+  {
+    "id": 1411,
+    "kana": "ある25",
+    "kanji": "ある25",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (25)"
+  },
+  {
+    "id": 1412,
+    "kana": "なる25",
+    "kanji": "なる25",
+    "group_type": "I  ",
+    "meaning": "成为 (25)"
+  },
+  {
+    "id": 1413,
+    "kana": "たべる25",
+    "kanji": "食べる25",
+    "group_type": "II ",
+    "meaning": "吃 (25)"
+  },
+  {
+    "id": 1414,
+    "kana": "みる25",
+    "kanji": "見る25",
+    "group_type": "II ",
+    "meaning": "看 (25)"
+  },
+  {
+    "id": 1415,
+    "kana": "ねる25",
+    "kanji": "寝る25",
+    "group_type": "II ",
+    "meaning": "睡觉 (25)"
+  },
+  {
+    "id": 1416,
+    "kana": "おきる25",
+    "kanji": "起きる25",
+    "group_type": "II ",
+    "meaning": "起床 (25)"
+  },
+  {
+    "id": 1417,
+    "kana": "でる25",
+    "kanji": "出る25",
+    "group_type": "II ",
+    "meaning": "出去 (25)"
+  },
+  {
+    "id": 1418,
+    "kana": "いる25",
+    "kanji": "いる25",
+    "group_type": "II ",
+    "meaning": "有(生物) (25)"
+  },
+  {
+    "id": 1419,
+    "kana": "きる25",
+    "kanji": "着る25",
+    "group_type": "II ",
+    "meaning": "穿 (25)"
+  },
+  {
+    "id": 1420,
+    "kana": "あける25",
+    "kanji": "開ける25",
+    "group_type": "II ",
+    "meaning": "打开 (25)"
+  },
+  {
+    "id": 1421,
+    "kana": "しめる25",
+    "kanji": "閉める25",
+    "group_type": "II ",
+    "meaning": "关闭 (25)"
+  },
+  {
+    "id": 1422,
+    "kana": "つける25",
+    "kanji": "付ける25",
+    "group_type": "II ",
+    "meaning": "安装 (25)"
+  },
+  {
+    "id": 1423,
+    "kana": "けす25",
+    "kanji": "消す25",
+    "group_type": "I  ",
+    "meaning": "关掉 (25)"
+  },
+  {
+    "id": 1424,
+    "kana": "おしえる25",
+    "kanji": "教える25",
+    "group_type": "II ",
+    "meaning": "教 (25)"
+  },
+  {
+    "id": 1425,
+    "kana": "おぼえる25",
+    "kanji": "覚える25",
+    "group_type": "II ",
+    "meaning": "记住 (25)"
+  },
+  {
+    "id": 1426,
+    "kana": "わすれる25",
+    "kanji": "忘れる25",
+    "group_type": "II ",
+    "meaning": "忘记 (25)"
+  },
+  {
+    "id": 1427,
+    "kana": "あげる25",
+    "kanji": "上げる25",
+    "group_type": "II ",
+    "meaning": "给 (25)"
+  },
+  {
+    "id": 1428,
+    "kana": "もらう25",
+    "kanji": "もらう25",
+    "group_type": "I  ",
+    "meaning": "收到 (25)"
+  },
+  {
+    "id": 1429,
+    "kana": "くれる25",
+    "kanji": "くれる25",
+    "group_type": "II ",
+    "meaning": "给我 (25)"
+  },
+  {
+    "id": 1430,
+    "kana": "かりる25",
+    "kanji": "借りる25",
+    "group_type": "II ",
+    "meaning": "借 (25)"
+  },
+  {
+    "id": 1431,
+    "kana": "かす25",
+    "kanji": "貸す25",
+    "group_type": "I  ",
+    "meaning": "借给 (25)"
+  },
+  {
+    "id": 1432,
+    "kana": "すてる25",
+    "kanji": "捨てる25",
+    "group_type": "II ",
+    "meaning": "扔 (25)"
+  },
+  {
+    "id": 1433,
+    "kana": "いく26",
+    "kanji": "行く26",
+    "group_type": "I  ",
+    "meaning": "去 (26)"
+  },
+  {
+    "id": 1434,
+    "kana": "かく26",
+    "kanji": "書く26",
+    "group_type": "I  ",
+    "meaning": "写 (26)"
+  },
+  {
+    "id": 1435,
+    "kana": "よむ26",
+    "kanji": "読む26",
+    "group_type": "I  ",
+    "meaning": "读 (26)"
+  },
+  {
+    "id": 1436,
+    "kana": "のむ26",
+    "kanji": "飲む26",
+    "group_type": "I  ",
+    "meaning": "喝 (26)"
+  },
+  {
+    "id": 1437,
+    "kana": "はなす26",
+    "kanji": "話す26",
+    "group_type": "I  ",
+    "meaning": "说话 (26)"
+  },
+  {
+    "id": 1438,
+    "kana": "きく26",
+    "kanji": "聞く26",
+    "group_type": "I  ",
+    "meaning": "听 (26)"
+  },
+  {
+    "id": 1439,
+    "kana": "あるく26",
+    "kanji": "歩く26",
+    "group_type": "I  ",
+    "meaning": "走路 (26)"
+  },
+  {
+    "id": 1440,
+    "kana": "はたらく26",
+    "kanji": "働く26",
+    "group_type": "I  ",
+    "meaning": "工作 (26)"
+  },
+  {
+    "id": 1441,
+    "kana": "およぐ26",
+    "kanji": "泳ぐ26",
+    "group_type": "I  ",
+    "meaning": "游泳 (26)"
+  },
+  {
+    "id": 1442,
+    "kana": "あそぶ26",
+    "kanji": "遊ぶ26",
+    "group_type": "I  ",
+    "meaning": "玩 (26)"
+  },
+  {
+    "id": 1443,
+    "kana": "よぶ26",
+    "kanji": "呼ぶ26",
+    "group_type": "I  ",
+    "meaning": "叫 (26)"
+  },
+  {
+    "id": 1444,
+    "kana": "しぬ26",
+    "kanji": "死ぬ26",
+    "group_type": "I  ",
+    "meaning": "死 (26)"
+  },
+  {
+    "id": 1445,
+    "kana": "たつ26",
+    "kanji": "立つ26",
+    "group_type": "I  ",
+    "meaning": "站 (26)"
+  },
+  {
+    "id": 1446,
+    "kana": "まつ26",
+    "kanji": "待つ26",
+    "group_type": "I  ",
+    "meaning": "等 (26)"
+  },
+  {
+    "id": 1447,
+    "kana": "もつ26",
+    "kanji": "持つ26",
+    "group_type": "I  ",
+    "meaning": "拿 (26)"
+  },
+  {
+    "id": 1448,
+    "kana": "うつ26",
+    "kanji": "打つ26",
+    "group_type": "I  ",
+    "meaning": "打 (26)"
+  },
+  {
+    "id": 1449,
+    "kana": "かう26",
+    "kanji": "買う26",
+    "group_type": "I  ",
+    "meaning": "买 (26)"
+  },
+  {
+    "id": 1450,
+    "kana": "うる26",
+    "kanji": "売る26",
+    "group_type": "I  ",
+    "meaning": "卖 (26)"
+  },
+  {
+    "id": 1451,
+    "kana": "つくる26",
+    "kanji": "作る26",
+    "group_type": "I  ",
+    "meaning": "做 (26)"
+  },
+  {
+    "id": 1452,
+    "kana": "とる26",
+    "kanji": "取る26",
+    "group_type": "I  ",
+    "meaning": "拿 (26)"
+  },
+  {
+    "id": 1453,
+    "kana": "はいる26",
+    "kanji": "入る26",
+    "group_type": "I  ",
+    "meaning": "进入 (26)"
+  },
+  {
+    "id": 1454,
+    "kana": "かえる26",
+    "kanji": "帰る26",
+    "group_type": "I  ",
+    "meaning": "回去 (26)"
+  },
+  {
+    "id": 1455,
+    "kana": "のる26",
+    "kanji": "乗る26",
+    "group_type": "I  ",
+    "meaning": "乘坐 (26)"
+  },
+  {
+    "id": 1456,
+    "kana": "すわる26",
+    "kanji": "座る26",
+    "group_type": "I  ",
+    "meaning": "坐 (26)"
+  },
+  {
+    "id": 1457,
+    "kana": "はしる26",
+    "kanji": "走る26",
+    "group_type": "I  ",
+    "meaning": "跑 (26)"
+  },
+  {
+    "id": 1458,
+    "kana": "おわる26",
+    "kanji": "終わる26",
+    "group_type": "I  ",
+    "meaning": "结束 (26)"
+  },
+  {
+    "id": 1459,
+    "kana": "はじまる26",
+    "kanji": "始まる26",
+    "group_type": "I  ",
+    "meaning": "开始 (26)"
+  },
+  {
+    "id": 1460,
+    "kana": "わかる26",
+    "kanji": "分かる26",
+    "group_type": "I  ",
+    "meaning": "明白 (26)"
+  },
+  {
+    "id": 1461,
+    "kana": "ある26",
+    "kanji": "ある26",
+    "group_type": "I  ",
+    "meaning": "有(无生物) (26)"
+  },
+  {
+    "id": 1462,
+    "kana": "なる26",
+    "kanji": "なる26",
+    "group_type": "I  ",
+    "meaning": "成为 (26)"
+  },
+  {
+    "id": 1463,
+    "kana": "たべる26",
+    "kanji": "食べる26",
+    "group_type": "II ",
+    "meaning": "吃 (26)"
+  },
+  {
+    "id": 1464,
+    "kana": "みる26",
+    "kanji": "見る26",
+    "group_type": "II ",
+    "meaning": "看 (26)"
+  },
+  {
+    "id": 1465,
+    "kana": "ねる26",
+    "kanji": "寝る26",
+    "group_type": "II ",
+    "meaning": "睡觉 (26)"
+  },
+  {
+    "id": 1466,
+    "kana": "おきる26",
+    "kanji": "起きる26",
+    "group_type": "II ",
+    "meaning": "起床 (26)"
+  },
+  {
+    "id": 1467,
+    "kana": "でる26",
+    "kanji": "出る26",
+    "group_type": "II ",
+    "meaning": "出去 (26)"
+  },
+  {
+    "id": 1468,
+    "kana": "いる26",
+    "kanji": "いる26",
+    "group_type": "II ",
+    "meaning": "有(生物) (26)"
+  },
+  {
+    "id": 1469,
+    "kana": "きる26",
+    "kanji": "着る26",
+    "group_type": "II ",
+    "meaning": "穿 (26)"
+  },
+  {
+    "id": 1470,
+    "kana": "あける26",
+    "kanji": "開ける26",
+    "group_type": "II ",
+    "meaning": "打开 (26)"
+  },
+  {
+    "id": 1471,
+    "kana": "しめる26",
+    "kanji": "閉める26",
+    "group_type": "II ",
+    "meaning": "关闭 (26)"
+  },
+  {
+    "id": 1472,
+    "kana": "つける26",
+    "kanji": "付ける26",
+    "group_type": "II ",
+    "meaning": "安装 (26)"
+  },
+  {
+    "id": 1473,
+    "kana": "けす26",
+    "kanji": "消す26",
+    "group_type": "I  ",
+    "meaning": "关掉 (26)"
+  },
+  {
+    "id": 1474,
+    "kana": "おしえる26",
+    "kanji": "教える26",
+    "group_type": "II ",
+    "meaning": "教 (26)"
+  },
+  {
+    "id": 1475,
+    "kana": "おぼえる26",
+    "kanji": "覚える26",
+    "group_type": "II ",
+    "meaning": "记住 (26)"
+  },
+  {
+    "id": 1476,
+    "kana": "わすれる26",
+    "kanji": "忘れる26",
+    "group_type": "II ",
+    "meaning": "忘记 (26)"
+  },
+  {
+    "id": 1477,
+    "kana": "あげる26",
+    "kanji": "上げる26",
+    "group_type": "II ",
+    "meaning": "给 (26)"
+  },
+  {
+    "id": 1478,
+    "kana": "もらう26",
+    "kanji": "もらう26",
+    "group_type": "I  ",
+    "meaning": "收到 (26)"
+  },
+  {
+    "id": 1479,
+    "kana": "くれる26",
+    "kanji": "くれる26",
+    "group_type": "II ",
+    "meaning": "给我 (26)"
+  },
+  {
+    "id": 1480,
+    "kana": "かりる26",
+    "kanji": "借りる26",
+    "group_type": "II ",
+    "meaning": "借 (26)"
+  },
+  {
+    "id": 1481,
+    "kana": "かす26",
+    "kanji": "貸す26",
+    "group_type": "I  ",
+    "meaning": "借给 (26)"
+  },
+  {
+    "id": 1482,
+    "kana": "すてる26",
+    "kanji": "捨てる26",
+    "group_type": "II ",
+    "meaning": "扔 (26)"
+  },
+  {
+    "id": 1483,
+    "kana": "いく27",
+    "kanji": "行く27",
+    "group_type": "I  ",
+    "meaning": "去 (27)"
+  },
+  {
+    "id": 1484,
+    "kana": "かく27",
+    "kanji": "書く27",
+    "group_type": "I  ",
+    "meaning": "写 (27)"
+  },
+  {
+    "id": 1485,
+    "kana": "よむ27",
+    "kanji": "読む27",
+    "group_type": "I  ",
+    "meaning": "读 (27)"
+  },
+  {
+    "id": 1486,
+    "kana": "のむ27",
+    "kanji": "飲む27",
+    "group_type": "I  ",
+    "meaning": "喝 (27)"
+  },
+  {
+    "id": 1487,
+    "kana": "はなす27",
+    "kanji": "話す27",
+    "group_type": "I  ",
+    "meaning": "说话 (27)"
+  },
+  {
+    "id": 1488,
+    "kana": "きく27",
+    "kanji": "聞く27",
+    "group_type": "I  ",
+    "meaning": "听 (27)"
+  },
+  {
+    "id": 1489,
+    "kana": "あるく27",
+    "kanji": "歩く27",
+    "group_type": "I  ",
+    "meaning": "走路 (27)"
+  },
+  {
+    "id": 1490,
+    "kana": "はたらく27",
+    "kanji": "働く27",
+    "group_type": "I  ",
+    "meaning": "工作 (27)"
+  },
+  {
+    "id": 1491,
+    "kana": "およぐ27",
+    "kanji": "泳ぐ27",
+    "group_type": "I  ",
+    "meaning": "游泳 (27)"
+  },
+  {
+    "id": 1492,
+    "kana": "あそぶ27",
+    "kanji": "遊ぶ27",
+    "group_type": "I  ",
+    "meaning": "玩 (27)"
+  },
+  {
+    "id": 1493,
+    "kana": "よぶ27",
+    "kanji": "呼ぶ27",
+    "group_type": "I  ",
+    "meaning": "叫 (27)"
+  },
+  {
+    "id": 1494,
+    "kana": "しぬ27",
+    "kanji": "死ぬ27",
+    "group_type": "I  ",
+    "meaning": "死 (27)"
+  },
+  {
+    "id": 1495,
+    "kana": "たつ27",
+    "kanji": "立つ27",
+    "group_type": "I  ",
+    "meaning": "站 (27)"
+  },
+  {
+    "id": 1496,
+    "kana": "まつ27",
+    "kanji": "待つ27",
+    "group_type": "I  ",
+    "meaning": "等 (27)"
+  },
+  {
+    "id": 1497,
+    "kana": "もつ27",
+    "kanji": "持つ27",
+    "group_type": "I  ",
+    "meaning": "拿 (27)"
+  },
+  {
+    "id": 1498,
+    "kana": "うつ27",
+    "kanji": "打つ27",
+    "group_type": "I  ",
+    "meaning": "打 (27)"
+  },
+  {
+    "id": 1499,
+    "kana": "かう27",
+    "kanji": "買う27",
+    "group_type": "I  ",
+    "meaning": "买 (27)"
+  },
+  {
+    "id": 1500,
+    "kana": "うる27",
+    "kanji": "売る27",
+    "group_type": "I  ",
+    "meaning": "卖 (27)"
+  },
+  {
+    "id": 1963,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 1964,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 1965,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 1966,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 1967,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 1968,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 1969,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 1970,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 1971,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 1972,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 1973,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 1974,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 1975,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 1976,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 1977,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 1978,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 1979,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 1980,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 1981,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 1982,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 1983,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 1984,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 1985,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 1986,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 1987,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 1988,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 1989,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 1990,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 1991,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 1992,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 1993,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 1994,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 1995,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 1996,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 1997,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 1998,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 1999,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2000,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2001,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2002,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2003,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2004,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2005,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2006,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2007,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2008,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2009,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2010,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2011,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2012,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2013,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2014,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2015,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2016,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2017,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2018,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2019,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2020,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2021,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2022,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2023,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2024,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2025,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2026,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2027,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2028,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2029,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2030,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2031,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2032,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2033,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2034,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2035,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2036,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2037,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2038,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2039,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2040,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2041,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2042,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2043,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2044,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2045,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2046,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2047,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2048,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2049,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2050,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2051,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2052,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2053,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2054,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2055,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2056,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2057,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2058,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2059,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2060,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2061,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2062,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2063,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2064,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2065,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2066,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2067,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2068,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2069,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2070,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2071,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2072,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2073,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2074,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2075,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2076,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2077,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2078,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2079,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2080,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2081,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2082,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2083,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2084,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2085,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2086,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2087,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2088,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2089,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2090,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2091,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2092,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2093,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2094,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2095,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2096,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2097,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2098,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2099,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2100,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2101,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2102,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2103,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2104,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2105,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2106,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2107,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2108,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2109,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2110,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2111,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2112,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2113,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2114,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2115,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2116,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2117,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2118,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2119,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2120,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2121,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2122,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2123,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2124,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2125,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2126,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2127,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2128,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2129,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2130,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  },
+  {
+    "id": 2131,
+    "kana": "よむ",
+    "kanji": "読む",
+    "group_type": "I  ",
+    "meaning": "读"
+  },
+  {
+    "id": 2132,
+    "kana": "たべる",
+    "kanji": "食べる",
+    "group_type": "II ",
+    "meaning": "吃"
+  },
+  {
+    "id": 2133,
+    "kana": "する",
+    "kanji": "する",
+    "group_type": "IRR",
+    "meaning": "做"
+  },
+  {
+    "id": 2134,
+    "kana": "いく",
+    "kanji": "行く",
+    "group_type": "I  ",
+    "meaning": "去"
+  },
+  {
+    "id": 2135,
+    "kana": "みる",
+    "kanji": "見る",
+    "group_type": "II ",
+    "meaning": "看"
+  },
+  {
+    "id": 2136,
+    "kana": "くる",
+    "kanji": "来る",
+    "group_type": "IRR",
+    "meaning": "来"
+  }
+]

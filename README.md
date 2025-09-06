@@ -51,12 +51,16 @@ npm install
 export DATABASE_URL="your_postgres_connection_string"
 export COOKIE_SECRET="your_random_secret_key"
 
-# 初始化数据库
+# 可选：启用自动数据库初始化（适用于首次部署或开发环境）
+# export ENABLE_DB_INIT=true
+
+# 手动初始化数据库（当ENABLE_DB_INIT=false时，默认情况）
 psql $DATABASE_URL < schema.sql
 
 # 导入种子数据
 node seed-verbs.js
 node seed-adjs.js
+node seed-plain.js
 ```
 
 ### 3. 本地开发
@@ -100,6 +104,35 @@ psql "your_production_database_url"
 # 导入种子数据
 DATABASE_URL="your_production_database_url" node seed-verbs.js
 DATABASE_URL="your_production_database_url" node seed-adjs.js
+```
+
+## 环境变量配置
+
+应用支持以下环境变量配置：
+
+| 变量名 | 必需 | 默认值 | 说明 |
+|--------|------|--------|------|
+| `DATABASE_URL` | 是 | - | PostgreSQL 数据库连接字符串 |
+| `COOKIE_SECRET` | 否 | `japanese-learning-secret` | Cookie 加密密钥 |
+| `NODE_ENV` | 否 | `development` | 运行环境标识 |
+| `ENABLE_DB_INIT` | 否 | `false` | 启用启动时的数据库初始化 |
+| `PORT` | 否 | `3000` | 服务器监听端口 |
+
+### ENABLE_DB_INIT 使用场景
+
+设置 `ENABLE_DB_INIT=true` 适用于以下情况：
+
+- **首次部署**: 需要创建数据库表和导入初始数据
+- **开发环境**: 重置数据库到初始状态
+- **测试环境**: 自动初始化干净的测试数据
+- **演示环境**: 快速搭建包含示例数据的环境
+
+```bash
+# 启用数据库初始化启动
+ENABLE_DB_INIT=true npm start
+
+# 或在 .env 文件中设置
+echo "ENABLE_DB_INIT=true" >> .env
 ```
 
 ## 项目结构

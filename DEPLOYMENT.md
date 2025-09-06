@@ -23,31 +23,35 @@
 
 ## 部署流程
 
-### 1. 开发环境 → 生产环境
+### 🚀 自动化部署（当前配置）
 
-当你从 dev 分支推送到 main 分支时，按照以下步骤操作：
+**推送到 main 分支时，系统会自动完成以下操作：**
 
-#### 步骤 1: 推送代码
+1. **代码部署**：Vercel 自动构建和部署应用
+2. **数据库迁移**：构建过程中自动执行 `npm run migrate`
+3. **环境配置**：自动应用生产环境变量
+
+#### 推送代码即可完成部署
 ```bash
 git push origin main
 ```
 
-#### 步骤 2: 在生产环境执行迁移
+✅ **无需手动操作** - 代码和数据库变更都会自动应用
+
+### 📋 Vercel 环境变量配置
+
+确保在 Vercel 项目设置中配置以下环境变量：
+
+- `DATABASE_URL`: PostgreSQL 数据库连接字符串
+- `JWT_SECRET`: JWT 签名密钥
+- `NODE_ENV`: 设置为 `production`
+
+### 🔧 手动迁移（仅在需要时）
+
+如果需要在本地或其他环境手动执行迁移：
+
 ```bash
-# 在生产服务器上
 npm run migrate
-```
-
-### 2. 自动化部署（推荐）
-
-如果使用 CI/CD 系统（如 GitHub Actions、Vercel 等），可以在部署脚本中添加：
-
-```yaml
-# .github/workflows/deploy.yml 示例
-- name: Run Database Migrations
-  run: npm run migrate
-  env:
-    DATABASE_URL: ${{ secrets.DATABASE_URL }}
 ```
 
 ### 3. Vercel 部署

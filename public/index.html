@@ -120,119 +120,194 @@
             <div id="progress" class="page">
                 <div class="page-header">
                     <h1>学习进度</h1>
-                    <div class="module-selector">
-                        <button class="module-btn active" data-module="verb">动词</button>
-                        <button class="module-btn" data-module="adj">形容词</button>
-                        <button class="module-btn" data-module="plain">简体形</button>
-                    </div>
                 </div>
                 
-                <!-- 进度标签页 -->
-                <div class="progress-tabs">
-                    <button class="tab-btn active" data-tab="overview">概览</button>
-                    <button class="tab-btn" data-tab="analysis">分析</button>
-                    <button class="tab-btn" data-tab="trends">趋势</button>
-                    <button class="tab-btn" data-tab="recommendations">建议</button>
-                </div>
-                
-                <!-- 概览标签页 -->
-                <div id="overview-tab" class="tab-content active">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-number" id="total-reviews">0</div>
-                            <div class="stat-label">总复习数</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="accuracy">0%</div>
-                            <div class="stat-label">正确率</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="due-count">0</div>
-                            <div class="stat-label">待复习</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="avg-streak">0</div>
-                            <div class="stat-label">平均熟练度</div>
-                        </div>
-                    </div>
+                <!-- 新的三层结构 -->
+                <div class="progress-container">
                     
-                    <div class="progress-charts">
-                        <div class="chart-section">
-                            <h3>模块对比</h3>
-                            <div id="module-comparison" class="module-comparison">
-                                <!-- 动态生成 -->
+                    <!-- 第一层：今日概览 -->
+                    <div class="today-overview-section">
+                        <h2>今日概览</h2>
+                        
+                        <!-- 今日目标进度 -->
+                        <div class="today-progress">
+                            <div class="progress-card">
+                                <div class="progress-header">
+                                    <span class="progress-title">新学进度</span>
+                                    <span class="progress-count" id="new-progress">0/10</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="new-progress-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-card">
+                                <div class="progress-header">
+                                    <span class="progress-title">复习进度</span>
+                                    <span class="progress-count" id="review-progress">0/50</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="review-progress-fill" style="width: 0%"></div>
+                                </div>
                             </div>
                         </div>
                         
-
-                    </div>
-                </div>
-                
-                <!-- 分析标签页 -->
-                <div id="analysis-tab" class="tab-content">
-                    <div class="analysis-section">
-                        <h3>变形掌握度</h3>
-                        <div id="form-mastery" class="form-mastery">
-                            <!-- 动态生成 -->
-                        </div>
-                    </div>
-                    
-                    <div class="analysis-section">
-                        <h3>错误分析</h3>
-                        <div id="error-analysis" class="error-analysis">
-                            <div class="error-stats" id="error-stats">
-                                <!-- 动态生成 -->
+                        <!-- 今日统计卡片 -->
+                        <div class="today-stats">
+                            <div class="stat-card">
+                                <div class="stat-icon">📚</div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="study-time-today">0分钟</div>
+                                    <div class="stat-label">今日学习时间</div>
+                                </div>
                             </div>
-                            <div class="problem-items" id="problem-items">
-                                <h4>需要重点关注的项目</h4>
-                                <div class="problem-list" id="problem-list">
-                                    <!-- 动态生成 -->
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon">🔥</div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="study-streak">0天</div>
+                                    <div class="stat-label">学习连击</div>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon">⏰</div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="due-total">0</div>
+                                    <div class="stat-label">待复习总数</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- 趋势标签页 -->
-                <div id="trends-tab" class="tab-content">
-                    <div class="trends-section">
-                        <h3>学习趋势</h3>
-                        <div class="trend-charts">
-                            <div class="chart-container">
-                                <h4>每日学习情况</h4>
-                                <canvas id="daily-trend-chart" width="350" height="200"></canvas>
+                    
+                    <!-- 第二层：模式对比 -->
+                    <div class="mode-comparison-section">
+                        <h2>模式对比</h2>
+                        
+                        <!-- 模块选择器 -->
+                        <div class="module-selector">
+                            <button class="module-btn active" data-module="all">全部</button>
+                            <button class="module-btn" data-module="vrb">动词</button>
+                            <button class="module-btn" data-module="adj">形容词</button>
+                            <button class="module-btn" data-module="pln">简体形</button>
+                        </div>
+                        
+                        <!-- 模式对比图表 -->
+                        <div class="mode-comparison-charts">
+                            <div class="comparison-card">
+                                <h3>测验模式</h3>
+                                <div class="mode-stats" id="quiz-mode-stats">
+                                    <div class="mode-stat">
+                                        <span class="stat-label">总题目</span>
+                                        <span class="stat-value" id="quiz-total">0</span>
+                                    </div>
+                                    <div class="mode-stat">
+                                        <span class="stat-label">正确率</span>
+                                        <span class="stat-value" id="quiz-accuracy">0%</span>
+                                    </div>
+                                    <div class="mode-stat">
+                                        <span class="stat-label">平均熟练度</span>
+                                        <span class="stat-value" id="quiz-streak">0</span>
+                                    </div>
+                                    <div class="mode-stat">
+                                        <span class="stat-label">已掌握</span>
+                                        <span class="stat-value" id="quiz-mastered">0</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="chart-container">
-                                <h4>每周进度</h4>
-                                <canvas id="weekly-trend-chart" width="350" height="200"></canvas>
+                            
+                            <div class="comparison-card">
+                                <h3>闪卡模式</h3>
+                                <div class="mode-stats" id="flashcard-mode-stats">
+                                    <div class="mode-stat">
+                                        <span class="stat-label">总题目</span>
+                                        <span class="stat-value" id="flashcard-total">0</span>
+                                    </div>
+                                    <div class="mode-stat">
+                                        <span class="stat-label">正确率</span>
+                                        <span class="stat-value" id="flashcard-accuracy">0%</span>
+                                    </div>
+                                    <div class="mode-stat">
+                                        <span class="stat-label">平均熟练度</span>
+                                        <span class="stat-value" id="flashcard-streak">0</span>
+                                    </div>
+                                    <div class="mode-stat">
+                                        <span class="stat-label">已掌握</span>
+                                        <span class="stat-value" id="flashcard-mastered">0</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- 建议标签页 -->
-                <div id="recommendations-tab" class="tab-content">
-                    <div class="recommendations-section">
-                        <h3>学习建议</h3>
-                        <div id="recommendations-list" class="recommendations-list">
-                            <!-- 动态生成 -->
+                        
+                        <!-- 模式推荐 -->
+                        <div class="mode-recommendation" id="mode-recommendation">
+                            <!-- 动态生成推荐内容 -->
                         </div>
                     </div>
                     
-                    <div class="study-goals">
-                        <h3>学习目标</h3>
-                        <div class="goal-setting">
-                            <div class="goal-item">
-                                <label>每日复习目标</label>
-                                <input type="number" id="daily-goal" min="1" max="100" value="20">
-                                <span>个项目</span>
+                    <!-- 第三层：学习洞察 -->
+                    <div class="learning-insights-section">
+                        <h2>学习洞察</h2>
+                        
+                        <!-- 洞察标签页 -->
+                        <div class="insights-tabs">
+                            <button class="insight-tab-btn active" data-tab="trends">7天趋势</button>
+                            <button class="insight-tab-btn" data-tab="weaknesses">薄弱环节</button>
+                            <button class="insight-tab-btn" data-tab="suggestions">智能建议</button>
+                        </div>
+                        
+                        <!-- 7天趋势 -->
+                        <div id="trends-insight" class="insight-content active">
+                            <div class="trend-chart-container">
+                                <canvas id="weekly-trend-chart" width="400" height="200"></canvas>
                             </div>
-                            <div class="goal-item">
-                                <label>目标准确率</label>
-                                <input type="number" id="accuracy-goal" min="50" max="100" value="85">
-                                <span>%</span>
+                            <div class="trend-summary" id="trend-summary">
+                                <!-- 动态生成趋势总结 -->
                             </div>
-                            <button class="save-goals-btn" id="save-goals-btn">保存目标</button>
+                        </div>
+                        
+                        <!-- 薄弱环节 -->
+                        <div id="weaknesses-insight" class="insight-content">
+                            <div class="weakness-list" id="weakness-list">
+                                <!-- 动态生成薄弱环节 -->
+                            </div>
+                        </div>
+                        
+                        <!-- 智能建议 -->
+                        <div id="suggestions-insight" class="insight-content">
+                            <div class="recommendations-container">
+                                <!-- 学习目标推荐 -->
+                                <div class="recommendation-section" id="goals-recommendations">
+                                    <h4>学习目标建议</h4>
+                                    <div class="recommendation-cards" id="goals-cards">
+                                        <!-- 动态生成目标推荐卡片 -->
+                                    </div>
+                                </div>
+                                
+                                <!-- 学习模式推荐 -->
+                                <div class="recommendation-section" id="modes-recommendations">
+                                    <h4>学习模式建议</h4>
+                                    <div class="recommendation-cards" id="modes-cards">
+                                        <!-- 动态生成模式推荐卡片 -->
+                                    </div>
+                                </div>
+                                
+                                <!-- 学习时间推荐 -->
+                                <div class="recommendation-section" id="schedule-recommendations">
+                                    <h4>最佳学习时间</h4>
+                                    <div class="recommendation-cards" id="schedule-cards">
+                                        <!-- 动态生成时间推荐卡片 -->
+                                    </div>
+                                </div>
+                                
+                                <!-- 重点关注区域 -->
+                                <div class="recommendation-section" id="focus-recommendations">
+                                    <h4>重点关注</h4>
+                                    <div class="recommendation-cards" id="focus-cards">
+                                        <!-- 动态生成重点关注卡片 -->
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -280,6 +355,36 @@
                             <span class="switch"></span>
                             显示变形规则说明
                         </label>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label>每日新学习目标</label>
+                        <div class="goal-setting">
+                            <input type="number" id="daily-goal-input" min="1" max="50" value="10">
+                            <span class="goal-unit">个新词汇</span>
+                        </div>
+                        <div class="setting-desc">设置每天学习新词汇的目标数量</div>
+                        <div class="goal-progress" id="goal-progress">
+                            <div class="progress-text">今日进度：<span id="today-progress">0</span>/<span id="today-goal">10</span></div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="settings-new-progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label>每日复习目标</label>
+                        <div class="goal-setting">
+                            <input type="number" id="daily-review-goal-input" min="1" max="100" value="20">
+                            <span class="goal-unit">个复习题目</span>
+                        </div>
+                        <div class="setting-desc">设置每天复习已学词汇的目标数量</div>
+                        <div class="goal-progress" id="review-goal-progress">
+                            <div class="progress-text">今日复习进度：<span id="today-review-progress">0</span>/<span id="today-review-goal">20</span></div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="settings-review-progress-fill"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 

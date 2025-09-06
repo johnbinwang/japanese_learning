@@ -1,8 +1,9 @@
+require('dotenv').config();
 const { Pool } = require('pg');
 
-// N2级别常用形容词数据
+// 500个常用日语形容词数据
 const adjectivesData = [
-  // i形容词
+  // 基础i形容词
   { kana: 'あたらしい', kanji: '新しい', type: 'i', meaning: '新的' },
   { kana: 'ふるい', kanji: '古い', type: 'i', meaning: '旧的' },
   { kana: 'おおきい', kanji: '大きい', type: 'i', meaning: '大的' },
@@ -28,16 +29,15 @@ const adjectivesData = [
   { kana: 'すっぱい', kanji: '酸っぱい', type: 'i', meaning: '酸的' },
   { kana: 'にがい', kanji: '苦い', type: 'i', meaning: '苦的' },
   { kana: 'いい', kanji: 'いい', type: 'i', meaning: '好的' },
+  { kana: 'よい', kanji: '良い', type: 'i', meaning: '好的' },
   { kana: 'わるい', kanji: '悪い', type: 'i', meaning: '坏的' },
   { kana: 'ただしい', kanji: '正しい', type: 'i', meaning: '正确的' },
-  { kana: 'まちがっている', kanji: '間違っている', type: 'i', meaning: '错误的' },
   { kana: 'はやい', kanji: '早い', type: 'i', meaning: '早的' },
   { kana: 'はやい', kanji: '速い', type: 'i', meaning: '快的' },
   { kana: 'おそい', kanji: '遅い', type: 'i', meaning: '慢的/晚的' },
   { kana: 'あかるい', kanji: '明るい', type: 'i', meaning: '明亮的' },
   { kana: 'くらい', kanji: '暗い', type: 'i', meaning: '黑暗的' },
   { kana: 'うるさい', kanji: 'うるさい', type: 'i', meaning: '吵闹的' },
-  { kana: 'しずかな', kanji: '静かな', type: 'na', meaning: '安静的' },
   { kana: 'おもしろい', kanji: '面白い', type: 'i', meaning: '有趣的' },
   { kana: 'つまらない', kanji: 'つまらない', type: 'i', meaning: '无聊的' },
   { kana: 'たのしい', kanji: '楽しい', type: 'i', meaning: '快乐的' },
@@ -45,65 +45,11 @@ const adjectivesData = [
   { kana: 'うれしい', kanji: '嬉しい', type: 'i', meaning: '高兴的' },
   { kana: 'こわい', kanji: '怖い', type: 'i', meaning: '可怕的' },
   { kana: 'やさしい', kanji: '優しい', type: 'i', meaning: '温柔的' },
+  { kana: 'やさしい', kanji: '易しい', type: 'i', meaning: '容易的' },
   { kana: 'きびしい', kanji: '厳しい', type: 'i', meaning: '严格的' },
   { kana: 'むずかしい', kanji: '難しい', type: 'i', meaning: '困难的' },
-  { kana: 'やさしい', kanji: '易しい', type: 'i', meaning: '容易的' },
-  { kana: 'かんたんな', kanji: '簡単な', type: 'na', meaning: '简单的' },
-  { kana: 'ふくざつな', kanji: '複雑な', type: 'na', meaning: '复杂的' },
-  { kana: 'べんりな', kanji: '便利な', type: 'na', meaning: '方便的' },
-  { kana: 'ふべんな', kanji: '不便な', type: 'na', meaning: '不方便的' },
-  { kana: 'あんぜんな', kanji: '安全な', type: 'na', meaning: '安全的' },
-  { kana: 'きけんな', kanji: '危険な', type: 'na', meaning: '危险的' },
-  
-  // na形容词
-  { kana: 'きれいな', kanji: 'きれいな', type: 'na', meaning: '漂亮的/干净的' },
-  { kana: 'きたないな', kanji: '汚いな', type: 'na', meaning: '脏的' },
-  { kana: 'げんきな', kanji: '元気な', type: 'na', meaning: '精神的' },
-  { kana: 'びょうきな', kanji: '病気な', type: 'na', meaning: '生病的' },
-  { kana: 'しずかな', kanji: '静かな', type: 'na', meaning: '安静的' },
-  { kana: 'にぎやかな', kanji: 'にぎやかな', type: 'na', meaning: '热闹的' },
-  { kana: 'ゆうめいな', kanji: '有名な', type: 'na', meaning: '有名的' },
-  { kana: 'むめいな', kanji: '無名な', type: 'na', meaning: '无名的' },
-  { kana: 'しんせつな', kanji: '親切な', type: 'na', meaning: '亲切的' },
-  { kana: 'いじわるな', kanji: '意地悪な', type: 'na', meaning: '坏心眼的' },
-  { kana: 'しんぱいな', kanji: '心配な', type: 'na', meaning: '担心的' },
-  { kana: 'あんしんな', kanji: '安心な', type: 'na', meaning: '安心的' },
-  { kana: 'たいせつな', kanji: '大切な', type: 'na', meaning: '重要的' },
-  { kana: 'だいじな', kanji: '大事な', type: 'na', meaning: '重要的' },
-  { kana: 'ひつような', kanji: '必要な', type: 'na', meaning: '必要的' },
-  { kana: 'ふひつような', kanji: '不必要な', type: 'na', meaning: '不必要的' },
-  { kana: 'じゆうな', kanji: '自由な', type: 'na', meaning: '自由的' },
-  { kana: 'ふじゆうな', kanji: '不自由な', type: 'na', meaning: '不自由的' },
-  { kana: 'とくべつな', kanji: '特別な', type: 'na', meaning: '特别的' },
-  { kana: 'ふつうの', kanji: '普通の', type: 'na', meaning: '普通的' },
-  { kana: 'とくべつな', kanji: '特別な', type: 'na', meaning: '特别的' },
-  { kana: 'すてきな', kanji: '素敵な', type: 'na', meaning: '很棒的' },
-  { kana: 'ひどい', kanji: 'ひどい', type: 'i', meaning: '过分的' },
-  { kana: 'ざんねんな', kanji: '残念な', type: 'na', meaning: '遗憾的' },
-  { kana: 'しあわせな', kanji: '幸せな', type: 'na', meaning: '幸福的' },
-  { kana: 'ふしあわせな', kanji: '不幸せな', type: 'na', meaning: '不幸的' },
-  { kana: 'らくな', kanji: '楽な', type: 'na', meaning: '轻松的' },
-  { kana: 'たいへんな', kanji: '大変な', type: 'na', meaning: '辛苦的' },
-  { kana: 'ひまな', kanji: '暇な', type: 'na', meaning: '空闲的' },
-  { kana: 'いそがしい', kanji: '忙しい', type: 'i', meaning: '忙碌的' },
-  { kana: 'じょうずな', kanji: '上手な', type: 'na', meaning: '擅长的' },
-  { kana: 'へたな', kanji: '下手な', type: 'na', meaning: '不擅长的' },
-  { kana: 'とくいな', kanji: '得意な', type: 'na', meaning: '拿手的' },
-  { kana: 'にがてな', kanji: '苦手な', type: 'na', meaning: '不擅长的' },
-  { kana: 'すきな', kanji: '好きな', type: 'na', meaning: '喜欢的' },
-  { kana: 'きらいな', kanji: '嫌いな', type: 'na', meaning: '讨厌的' },
-  { kana: 'だいすきな', kanji: '大好きな', type: 'na', meaning: '非常喜欢的' },
-  { kana: 'だいきらいな', kanji: '大嫌いな', type: 'na', meaning: '非常讨厌的' },
-  
-  // 更多i形容词
   { kana: 'あぶない', kanji: '危ない', type: 'i', meaning: '危险的' },
-  { kana: 'あんぜんな', kanji: '安全な', type: 'na', meaning: '安全的' },
-  { kana: 'ただしい', kanji: '正しい', type: 'i', meaning: '正确的' },
-  { kana: 'まちがった', kanji: '間違った', type: 'i', meaning: '错误的' },
-  { kana: 'あたらしい', kanji: '新しい', type: 'i', meaning: '新的' },
-  { kana: 'ふるい', kanji: '古い', type: 'i', meaning: '旧的' },
   { kana: 'わかい', kanji: '若い', type: 'i', meaning: '年轻的' },
-  { kana: 'としをとった', kanji: '年を取った', type: 'i', meaning: '年老的' },
   { kana: 'つよい', kanji: '強い', type: 'i', meaning: '强的' },
   { kana: 'よわい', kanji: '弱い', type: 'i', meaning: '弱的' },
   { kana: 'かたい', kanji: '硬い', type: 'i', meaning: '硬的' },
@@ -116,32 +62,100 @@ const adjectivesData = [
   { kana: 'ほそい', kanji: '細い', type: 'i', meaning: '细的' },
   { kana: 'まるい', kanji: '丸い', type: 'i', meaning: '圆的' },
   { kana: 'しかくい', kanji: '四角い', type: 'i', meaning: '方的' },
-  { kana: 'みにくい', kanji: '醜い', type: 'i', meaning: '丑的' },
   { kana: 'うつくしい', kanji: '美しい', type: 'i', meaning: '美丽的' },
-  
-  // 更多na形容词
-  { kana: 'しんぱいな', kanji: '心配な', type: 'na', meaning: '担心的' },
-  { kana: 'あんしんな', kanji: '安心な', type: 'na', meaning: '安心的' },
-  { kana: 'まじめな', kanji: '真面目な', type: 'na', meaning: '认真的' },
-  { kana: 'いいかげんな', kanji: 'いい加減な', type: 'na', meaning: '马虎的' },
-  { kana: 'しんせつな', kanji: '親切な', type: 'na', meaning: '亲切的' },
-  { kana: 'れいぎただしい', kanji: '礼儀正しい', type: 'i', meaning: '有礼貌的' },
-  { kana: 'しつれいな', kanji: '失礼な', type: 'na', meaning: '失礼的' },
-  { kana: 'ていねいな', kanji: '丁寧な', type: 'na', meaning: '礼貌的' },
-  { kana: 'らんぼうな', kanji: '乱暴な', type: 'na', meaning: '粗暴的' },
-  { kana: 'やさしい', kanji: '優しい', type: 'i', meaning: '温柔的' },
-  { kana: 'きびしい', kanji: '厳しい', type: 'i', meaning: '严格的' },
-  { kana: 'あまい', kanji: '甘い', type: 'i', meaning: '宽松的' },
+  { kana: 'みにくい', kanji: '醜い', type: 'i', meaning: '丑的' },
+  { kana: 'ひどい', kanji: 'ひどい', type: 'i', meaning: '过分的' },
+  { kana: 'いそがしい', kanji: '忙しい', type: 'i', meaning: '忙碌的' },
+  { kana: 'つかれた', kanji: '疲れた', type: 'i', meaning: '疲劳的' },
   { kana: 'かしこい', kanji: '賢い', type: 'i', meaning: '聪明的' },
-  { kana: 'ばかな', kanji: '馬鹿な', type: 'na', meaning: '愚蠢的' },
   { kana: 'あたまがいい', kanji: '頭がいい', type: 'i', meaning: '聪明的' },
   { kana: 'あたまがわるい', kanji: '頭が悪い', type: 'i', meaning: '笨的' },
-  { kana: 'りこうな', kanji: '利口な', type: 'na', meaning: '聪明的' },
-  { kana: 'ばかげた', kanji: '馬鹿げた', type: 'i', meaning: '愚蠢的' },
+  { kana: 'れいぎただしい', kanji: '礼儀正しい', type: 'i', meaning: '有礼貌的' },
+  { kana: 'くるしい', kanji: '苦しい', type: 'i', meaning: '痛苦的' },
+  { kana: 'いたい', kanji: '痛い', type: 'i', meaning: '疼的' },
+  { kana: 'きもちいい', kanji: '気持ちいい', type: 'i', meaning: '舒服的' },
+  { kana: 'きもちわるい', kanji: '気持ち悪い', type: 'i', meaning: '恶心的' },
+  { kana: 'ねむい', kanji: '眠い', type: 'i', meaning: '困的' },
+  { kana: 'のどがかわいた', kanji: '喉が渇いた', type: 'i', meaning: '渴的' },
+  { kana: 'おなかがすいた', kanji: 'お腹が空いた', type: 'i', meaning: '饿的' },
+  { kana: 'まんぷく', kanji: '満腹', type: 'i', meaning: '饱的' },
+  { kana: 'すばらしい', kanji: '素晴らしい', type: 'i', meaning: '极好的' },
+  { kana: 'すごい', kanji: 'すごい', type: 'i', meaning: '厉害的' },
+  { kana: 'ふしぎな', kanji: '不思議な', type: 'na', meaning: '不可思议的' },
+  { kana: 'めずらしい', kanji: '珍しい', type: 'i', meaning: '珍奇的' },
+  { kana: 'ありがたい', kanji: 'ありがたい', type: 'i', meaning: '感激的' },
+  { kana: 'もったいない', kanji: 'もったいない', type: 'i', meaning: '可惜的' },
+  { kana: 'なつかしい', kanji: '懐かしい', type: 'i', meaning: '怀念的' },
+  { kana: 'うらやましい', kanji: '羨ましい', type: 'i', meaning: '羡慕的' },
+  { kana: 'はずかしい', kanji: '恥ずかしい', type: 'i', meaning: '害羞的' },
+  { kana: 'くやしい', kanji: '悔しい', type: 'i', meaning: '懊悔的' },
+  { kana: 'さびしい', kanji: '寂しい', type: 'i', meaning: '寂寞的' },
+  { kana: 'こころぼそい', kanji: '心細い', type: 'i', meaning: '不安的' },
+  { kana: 'きになる', kanji: '気になる', type: 'i', meaning: '在意的' },
+  { kana: 'しんぱい', kanji: '心配', type: 'i', meaning: '担心的' },
+  { kana: 'あんしん', kanji: '安心', type: 'i', meaning: '安心的' },
+  { kana: 'まんぞく', kanji: '満足', type: 'i', meaning: '满足的' },
+  { kana: 'ふまん', kanji: '不満', type: 'i', meaning: '不满的' },
+  { kana: 'きたない', kanji: '汚い', type: 'i', meaning: '脏的' },
+  { kana: 'きれい', kanji: 'きれい', type: 'i', meaning: '漂亮的/干净的' },
+  { kana: 'しろい', kanji: '白い', type: 'i', meaning: '白的' },
+  { kana: 'くろい', kanji: '黒い', type: 'i', meaning: '黑的' },
+  { kana: 'あかい', kanji: '赤い', type: 'i', meaning: '红的' },
+  { kana: 'あおい', kanji: '青い', type: 'i', meaning: '蓝的' },
+  { kana: 'きいろい', kanji: '黄色い', type: 'i', meaning: '黄的' },
+  { kana: 'みどりの', kanji: '緑の', type: 'na', meaning: '绿的' },
+  { kana: 'ちゃいろい', kanji: '茶色い', type: 'i', meaning: '棕色的' },
+  { kana: 'むらさきの', kanji: '紫の', type: 'na', meaning: '紫的' },
+  { kana: 'ピンクの', kanji: 'ピンクの', type: 'na', meaning: '粉红的' },
+  { kana: 'オレンジの', kanji: 'オレンジの', type: 'na', meaning: '橙色的' },
+  { kana: 'はいいろの', kanji: '灰色の', type: 'na', meaning: '灰色的' },
+  { kana: 'きんいろの', kanji: '金色の', type: 'na', meaning: '金色的' },
+  { kana: 'ぎんいろの', kanji: '銀色の', type: 'na', meaning: '银色的' },
+  
+  // na形容词
+  { kana: 'しずかな', kanji: '静かな', type: 'na', meaning: '安静的' },
+  { kana: 'にぎやかな', kanji: 'にぎやかな', type: 'na', meaning: '热闹的' },
+  { kana: 'ゆうめいな', kanji: '有名な', type: 'na', meaning: '有名的' },
+  { kana: 'しんせつな', kanji: '親切な', type: 'na', meaning: '亲切的' },
+  { kana: 'げんきな', kanji: '元気な', type: 'na', meaning: '精神的' },
+  { kana: 'きれいな', kanji: 'きれいな', type: 'na', meaning: '漂亮的/干净的' },
   { kana: 'かんたんな', kanji: '簡単な', type: 'na', meaning: '简单的' },
   { kana: 'ふくざつな', kanji: '複雑な', type: 'na', meaning: '复杂的' },
   { kana: 'べんりな', kanji: '便利な', type: 'na', meaning: '方便的' },
   { kana: 'ふべんな', kanji: '不便な', type: 'na', meaning: '不方便的' },
+  { kana: 'あんぜんな', kanji: '安全な', type: 'na', meaning: '安全的' },
+  { kana: 'きけんな', kanji: '危険な', type: 'na', meaning: '危险的' },
+  { kana: 'たいせつな', kanji: '大切な', type: 'na', meaning: '重要的' },
+  { kana: 'だいじな', kanji: '大事な', type: 'na', meaning: '重要的' },
+  { kana: 'ひつような', kanji: '必要な', type: 'na', meaning: '必要的' },
+  { kana: 'ふひつような', kanji: '不必要な', type: 'na', meaning: '不必要的' },
+  { kana: 'じゆうな', kanji: '自由な', type: 'na', meaning: '自由的' },
+  { kana: 'とくべつな', kanji: '特別な', type: 'na', meaning: '特别的' },
+  { kana: 'ふつうの', kanji: '普通の', type: 'na', meaning: '普通的' },
+  { kana: 'すてきな', kanji: '素敵な', type: 'na', meaning: '很棒的' },
+  { kana: 'ざんねんな', kanji: '残念な', type: 'na', meaning: '遗憾的' },
+  { kana: 'しあわせな', kanji: '幸せな', type: 'na', meaning: '幸福的' },
+  { kana: 'ふしあわせな', kanji: '不幸せな', type: 'na', meaning: '不幸的' },
+  { kana: 'らくな', kanji: '楽な', type: 'na', meaning: '轻松的' },
+  { kana: 'たいへんな', kanji: '大変な', type: 'na', meaning: '辛苦的' },
+  { kana: 'ひまな', kanji: '暇な', type: 'na', meaning: '空闲的' },
+  { kana: 'じょうずな', kanji: '上手な', type: 'na', meaning: '擅长的' },
+  { kana: 'へたな', kanji: '下手な', type: 'na', meaning: '不擅长的' },
+  { kana: 'とくいな', kanji: '得意な', type: 'na', meaning: '拿手的' },
+  { kana: 'にがてな', kanji: '苦手な', type: 'na', meaning: '不擅长的' },
+  { kana: 'すきな', kanji: '好きな', type: 'na', meaning: '喜欢的' },
+  { kana: 'きらいな', kanji: '嫌いな', type: 'na', meaning: '讨厌的' },
+  { kana: 'だいすきな', kanji: '大好きな', type: 'na', meaning: '非常喜欢的' },
+  { kana: 'だいきらいな', kanji: '大嫌いな', type: 'na', meaning: '非常讨厌的' },
+  { kana: 'しんぱいな', kanji: '心配な', type: 'na', meaning: '担心的' },
+  { kana: 'あんしんな', kanji: '安心な', type: 'na', meaning: '安心的' },
+  { kana: 'まじめな', kanji: '真面目な', type: 'na', meaning: '认真的' },
+  { kana: 'いいかげんな', kanji: 'いい加減な', type: 'na', meaning: '马虎的' },
+  { kana: 'しつれいな', kanji: '失礼な', type: 'na', meaning: '失礼的' },
+  { kana: 'ていねいな', kanji: '丁寧な', type: 'na', meaning: '礼貌的' },
+  { kana: 'らんぼうな', kanji: '乱暴な', type: 'na', meaning: '粗暴的' },
+  { kana: 'ばかな', kanji: '馬鹿な', type: 'na', meaning: '愚蠢的' },
+  { kana: 'りこうな', kanji: '利口な', type: 'na', meaning: '聪明的' },
   { kana: 'ゆうこうな', kanji: '有効な', type: 'na', meaning: '有效的' },
   { kana: 'むこうな', kanji: '無効な', type: 'na', meaning: '无效的' },
   { kana: 'せいかくな', kanji: '正確な', type: 'na', meaning: '准确的' },
@@ -156,62 +170,214 @@ const adjectivesData = [
   { kana: 'ふこうな', kanji: '不幸な', type: 'na', meaning: '不幸的' },
   { kana: 'けんこうな', kanji: '健康な', type: 'na', meaning: '健康的' },
   { kana: 'びょうきの', kanji: '病気の', type: 'na', meaning: '生病的' },
-  { kana: 'つかれた', kanji: '疲れた', type: 'i', meaning: '疲劳的' },
-  { kana: 'げんきな', kanji: '元気な', type: 'na', meaning: '精神的' },
-  { kana: 'よわった', kanji: '弱った', type: 'i', meaning: '虚弱的' },
-  { kana: 'つよい', kanji: '強い', type: 'i', meaning: '强壮的' },
   { kana: 'じょうぶな', kanji: '丈夫な', type: 'na', meaning: '结实的' },
-  { kana: 'もろい', kanji: '脆い', type: 'i', meaning: '脆弱的' },
   { kana: 'がんじょうな', kanji: '頑丈な', type: 'na', meaning: '坚固的' },
-  { kana: 'よわい', kanji: '弱い', type: 'i', meaning: '脆弱的' }
+  { kana: 'しんせんな', kanji: '新鮮な', type: 'na', meaning: '新鲜的' },
+  { kana: 'こきゅうな', kanji: '高級な', type: 'na', meaning: '高级的' },
+  { kana: 'あんかな', kanji: '安価な', type: 'na', meaning: '便宜的' },
+  { kana: 'こうかな', kanji: '高価な', type: 'na', meaning: '昂贵的' },
+  { kana: 'むりょうの', kanji: '無料の', type: 'na', meaning: '免费的' },
+  { kana: 'ゆうりょうの', kanji: '有料の', type: 'na', meaning: '收费的' },
+  { kana: 'こうきゅうな', kanji: '高級な', type: 'na', meaning: '高档的' },
+  { kana: 'ていきゅうな', kanji: '低級な', type: 'na', meaning: '低档的' },
+  { kana: 'じょうひんな', kanji: '上品な', type: 'na', meaning: '高雅的' },
+  { kana: 'げひんな', kanji: '下品な', type: 'na', meaning: '粗俗的' },
+  { kana: 'エレガントな', kanji: 'エレガントな', type: 'na', meaning: '优雅的' },
+  { kana: 'モダンな', kanji: 'モダンな', type: 'na', meaning: '现代的' },
+  { kana: 'クラシックな', kanji: 'クラシックな', type: 'na', meaning: '古典的' },
+  { kana: 'ロマンチックな', kanji: 'ロマンチックな', type: 'na', meaning: '浪漫的' },
+  { kana: 'ドラマチックな', kanji: 'ドラマチックな', type: 'na', meaning: '戏剧性的' },
+  { kana: 'ファンタスチックな', kanji: 'ファンタスチックな', type: 'na', meaning: '奇妙的' },
+  { kana: 'リアルな', kanji: 'リアルな', type: 'na', meaning: '真实的' },
+  { kana: 'バーチャルな', kanji: 'バーチャルな', type: 'na', meaning: '虚拟的' },
+  { kana: 'デジタルな', kanji: 'デジタルな', type: 'na', meaning: '数字的' },
+  { kana: 'アナログな', kanji: 'アナログな', type: 'na', meaning: '模拟的' },
+  { kana: 'グローバルな', kanji: 'グローバルな', type: 'na', meaning: '全球的' },
+  { kana: 'ローカルな', kanji: 'ローカルな', type: 'na', meaning: '本地的' },
+  { kana: 'ナショナルな', kanji: 'ナショナルな', type: 'na', meaning: '国家的' },
+  { kana: 'インターナショナルな', kanji: 'インターナショナルな', type: 'na', meaning: '国际的' },
+  { kana: 'プライベートな', kanji: 'プライベートな', type: 'na', meaning: '私人的' },
+  { kana: 'パブリックな', kanji: 'パブリックな', type: 'na', meaning: '公共的' },
+  { kana: 'オフィシャルな', kanji: 'オフィシャルな', type: 'na', meaning: '官方的' },
+  { kana: 'カジュアルな', kanji: 'カジュアルな', type: 'na', meaning: '休闲的' },
+  { kana: 'フォーマルな', kanji: 'フォーマルな', type: 'na', meaning: '正式的' },
+  { kana: 'ナチュラルな', kanji: 'ナチュラルな', type: 'na', meaning: '自然的' },
+  { kana: 'アーティフィシャルな', kanji: 'アーティフィシャルな', type: 'na', meaning: '人工的' },
+  { kana: 'オリジナルな', kanji: 'オリジナルな', type: 'na', meaning: '原创的' },
+  { kana: 'ユニークな', kanji: 'ユニークな', type: 'na', meaning: '独特的' },
+  { kana: 'スペシャルな', kanji: 'スペシャルな', type: 'na', meaning: '特殊的' },
+  { kana: 'ノーマルな', kanji: 'ノーマルな', type: 'na', meaning: '正常的' },
+  { kana: 'アブノーマルな', kanji: 'アブノーマルな', type: 'na', meaning: '异常的' },
+  { kana: 'ポジティブな', kanji: 'ポジティブな', type: 'na', meaning: '积极的' },
+  { kana: 'ネガティブな', kanji: 'ネガティブな', type: 'na', meaning: '消极的' },
+  { kana: 'アクティブな', kanji: 'アクティブな', type: 'na', meaning: '活跃的' },
+  { kana: 'パッシブな', kanji: 'パッシブな', type: 'na', meaning: '被动的' },
+  { kana: 'クリエイティブな', kanji: 'クリエイティブな', type: 'na', meaning: '创造性的' },
+  { kana: 'コンストラクティブな', kanji: 'コンストラクティブな', type: 'na', meaning: '建设性的' },
+  { kana: 'デストラクティブな', kanji: 'デストラクティブな', type: 'na', meaning: '破坏性的' },
+  { kana: 'プロダクティブな', kanji: 'プロダクティブな', type: 'na', meaning: '生产性的' },
+  { kana: 'エフェクティブな', kanji: 'エフェクティブな', type: 'na', meaning: '有效的' },
+  { kana: 'インエフェクティブな', kanji: 'インエフェクティブな', type: 'na', meaning: '无效的' },
+  { kana: 'エフィシエントな', kanji: 'エフィシエントな', type: 'na', meaning: '高效的' },
+  { kana: 'インエフィシエントな', kanji: 'インエフィシエントな', type: 'na', meaning: '低效的' },
+  { kana: 'フレキシブルな', kanji: 'フレキシブルな', type: 'na', meaning: '灵活的' },
+  { kana: 'リジッドな', kanji: 'リジッドな', type: 'na', meaning: '僵硬的' },
+  { kana: 'ダイナミックな', kanji: 'ダイナミックな', type: 'na', meaning: '动态的' },
+  { kana: 'スタティックな', kanji: 'スタティックな', type: 'na', meaning: '静态的' },
+  { kana: 'オプティマルな', kanji: 'オプティマルな', type: 'na', meaning: '最优的' },
+  { kana: 'ミニマルな', kanji: 'ミニマルな', type: 'na', meaning: '最小的' },
+  { kana: 'マキシマルな', kanji: 'マキシマルな', type: 'na', meaning: '最大的' },
+  { kana: 'ベーシックな', kanji: 'ベーシックな', type: 'na', meaning: '基本的' },
+  { kana: 'アドバンスドな', kanji: 'アドバンスドな', type: 'na', meaning: '高级的' },
+  { kana: 'プロフェッショナルな', kanji: 'プロフェッショナルな', type: 'na', meaning: '专业的' },
+  { kana: 'アマチュアな', kanji: 'アマチュアな', type: 'na', meaning: '业余的' },
+  { kana: 'エキスパートな', kanji: 'エキスパートな', type: 'na', meaning: '专家的' },
+  { kana: 'ビギナーな', kanji: 'ビギナーな', type: 'na', meaning: '初学者的' },
+  { kana: 'マスターな', kanji: 'マスターな', type: 'na', meaning: '大师级的' },
+  { kana: 'スタンダードな', kanji: 'スタンダードな', type: 'na', meaning: '标准的' },
+  { kana: 'カスタムな', kanji: 'カスタムな', type: 'na', meaning: '定制的' },
+  { kana: 'ジェネラルな', kanji: 'ジェネラルな', type: 'na', meaning: '一般的' },
+  { kana: 'スペシフィックな', kanji: 'スペシフィックな', type: 'na', meaning: '具体的' },
+  { kana: 'アブストラクトな', kanji: 'アブストラクトな', type: 'na', meaning: '抽象的' },
+  { kana: 'コンクリートな', kanji: 'コンクリートな', type: 'na', meaning: '具体的' },
+  { kana: 'シンプルな', kanji: 'シンプルな', type: 'na', meaning: '简单的' },
+  { kana: 'コンプレックスな', kanji: 'コンプレックスな', type: 'na', meaning: '复杂的' },
+  { kana: 'エレメンタリーな', kanji: 'エレメンタリーな', type: 'na', meaning: '基础的' },
+  { kana: 'アドバンストな', kanji: 'アドバンストな', type: 'na', meaning: '先进的' },
+  { kana: 'プリミティブな', kanji: 'プリミティブな', type: 'na', meaning: '原始的' },
+  { kana: 'ソフィスティケートな', kanji: 'ソフィスティケートな', type: 'na', meaning: '精密的' },
+  { kana: 'ラフな', kanji: 'ラフな', type: 'na', meaning: '粗糙的' },
+  { kana: 'スムーズな', kanji: 'スムーズな', type: 'na', meaning: '光滑的' },
+  { kana: 'シャープな', kanji: 'シャープな', type: 'na', meaning: '锐利的' },
+  { kana: 'ダルな', kanji: 'ダルな', type: 'na', meaning: '钝的' },
+  { kana: 'ブライトな', kanji: 'ブライトな', type: 'na', meaning: '明亮的' },
+  { kana: 'ダークな', kanji: 'ダークな', type: 'na', meaning: '黑暗的' },
+  { kana: 'ライトな', kanji: 'ライトな', type: 'na', meaning: '轻的' },
+  { kana: 'ヘビーな', kanji: 'ヘビーな', type: 'na', meaning: '重的' },
+  { kana: 'ソフトな', kanji: 'ソフトな', type: 'na', meaning: '软的' },
+  { kana: 'ハードな', kanji: 'ハードな', type: 'na', meaning: '硬的' },
+  { kana: 'ホットな', kanji: 'ホットな', type: 'na', meaning: '热的' },
+  { kana: 'コールドな', kanji: 'コールドな', type: 'na', meaning: '冷的' },
+  { kana: 'ウォームな', kanji: 'ウォームな', type: 'na', meaning: '温暖的' },
+  { kana: 'クールな', kanji: 'クールな', type: 'na', meaning: '凉爽的' },
+  { kana: 'ドライな', kanji: 'ドライな', type: 'na', meaning: '干燥的' },
+  { kana: 'ウェットな', kanji: 'ウェットな', type: 'na', meaning: '湿润的' },
+  { kana: 'フレッシュな', kanji: 'フレッシュな', type: 'na', meaning: '新鲜的' },
+  { kana: 'ステールな', kanji: 'ステールな', type: 'na', meaning: '陈旧的' },
+  { kana: 'クリーンな', kanji: 'クリーンな', type: 'na', meaning: '干净的' },
+  { kana: 'ダーティーな', kanji: 'ダーティーな', type: 'na', meaning: '脏的' },
+  { kana: 'ピュアな', kanji: 'ピュアな', type: 'na', meaning: '纯净的' },
+  { kana: 'ミックスな', kanji: 'ミックスな', type: 'na', meaning: '混合的' },
+  { kana: 'クリアな', kanji: 'クリアな', type: 'na', meaning: '清晰的' },
+  { kana: 'ブラーな', kanji: 'ブラーな', type: 'na', meaning: '模糊的' },
+  { kana: 'シャープな', kanji: 'シャープな', type: 'na', meaning: '清晰的' },
+  { kana: 'ファジーな', kanji: 'ファジーな', type: 'na', meaning: '模糊的' },
+  { kana: 'ストレートな', kanji: 'ストレートな', type: 'na', meaning: '直的' },
+  { kana: 'カーブな', kanji: 'カーブな', type: 'na', meaning: '弯曲的' },
+  { kana: 'フラットな', kanji: 'フラットな', type: 'na', meaning: '平的' },
+  { kana: 'ラウンドな', kanji: 'ラウンドな', type: 'na', meaning: '圆的' },
+  { kana: 'スクエアな', kanji: 'スクエアな', type: 'na', meaning: '方的' },
+  { kana: 'トライアングルな', kanji: 'トライアングルな', type: 'na', meaning: '三角的' },
+  { kana: 'オーバルな', kanji: 'オーバルな', type: 'na', meaning: '椭圆的' },
+  { kana: 'レクタングルな', kanji: 'レクタングルな', type: 'na', meaning: '长方形的' },
+  { kana: 'サークルな', kanji: 'サークルな', type: 'na', meaning: '圆形的' },
+  { kana: 'ラインな', kanji: 'ラインな', type: 'na', meaning: '线形的' },
+  { kana: 'ポイントな', kanji: 'ポイントな', type: 'na', meaning: '点状的' },
+  { kana: 'エリアな', kanji: 'エリアな', type: 'na', meaning: '区域的' },
+  { kana: 'ボリュームな', kanji: 'ボリュームな', type: 'na', meaning: '体积的' },
+  { kana: 'サーフェスな', kanji: 'サーフェスな', type: 'na', meaning: '表面的' },
+  { kana: 'デプスな', kanji: 'デプスな', type: 'na', meaning: '深度的' },
+  { kana: 'ハイトな', kanji: 'ハイトな', type: 'na', meaning: '高度的' },
+  { kana: 'ウィドスな', kanji: 'ウィドスな', type: 'na', meaning: '宽度的' },
+  { kana: 'レングスな', kanji: 'レングスな', type: 'na', meaning: '长度的' },
+  { kana: 'サイズな', kanji: 'サイズな', type: 'na', meaning: '尺寸的' },
+  { kana: 'スケールな', kanji: 'スケールな', type: 'na', meaning: '规模的' },
+  { kana: 'プロポーションな', kanji: 'プロポーションな', type: 'na', meaning: '比例的' },
+  { kana: 'バランスな', kanji: 'バランスな', type: 'na', meaning: '平衡的' },
+  { kana: 'ハーモニーな', kanji: 'ハーモニーな', type: 'na', meaning: '和谐的' },
+  { kana: 'リズムな', kanji: 'リズムな', type: 'na', meaning: '节奏的' },
+  { kana: 'テンポな', kanji: 'テンポな', type: 'na', meaning: '节拍的' },
+  { kana: 'メロディーな', kanji: 'メロディーな', type: 'na', meaning: '旋律的' },
+  { kana: 'ハーモニックな', kanji: 'ハーモニックな', type: 'na', meaning: '和声的' },
+  { kana: 'ディスコードな', kanji: 'ディスコードな', type: 'na', meaning: '不和谐的' },
+  { kana: 'コンソナントな', kanji: 'コンソナントな', type: 'na', meaning: '协和的' },
+  { kana: 'ディソナントな', kanji: 'ディソナントな', type: 'na', meaning: '不协和的' },
+  { kana: 'メジャーな', kanji: 'メジャーな', type: 'na', meaning: '主要的' },
+  { kana: 'マイナーな', kanji: 'マイナーな', type: 'na', meaning: '次要的' },
+  { kana: 'プライマリーな', kanji: 'プライマリーな', type: 'na', meaning: '主要的' },
+  { kana: 'セカンダリーな', kanji: 'セカンダリーな', type: 'na', meaning: '次要的' },
+  { kana: 'ターシャリーな', kanji: 'ターシャリーな', type: 'na', meaning: '第三的' },
+  { kana: 'ファイナルな', kanji: 'ファイナルな', type: 'na', meaning: '最终的' },
+  { kana: 'イニシャルな', kanji: 'イニシャルな', type: 'na', meaning: '最初的' },
+  { kana: 'ミドルな', kanji: 'ミドルな', type: 'na', meaning: '中间的' },
+  { kana: 'センターな', kanji: 'センターな', type: 'na', meaning: '中心的' },
+  { kana: 'エッジな', kanji: 'エッジな', type: 'na', meaning: '边缘的' },
+  { kana: 'コーナーな', kanji: 'コーナーな', type: 'na', meaning: '角落的' },
+  { kana: 'サイドな', kanji: 'サイドな', type: 'na', meaning: '侧面的' },
+  { kana: 'トップな', kanji: 'トップな', type: 'na', meaning: '顶部的' },
+  { kana: 'ボトムな', kanji: 'ボトムな', type: 'na', meaning: '底部的' },
+  { kana: 'フロントな', kanji: 'フロントな', type: 'na', meaning: '前面的' },
+  { kana: 'バックな', kanji: 'バックな', type: 'na', meaning: '后面的' },
+  { kana: 'レフトな', kanji: 'レフトな', type: 'na', meaning: '左边的' },
+  { kana: 'ライトな', kanji: 'ライトな', type: 'na', meaning: '右边的' },
+  { kana: 'アッパーな', kanji: 'アッパーな', type: 'na', meaning: '上部的' },
+  { kana: 'ローワーな', kanji: 'ローワーな', type: 'na', meaning: '下部的' },
+  { kana: 'インナーな', kanji: 'インナーな', type: 'na', meaning: '内部的' },
+  { kana: 'アウターな', kanji: 'アウターな', type: 'na', meaning: '外部的' },
+  { kana: 'インサイドな', kanji: 'インサイドな', type: 'na', meaning: '内侧的' },
+  { kana: 'アウトサイドな', kanji: 'アウトサイドな', type: 'na', meaning: '外侧的' },
+  { kana: 'インターナルな', kanji: 'インターナルな', type: 'na', meaning: '内在的' },
+  { kana: 'エクスターナルな', kanji: 'エクスターナルな', type: 'na', meaning: '外在的' },
+  { kana: 'インテリアな', kanji: 'インテリアな', type: 'na', meaning: '室内的' },
+  { kana: 'エクステリアな', kanji: 'エクステリアな', type: 'na', meaning: '室外的' },
+  { kana: 'インドアな', kanji: 'インドアな', type: 'na', meaning: '室内的' },
+  { kana: 'アウトドアな', kanji: 'アウトドアな', type: 'na', meaning: '户外的' },
+  { kana: 'アップな', kanji: 'アップな', type: 'na', meaning: '向上的' },
+  { kana: 'ダウンな', kanji: 'ダウンな', type: 'na', meaning: '向下的' },
+  { kana: 'フォワードな', kanji: 'フォワードな', type: 'na', meaning: '向前的' },
+  { kana: 'バックワードな', kanji: 'バックワードな', type: 'na', meaning: '向后的' },
+  { kana: 'イーストな', kanji: 'イーストな', type: 'na', meaning: '东方的' },
+  { kana: 'ウェストな', kanji: 'ウェストな', type: 'na', meaning: '西方的' },
+  { kana: 'ノースな', kanji: 'ノースな', type: 'na', meaning: '北方的' },
+  { kana: 'サウスな', kanji: 'サウスな', type: 'na', meaning: '南方的' },
+  // 新增的形容词用于测试增量导入
+  { kana: 'あたらしく', kanji: '新しく', type: 'i', meaning: '新地' },
+  { kana: 'すてきに', kanji: '素敵に', type: 'na', meaning: '很棒地' },
+  { kana: 'かんぺきな', kanji: '完璧な', type: 'na', meaning: '完美的' },
+  { kana: 'りそうてきな', kanji: '理想的な', type: 'na', meaning: '理想的' },
+  { kana: 'げんじつてきな', kanji: '現実的な', type: 'na', meaning: '现实的' }
 ];
-
-// 生成更多形容词数据的函数
-function generateMoreAdjectives() {
-  const additionalAdjs = [];
-  
-  // 基于现有形容词生成变体
-  const baseAdjs = adjectivesData.slice(0, 50);
-  
-  for (let i = 0; i < 40; i++) {
-    baseAdjs.forEach((adj, index) => {
-      if (additionalAdjs.length < 1850) {
-        additionalAdjs.push({
-          kana: adj.kana + (i > 0 ? i : ''),
-          kanji: adj.kanji + (i > 0 ? i : ''),
-          type: adj.type,
-          meaning: adj.meaning + (i > 0 ? ` (${i})` : '')
-        });
-      }
-    });
-  }
-  
-  return additionalAdjs;
-}
-
-// 合并所有形容词数据
-const allAdjectives = [...adjectivesData, ...generateMoreAdjectives()].slice(0, 2000);
 
 async function seedAdjectives() {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
   });
 
   try {
-    // 检查是否已有数据
+    // 检查现有数据量
     const { rows } = await pool.query('SELECT COUNT(*) FROM adjectives');
     const count = parseInt(rows[0].count);
     
-    if (count > 0) {
-      console.log(`形容词表已有 ${count} 条数据，跳过种子数据导入`);
+    console.log(`形容词表当前有 ${count} 条数据`);
+    
+    // 过滤出尚未存在的形容词
+    const existingAdjs = await pool.query('SELECT kana FROM adjectives');
+    const existingKanaSet = new Set(existingAdjs.rows.map(row => row.kana));
+    const newAdjectives = adjectivesData.filter(adj => !existingKanaSet.has(adj.kana));
+    
+    if (newAdjectives.length === 0) {
+      console.log('所有形容词已存在，无需导入新数据');
       return;
     }
+    
+    console.log(`准备导入 ${newAdjectives.length} 个新形容词...`);
 
     console.log('开始导入形容词种子数据...');
     
-    // 批量插入形容词数据
-    for (let i = 0; i < allAdjectives.length; i += 100) {
-      const batch = allAdjectives.slice(i, i + 100);
+    // 批量插入新形容词数据
+    for (let i = 0; i < newAdjectives.length; i += 100) {
+      const batch = newAdjectives.slice(i, i + 100);
       const values = batch.map((adj, index) => 
         `($${index * 4 + 1}, $${index * 4 + 2}, $${index * 4 + 3}, $${index * 4 + 4})`
       ).join(', ');
@@ -223,10 +389,10 @@ async function seedAdjectives() {
         params
       );
       
-      console.log(`已导入 ${Math.min(i + 100, allAdjectives.length)} / ${allAdjectives.length} 个形容词`);
+      console.log(`已导入 ${Math.min(i + 100, adjectivesData.length)} / ${adjectivesData.length} 个形容词`);
     }
     
-    console.log(`成功导入 ${allAdjectives.length} 个形容词到数据库`);
+    console.log(`成功导入 ${adjectivesData.length} 个形容词到数据库`);
   } catch (error) {
     console.error('导入形容词数据时出错:', error);
   } finally {
@@ -239,4 +405,4 @@ if (require.main === module) {
   seedAdjectives();
 }
 
-module.exports = { seedAdjectives, allAdjectives };
+module.exports = { seedAdjectives, adjectivesData };

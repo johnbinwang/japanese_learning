@@ -8,7 +8,8 @@ const state = {
     settings: {
         dueOnly: false,
         showExplain: true,
-        enabledForms: []
+        enabledForms: [],
+        dailyGoal: 10
     },
     user: {
         anonId: null,
@@ -43,21 +44,127 @@ const FORMS = {
     ]
 };
 
+// 今日概览数据管理器
+class TodayOverviewManager {
+    constructor() {
+        this.cache = null;
+        this.lastFetchTime = 0;
+        this.cacheDuration = 30000; // 30秒缓存
+        this.pendingRequest = null;
+        this.subscribers = new Set();
+    }
+
+    // 订阅数据更新
+    subscribe(callback) {
+        this.subscribers.add(callback);
+        // 如果已有缓存数据，立即调用回调
+        if (this.cache) {
+            callback(this.cache);
+        }
+        return () => this.subscribers.delete(callback);
+    }
+
+    // 通知所有订阅者
+    notifySubscribers(data) {
+        this.subscribers.forEach(callback => {
+            try {
+                callback(data);
+            } catch (error) {
+                console.error('Error in subscriber callback:', error);
+            }
+        });
+    }
+
+    // 获取今日概览数据
+    async getTodayOverview(forceRefresh = false) {
+        const now = Date.now();
+        
+        // 如果有缓存且未过期，直接返回缓存
+        if (!forceRefresh && this.cache && (now - this.lastFetchTime) < this.cacheDuration) {
+            console.log('📋 使用缓存的今日概览数据');
+            return this.cache;
+        }
+
+        // 如果已有请求在进行中，等待该请求完成
+        if (this.pendingRequest) {
+            console.log('📋 等待进行中的今日概览请求');
+            return this.pendingRequest;
+        }
+
+        console.log('📋 发起新的今日概览API请求');
+        this.pendingRequest = this.fetchTodayOverview();
+        
+        try {
+            const data = await this.pendingRequest;
+            this.cache = data;
+            this.lastFetchTime = now;
+            this.notifySubscribers(data);
+            return data;
+        } finally {
+            this.pendingRequest = null;
+        }
+    }
+
+    // 实际的API请求
+    async fetchTodayOverview() {
+        try {
+            const response = await API.request('/api/today-overview');
+            console.log('📡 今日概览API请求成功');
+            return response;
+        } catch (error) {
+            console.error('❌ 今日概览API请求失败:', error);
+            throw error;
+        }
+    }
+
+    // 清除缓存
+    clearCache() {
+        this.cache = null;
+        this.lastFetchTime = 0;
+        console.log('🗑️ 今日概览缓存已清除');
+    }
+
+    // 强制刷新数据
+    async refresh() {
+        this.clearCache();
+        return this.getTodayOverview(true);
+    }
+}
+
+// 创建全局实例
+const todayOverviewManager = new TodayOverviewManager();
+
 // API 调用函数
 class API {
     static async request(endpoint, options = {}) {
         try {
+            // 自动添加访问码头部（如果存在）
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+            
+            if (state.user.accessCode) {
+                headers['X-Access-Code'] = state.user.accessCode;
+            }
     
             const response = await fetch(endpoint, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...options.headers
-                },
+                headers,
                 ...options
             });
             
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                // 尝试解析错误响应中的具体错误信息
+                let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData.error) {
+                        errorMessage = errorData.error;
+                    }
+                } catch (e) {
+                    // 如果无法解析JSON，使用默认错误信息
+                }
+                throw new Error(errorMessage);
             }
             
             return await response.json();
@@ -73,9 +180,16 @@ class API {
     }
     
     static async updateSettings(settings) {
-        return this.request('/api/settings', {
+    return this.request('/api/preferences', {
+      method: 'POST',
+      body: JSON.stringify(settings)
+    });
+  }
+    
+    static async updatePreferences(preferences) {
+        return this.request('/api/preferences', {
             method: 'POST',
-            body: JSON.stringify(settings)
+            body: JSON.stringify(preferences)
         });
     }
     
@@ -101,12 +215,19 @@ class API {
     }
     
     static async bindDevice(accessCode) {
-        return this.request('/api/me', {
+        const result = await this.request('/api/me', {
             method: 'POST',
             headers: {
                 'X-Access-Code': accessCode
             }
         });
+        
+        // 绑定成功后保存访问码到状态
+        if (result && result.accessCode) {
+            state.user.accessCode = result.accessCode;
+        }
+        
+        return result;
     }
 }
 
@@ -120,6 +241,11 @@ class Router {
         };
         
         window.addEventListener('hashchange', () => this.handleRoute());
+        // 不在构造函数中立即处理路由，等待App初始化完成
+    }
+    
+    // 新增方法：App初始化完成后调用
+    initialize() {
         this.handleRoute();
     }
     
@@ -139,6 +265,8 @@ class Router {
     }
     
     showPage(pageId) {
+        console.log('🔄 Router.showPage 被调用，目标页面:', pageId);
+        
         // 隐藏所有页面
         document.querySelectorAll('.page').forEach(page => {
             page.classList.remove('active');
@@ -150,6 +278,9 @@ class Router {
             targetPage.classList.add('active');
         }
         
+        // 重置页面滚动位置到顶部
+        window.scrollTo(0, 0);
+        
         // 更新导航状态
         document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
@@ -160,29 +291,86 @@ class Router {
             activeNav.classList.add('active');
         }
         
-        // 页面特定初始化
+        // 页面特定初始化和数据刷新
         if (pageId === 'progress') {
+            console.log('📊 切换到进度页面，调用 loadProgress');
             this.loadProgress();
         } else if (pageId === 'settings') {
+            console.log('⚙️ 切换到设置页面，调用 loadSettings');
             this.loadSettings();
         }
     }
     
     async loadProgress() {
         try {
-            // 初始化进度页面
+            console.log('📊 loadProgress 开始执行');
+            // 初始化进度页面结构（仅在首次需要时）
             initProgressPage();
+            // 使用统一的数据管理器加载今日概览数据
+            await loadTodayOverview();
+            console.log('✅ loadProgress 执行完成');
         } catch (error) {
-            console.error('Failed to load progress:', error);
+            console.error('❌ Failed to load progress:', error);
         }
     }
-    
+
     async loadSettings() {
         try {
-            const userData = await API.getUser();
+            console.log('🔧 loadSettings 开始执行');
+            
+            // 确保在API调用前先恢复用户状态
+            if (!state.user.accessCode) {
+                console.log('🔄 检测到访问码为空，尝试恢复用户状态');
+                // 使用App实例的restoreUserState方法
+                if (window.app) {
+                    window.app.restoreUserState();
+                }
+            }
+            
+            // 添加时间戳参数防止缓存，确保获取最新数据
+            const timestamp = Date.now();
+            console.log('📡 发送API请求获取用户数据和偏好设置，时间戳:', timestamp);
+            console.log('🔑 当前访问码:', state.user.accessCode);
+            
+            // 同时获取用户数据和偏好设置
+            const [userData, preferences] = await Promise.all([
+                API.request(`/api/me?_t=${timestamp}`, {
+                    cache: 'no-cache'
+                }),
+                API.request(`/api/preferences?_t=${timestamp}`, {
+                    cache: 'no-cache'
+                })
+            ]);
+            
+            // 将preferences数据合并到userData中
+            userData.preferences = preferences;
+            
+            console.log('📥 收到用户数据:', userData);
+            console.log('📥 收到偏好设置:', preferences);
+            console.log('📋 调用 updateSettingsDisplay 更新设置显示');
             updateSettingsDisplay(userData);
+            
+            // 使用统一的数据管理器加载今日进度，避免重复调用
+            console.log('📈 调用 loadTodayOverview 加载今日进度');
+            await loadTodayOverview();
+            
+            console.log('✅ loadSettings 执行完成');
         } catch (error) {
-            console.error('Failed to load settings:', error);
+            console.error('❌ Failed to load settings:', error);
+            
+            // 如果是访问码无效错误，清除本地存储并重新加载用户数据
+            if (error.message && error.message.includes('访问码无效')) {
+                console.log('Access code invalid, clearing and reloading user data');
+                localStorage.removeItem('accessCode');
+                state.user.accessCode = null;
+                
+                // 重新加载用户数据以获取新的访问码
+                if (window.app) {
+                    await window.app.loadUserData();
+                    // 重新尝试加载设置
+                    await this.loadSettings();
+                }
+            }
         }
     }
 }
@@ -393,8 +581,8 @@ class LearningManager {
             
             // 将选择的变形类型同步到设置中
             state.settings.enabledForms = [...state.selectedForms];
-            await API.updateSettings({
-                enabledForms: state.settings.enabledForms
+            await API.updatePreferences({
+                enabled_forms: JSON.stringify(state.settings.enabledForms)
             });
             
             await this.loadNextQuestion();
@@ -544,7 +732,7 @@ class LearningManager {
             } else if (state.currentModule === 'adj') {
                 explanation = this.getAdjectiveExplanation(q.targetForm, q.type);
             } else if (state.currentModule === 'plain') {
-                // 简体形模块需要根据实际题目类型来显示explanation
+                // 简体形模块统一使用简体形解释
                 if (q.itemType === 'vrb') {
                     explanation = this.getPlainFormExplanation(q.targetForm, q.group);
                 } else if (q.itemType === 'adj') {
@@ -579,11 +767,31 @@ class LearningManager {
             return { text: answer, explanation };
         } else if (state.currentModule === 'plain') {
             // 简体形变形
-            const answer = this.conjugateVerb({ kana, kanji, group }, targetForm);
+            const answer = this.conjugatePlainForm({ kana, kanji, group }, targetForm);
             const explanation = this.getPlainFormExplanation(targetForm, group);
             return { text: answer, explanation };
         } else {
             return { text: base, explanation: '简体形式' };
+        }
+    }
+    
+    conjugatePlainForm(verb, form) {
+        const { kana, kanji, group } = verb;
+        const base = kanji || kana;
+        const cleanGroup = this.normalizeVerbGroup(group);
+        
+        switch (form) {
+            case 'plain_present':
+                return base; // 简体现在形就是动词原形
+            case 'plain_past':
+                return this.conjugateToTa(base, cleanGroup);
+            case 'plain_negative':
+                return this.conjugateToNai(base, cleanGroup);
+            case 'plain_past_negative':
+                const naiForm = this.conjugateToNai(base, cleanGroup);
+                return naiForm.replace(/ない$/, 'なかった');
+            default:
+                return base;
         }
     }
     
@@ -663,6 +871,11 @@ class LearningManager {
         if (verb === 'する') return 'します';
         if (verb === '来る' || verb === 'くる') return 'きます';
         
+        // 复合动词处理：以「する」结尾的动词
+        if (verb.endsWith('する')) {
+            return verb.slice(0, -2) + 'します';
+        }
+        
         if (group === 'I') {
             const stem = verb.slice(0, -1);
             const lastChar = verb.slice(-1);
@@ -678,6 +891,11 @@ class LearningManager {
         if (verb === 'する') return 'して';
         if (verb === '来る' || verb === 'くる') return 'きて';
         if (verb === '行く' || verb === 'いく') return 'いって';
+        
+        // 复合动词处理：以「する」结尾的动词
+        if (verb.endsWith('する')) {
+            return verb.slice(0, -2) + 'して';
+        }
         
         if (group === 'I') {
             const stem = verb.slice(0, -1);
@@ -735,6 +953,11 @@ class LearningManager {
         if (verb === 'する') return 'できる';
         if (verb === '来る' || verb === 'くる') return 'こられる';
         
+        // 复合动词处理：以「する」结尾的动词
+        if (verb.endsWith('する')) {
+            return verb.slice(0, -2) + 'できる';
+        }
+        
         if (group === 'I') {
             const stem = verb.slice(0, -1);
             const lastChar = verb.slice(-1);
@@ -749,6 +972,11 @@ class LearningManager {
     conjugateToVolitional(verb, group) {
         if (verb === 'する') return 'しよう';
         if (verb === '来る' || verb === 'くる') return 'こよう';
+        
+        // 复合动词处理：以「する」结尾的动词
+        if (verb.endsWith('する')) {
+            return verb.slice(0, -2) + 'しよう';
+        }
         
         if (group === 'I') {
             const stem = verb.slice(0, -1);
@@ -800,6 +1028,8 @@ class LearningManager {
                 return adj + 'だった';
             case 'past_negative':
                 return adj + 'じゃなかった';
+            case 'adverb':
+                return adj + 'に';
             case 'te':
                 return adj + 'で';
             case 'rentai':
@@ -815,7 +1045,7 @@ class LearningManager {
         
         const explanations = {
             'masu': cleanGroup === 'I' ? 'I类动词ます形：词尾变i段+ます（如：飲む→飲みます）' : cleanGroup === 'II' ? 'II类动词ます形：去る+ます（如：食べる→食べます）' : '不规则动词ます形',
-            'te': cleanGroup === 'I' ? 'I类动词て形：く→いて，ぐ→いで，む/ぶ/ぬ→んで，る/う/つ→って' : cleanGroup === 'II' ? 'II类动词て形：去る+て（如：食べる→食べて）' : '不规则动词て形',
+            'te': cleanGroup === 'I' ? 'I类动词て形：く→いて，ぐ→いで，む/ぶ/ぬ→んで，る/う/つ→って，す→して' : cleanGroup === 'II' ? 'II类动词て形：去る+て（如：食べる→食べて）' : '不规则动词て形',
             'nai': cleanGroup === 'I' ? 'I类动词ない形：词尾变a段+ない（如：飲む→飲まない）' : cleanGroup === 'II' ? 'II类动词ない形：去る+ない（如：食べる→食べない）' : '不规则动词ない形',
             'ta': cleanGroup === 'I' ? 'I类动词た形：る/う/つ→った，ぶ/む/ぬ→んだ，く→いた，ぐ→いだ，す→した（如：つくる→作った）' : cleanGroup === 'II' ? 'II类动词た形：去る+た（如：食べる→食べた）' : '不规则动词た形',
             'potential': cleanGroup === 'I' ? 'I类动词可能形：词尾变e段+る（如：飲む→飲める）' : cleanGroup === 'II' ? 'II类动词可能形：去る+られる（如：食べる→食べられる）' : '不规则动词可能形',
@@ -835,7 +1065,7 @@ class LearningManager {
             'plain_negative': cleanType === 'i' ? '简体否定形（i形容词）：去い+くない（如：高い→高くない）' : '简体否定形（na形容词）：+じゃない / +ではない（如：きれい→きれいじゃない）',
             'plain_past': cleanType === 'i' ? '简体过去形（i形容词）：去い+かった（如：高い→高かった）' : '简体过去形（na形容词）：+だった（如：きれい→きれいだった）',
             'plain_past_negative': cleanType === 'i' ? '简体过去否定形（i形容词）：去い+くなかった（如：高い→高くなかった）' : '简体过去否定形（na形容词）：+じゃなかった / +ではなかった（如：きれい→きれいじゃなかった）',
-            'adverb': 'i形容词副词形：去い+く（如：高い→高く）',
+            'adverb': cleanType === 'i' ? 'i形容词副词形：去い+く（如：高い→高く）' : 'na形容词副词形：+に（如：きれい→きれいに）',
             'te': cleanType === 'i' ? 'i形容词て形：去い+くて（如：高い→高くて）' : 'na形容词て形：+で（如：きれい→きれいで）',
             'rentai': 'na形容词连体形：+な（如：きれい→きれいな）'
         };
@@ -939,21 +1169,70 @@ function updateProgressDisplay(data) {
 
 // 初始化进度页面
 function initProgressPage() {
-    // 设置默认选中的模块为动词
-    state.selectedModule = 'verb';
+    // 设置默认选中的模块为全部
+    state.selectedModule = 'all';
     
-    // 确保UI状态正确
-    const progressModuleButtons = document.querySelectorAll('#progress .module-btn');
-    progressModuleButtons.forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.module === 'verb') {
-            btn.classList.add('active');
-        }
-    });
+    // 初始化模式对比的模块选择器
+    initModeComparisonModuleSelector();
     
-    initModuleSelector();
-    initProgressTabs();
+    // 初始化洞察标签页
+    initInsightTabs();
+    
+    // 加载初始数据
     updateProgressDisplayWithModule();
+}
+
+// 初始化模式对比的模块选择器
+function initModeComparisonModuleSelector() {
+    const moduleButtons = document.querySelectorAll('.mode-comparison-section .module-btn');
+    
+    moduleButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // 移除其他按钮的active类
+            moduleButtons.forEach(b => b.classList.remove('active'));
+            // 添加当前按钮的active类
+            btn.classList.add('active');
+            
+            // 更新选中的模块
+            state.selectedModule = btn.dataset.module;
+            
+            // 重新加载模式对比数据
+            loadModeComparison();
+        });
+    });
+}
+
+// 初始化洞察标签页
+function initInsightTabs() {
+    const insightTabButtons = document.querySelectorAll('.insight-tab-btn');
+    const insightContents = document.querySelectorAll('.insight-content');
+    
+    insightTabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.dataset.tab;
+            
+            // 移除所有active类
+            insightTabButtons.forEach(b => b.classList.remove('active'));
+            insightContents.forEach(c => c.classList.remove('active'));
+            
+            // 添加当前标签的active类
+            btn.classList.add('active');
+            document.getElementById(`${targetTab}-insight`).classList.add('active');
+            
+            // 加载对应的数据
+            switch (targetTab) {
+                case 'trends':
+                    loadWeeklyTrends();
+                    break;
+                case 'weaknesses':
+                    loadWeaknesses();
+                    break;
+                case 'suggestions':
+                    loadSuggestions();
+                    break;
+            }
+        });
+    });
 }
 
 // 初始化模块选择器
@@ -970,6 +1249,8 @@ function initModuleSelector() {
             state.selectedModule = btn.dataset.module;
             // 重新加载数据
             updateProgressDisplayWithModule();
+            // 同时更新今日进度数据，确保设置页面数据同步
+            loadTodayProgress();
         });
     });
 }
@@ -997,32 +1278,384 @@ function initProgressTabs() {
     });
 }
 
-// 更新进度显示（带模块选择）
+// 更新进度显示（新的三层结构）
 function updateProgressDisplayWithModule() {
+    // 加载今日概览数据
+    loadTodayOverview();
+    
+    // 加载模式对比数据
+    loadModeComparison();
+    
+    // 加载学习洞察数据
+    loadLearningInsights();
+}
+
+// 加载今日概览数据
+async function loadTodayOverview() {
+    try {
+        console.log('📋 loadTodayOverview 开始执行');
+        const data = await todayOverviewManager.getTodayOverview();
+        updateTodayOverview(data);
+        console.log('✅ loadTodayOverview 执行完成');
+    } catch (error) {
+        console.error('❌ 获取今日概览数据失败:', error);
+    }
+}
+
+// 更新今日概览显示
+function updateTodayOverview(data) {
+    console.log('更新今日概览数据:', data);
+    
+    // 从API返回的嵌套结构中提取数据
+    const overview = data.overview || {};
+    const progress = data.progress || {};
+    const dueReviews = data.dueReviews || {};
+    
+    // 更新新学进度
+    const newProgress = parseInt(progress.newItemsProgress?.completed) || 0;
+    const newTarget = parseInt(progress.newItemsProgress?.target) || 10;
+    document.getElementById('new-progress').textContent = `${newProgress}/${newTarget}`;
+    const newProgressPercentage = newTarget > 0 ? (newProgress / newTarget) * 100 : 0;
+    document.getElementById('new-progress-fill').style.width = `${newProgressPercentage}%`;
+    
+    // 更新复习进度
+    const reviewProgress = parseInt(progress.reviewsProgress?.completed) || 0;
+    const reviewTarget = parseInt(progress.reviewsProgress?.target) || 50;
+    document.getElementById('review-progress').textContent = `${reviewProgress}/${reviewTarget}`;
+    const reviewProgressPercentage = reviewTarget > 0 ? (reviewProgress / reviewTarget) * 100 : 0;
+    document.getElementById('review-progress-fill').style.width = `${reviewProgressPercentage}%`;
+    
+    // 更新统计卡片
+    const totalDueCount = Object.values(dueReviews).reduce((sum, count) => sum + count, 0);
+    document.getElementById('study-time-today').textContent = `${Math.round(overview.total_study_time_today / 60) || 0}分钟`;
+    document.getElementById('study-streak').textContent = `${overview.study_streak_days || 0}天`;
+    document.getElementById('due-total').textContent = totalDueCount;
+}
+
+// 加载模式对比数据
+function loadModeComparison() {
     const selectedModule = state.selectedModule || 'all';
-    const isDetailed = document.querySelector('.tab-btn.active')?.dataset.tab !== 'overview';
-    const currentMode = state.currentMode;
-    
-    let url = `/api/progress?module=${selectedModule}`;
-    if (isDetailed) {
-        url += '&detailed=true';
-    }
-    if (currentMode) {
-        url += `&mode=${currentMode}`;
-    }
-    
-    fetch(url)
+    // 添加时间戳参数防止缓存
+    const timestamp = Date.now();
+    fetch(`/api/mode-comparison?module=${selectedModule}&_t=${timestamp}`, {
+        cache: 'no-cache'
+    })
         .then(response => response.json())
         .then(data => {
-            if (isDetailed && data.detailed) {
-                updateDetailedProgress(data.detailed);
-            } else {
-                updateProgressDisplay(data);
+            updateModeComparison(data);
+        })
+        .catch(error => {
+            console.error('获取模式对比数据失败:', error);
+        });
+}
+
+// 更新模式对比显示
+function updateModeComparison(data) {
+    // 更新测验模式统计
+    const quizData = data.quiz || {};
+    document.getElementById('quiz-total').textContent = quizData.total_reviews || 0;
+    document.getElementById('quiz-accuracy').textContent = `${quizData.accuracy || 0}%`;
+    document.getElementById('quiz-streak').textContent = quizData.avg_streak || 0;
+    document.getElementById('quiz-mastered').textContent = quizData.mastered_count || 0;
+    
+    // 更新闪卡模式统计
+    const flashcardData = data.flashcard || {};
+    document.getElementById('flashcard-total').textContent = flashcardData.total_reviews || 0;
+    document.getElementById('flashcard-accuracy').textContent = `${flashcardData.accuracy || 0}%`;
+    document.getElementById('flashcard-streak').textContent = flashcardData.avg_streak || 0;
+    document.getElementById('flashcard-mastered').textContent = flashcardData.mastered_count || 0;
+    
+    // 更新模式推荐
+    updateModeRecommendation(data.recommendation);
+}
+
+// 更新模式推荐
+function updateModeRecommendation(recommendation) {
+    const container = document.getElementById('mode-recommendation');
+    if (!container || !recommendation) return;
+    
+    container.innerHTML = `
+        <div class="recommendation-card">
+            <div class="recommendation-icon">${recommendation.icon || '💡'}</div>
+            <div class="recommendation-content">
+                <h4>${recommendation.title || '学习建议'}</h4>
+                <p>${recommendation.message || '继续保持良好的学习习惯！'}</p>
+            </div>
+        </div>
+    `;
+}
+
+// 加载学习洞察数据
+function loadLearningInsights() {
+    const activeInsightTab = document.querySelector('.insight-tab-btn.active')?.dataset.tab || 'trends';
+    
+    switch (activeInsightTab) {
+        case 'trends':
+            loadWeeklyTrends();
+            break;
+        case 'weaknesses':
+            loadWeaknesses();
+            break;
+        case 'suggestions':
+            loadSuggestions();
+            break;
+    }
+}
+
+// 加载7天趋势数据
+function loadWeeklyTrends() {
+    const timestamp = Date.now();
+    fetch(`/api/progress?detailed=true&_t=${timestamp}`, {
+        cache: 'no-cache'
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.detailed && data.detailed.learningTrends) {
+                updateWeeklyTrendChart(data.detailed.learningTrends.weekly);
+                updateTrendSummary(data.detailed.learningTrends);
             }
         })
         .catch(error => {
-            console.error('获取进度数据失败:', error);
+            console.error('获取趋势数据失败:', error);
         });
+}
+
+// 更新趋势总结
+function updateTrendSummary(trendsData) {
+    const container = document.getElementById('trend-summary');
+    if (!container || !trendsData) return;
+    
+    const summary = trendsData.summary || {};
+    container.innerHTML = `
+        <div class="trend-summary-cards">
+            <div class="summary-card">
+                <span class="summary-label">本周学习天数</span>
+                <span class="summary-value">${summary.study_days || 0}天</span>
+            </div>
+            <div class="summary-card">
+                <span class="summary-label">平均正确率</span>
+                <span class="summary-value">${summary.avg_accuracy || 0}%</span>
+            </div>
+            <div class="summary-card">
+                <span class="summary-label">总复习数</span>
+                <span class="summary-value">${summary.total_reviews || 0}</span>
+            </div>
+        </div>
+    `;
+}
+
+// 加载薄弱环节数据
+function loadWeaknesses() {
+    const timestamp = Date.now();
+    fetch(`/api/progress?detailed=true&_t=${timestamp}`, {
+        cache: 'no-cache'
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.detailed && data.detailed.errorPatterns) {
+                updateWeaknessList(data.detailed.errorPatterns.problems);
+            }
+        })
+        .catch(error => {
+            console.error('获取薄弱环节数据失败:', error);
+        });
+}
+
+// 更新薄弱环节列表
+function updateWeaknessList(weaknesses) {
+    const container = document.getElementById('weakness-list');
+    if (!container) return;
+    
+    if (!weaknesses || weaknesses.length === 0) {
+        container.innerHTML = '<div class="no-weaknesses">🎉 暂无明显薄弱环节，继续保持！</div>';
+        return;
+    }
+    
+    container.innerHTML = '';
+    weaknesses.forEach(weakness => {
+        const weaknessDiv = document.createElement('div');
+        weaknessDiv.className = 'weakness-item';
+        weaknessDiv.innerHTML = `
+            <div class="weakness-form">${weakness.form}</div>
+            <div class="weakness-stats">
+                <span class="error-rate">错误率: ${Math.round((weakness.errors / weakness.total) * 100)}%</span>
+                <span class="error-count">${weakness.errors}/${weakness.total}</span>
+            </div>
+            <div class="weakness-suggestion">建议加强练习</div>
+        `;
+        container.appendChild(weaknessDiv);
+    });
+}
+
+// 加载智能推荐数据
+function loadSuggestions() {
+    const timestamp = Date.now();
+    fetch(`/api/recommendations?_t=${timestamp}`, {
+        cache: 'no-cache'
+    })
+        .then(response => response.json())
+        .then(data => {
+            updateRecommendationCards(data);
+        })
+        .catch(error => {
+            console.error('获取智能推荐失败:', error);
+        });
+}
+
+// 更新推荐卡片
+function updateRecommendationCards(recommendations) {
+    // 更新目标推荐
+    updateRecommendationSection('goals', recommendations.goals, {
+        emptyMessage: '暂无目标建议',
+        cardClass: 'goals'
+    });
+    
+    // 更新模式推荐
+    updateRecommendationSection('modes', recommendations.modes, {
+        emptyMessage: '暂无模式建议',
+        cardClass: 'modes'
+    });
+    
+    // 更新时间推荐
+    updateRecommendationSection('schedule', recommendations.schedule, {
+        emptyMessage: '暂无时间建议',
+        cardClass: 'schedule'
+    });
+    
+    // 更新重点关注推荐
+    updateRecommendationSection('focus', recommendations.focus_areas, {
+        emptyMessage: '暂无重点关注建议',
+        cardClass: 'focus'
+    });
+}
+
+// 更新推荐区域
+function updateRecommendationSection(sectionId, items, options) {
+    const container = document.getElementById(`${sectionId}-cards`);
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (!items || items.length === 0) {
+        container.innerHTML = `<div class="no-recommendations">${options.emptyMessage}</div>`;
+        return;
+    }
+    
+    items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = `recommendation-card ${options.cardClass}`;
+        
+        let actionsHtml = '';
+        let metaHtml = '';
+        
+        // 根据推荐类型生成不同的操作按钮和元数据
+        if (sectionId === 'goals') {
+            actionsHtml = `
+                <div class="recommendation-actions">
+                    <button class="apply-recommendation-btn" onclick="applyGoalRecommendation(${item.suggested_new_target}, ${item.suggested_review_target})">
+                        应用建议
+                    </button>
+                </div>
+            `;
+        } else if (sectionId === 'modes') {
+            metaHtml = `
+                <div class="recommendation-meta">
+                    <span>正确率: ${(item.accuracy * 100).toFixed(1)}%</span>
+                </div>
+            `;
+        } else if (sectionId === 'schedule') {
+            metaHtml = `
+                <div class="recommendation-meta">
+                    <span>时间: ${item.hour}:00</span>
+                    <span>正确率: ${(item.accuracy * 100).toFixed(1)}%</span>
+                </div>
+            `;
+        } else if (sectionId === 'focus') {
+            metaHtml = `
+                <div class="recommendation-meta">
+                    <span>错误率: ${item.error_rate}%</span>
+                    <span>练习次数: ${item.total_attempts}</span>
+                </div>
+            `;
+        }
+        
+        card.innerHTML = `
+            <div class="recommendation-title">${item.title}</div>
+            <div class="recommendation-description">${item.description}</div>
+            ${metaHtml}
+            ${actionsHtml}
+        `;
+        
+        container.appendChild(card);
+    });
+}
+
+// 应用目标推荐
+function applyGoalRecommendation(newTarget, reviewTarget) {
+    fetch('/api/recommendations/apply', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: 'goals',
+            new_target: newTarget,
+            review_target: reviewTarget
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('学习目标已更新！', 'success');
+            // 更新设置页面的目标显示
+            const dailyGoalInput = document.getElementById('daily-goal-input');
+            if (dailyGoalInput) {
+                dailyGoalInput.value = newTarget;
+            }
+            // 重新加载推荐
+            loadSuggestions();
+        } else {
+            showNotification('更新失败: ' + (data.error || '未知错误'), 'error');
+        }
+    })
+    .catch(error => {
+        console.error('应用推荐失败:', error);
+        showNotification('应用推荐失败', 'error');
+    });
+}
+
+// 显示通知
+function showNotification(message, type = 'info') {
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 10000;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // 3秒后自动移除
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
 }
 
 // 更新详细进度数据
@@ -1035,9 +1668,6 @@ function updateDetailedProgress(detailedData) {
             break;
         case 'trends':
             updateTrendsTab(detailedData);
-            break;
-        case 'recommendations':
-            updateRecommendationsTab(detailedData);
             break;
     }
 }
@@ -1224,29 +1854,9 @@ function updateWeeklyTrendChart(weeklyData) {
 }
 
 // 更新建议标签页
-function updateRecommendationsTab(data) {
-    if (data.recommendations) {
-        updateRecommendations(data.recommendations);
-    }
-}
 
-// 更新学习建议
-function updateRecommendations(recommendations) {
-    const container = document.getElementById('recommendations-list');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    recommendations.forEach(rec => {
-        const recDiv = document.createElement('div');
-        recDiv.className = `recommendation-item ${rec.priority}`;
-        recDiv.innerHTML = `
-            <div class="recommendation-message">${rec.message}</div>
-            <div class="recommendation-action">${rec.action}</div>
-        `;
-        container.appendChild(recDiv);
-    });
-}
+
+
 
 // 保存学习目标
 function saveStudyGoals() {
@@ -1267,26 +1877,118 @@ function saveStudyGoals() {
     showToast('学习目标已保存', 'success');
 }
 
+// 加载今日学习进度
+async function loadTodayProgress() {
+    try {
+        console.log('📈 loadTodayProgress 开始执行');
+        console.log('🔍 当前 state.settings:', state.settings);
+        
+        const data = await todayOverviewManager.getTodayOverview();
+        
+        console.log('📡 收到今日概览数据:', data);
+        
+        // 更新今日新学习进度显示
+        const todayProgress = parseInt(data.progress?.newItemsProgress?.completed) || 0;
+        // 优先使用state.settings中的目标值，确保与输入框一致
+        const todayGoal = state.settings.dailyGoal || parseInt(data.overview?.daily_new_target) || 10;
+        
+        console.log('🎯 学习进度数据 - 完成:', todayProgress, '目标:', todayGoal);
+        console.log('📊 目标值来源 - state.settings.dailyGoal:', state.settings.dailyGoal, 'API daily_new_target:', data.overview?.daily_new_target);
+        
+        const todayProgressEl = document.getElementById('today-progress');
+        const todayGoalEl = document.getElementById('today-goal');
+        if (todayProgressEl) todayProgressEl.textContent = todayProgress;
+        if (todayGoalEl) todayGoalEl.textContent = todayGoal;
+        
+        // 更新新学习进度条
+        const progressPercentage = todayGoal > 0 ? Math.min((todayProgress / todayGoal) * 100, 100) : 0;
+        const settingsNewProgressFill = document.getElementById('settings-new-progress-fill');
+        console.log('📊 新学习进度条 - 百分比:', progressPercentage + '%', '元素:', settingsNewProgressFill);
+        if (settingsNewProgressFill) {
+            settingsNewProgressFill.style.width = progressPercentage + '%';
+            console.log('✅ 新学习进度条宽度已设置为:', progressPercentage + '%');
+        }
+        
+        // 更新今日复习进度显示
+        const todayReviewProgress = parseInt(data.progress?.reviewsProgress?.completed) || 0;
+        // 优先使用state.settings中的目标值，确保与输入框一致
+        const todayReviewGoal = state.settings.dailyReviewGoal || parseInt(data.overview?.daily_review_target) || 20;
+        
+        console.log('🔄 复习进度数据 - 完成:', todayReviewProgress, '目标:', todayReviewGoal);
+        console.log('📊 复习目标值来源 - state.settings.dailyReviewGoal:', state.settings.dailyReviewGoal, 'API daily_review_target:', data.overview?.daily_review_target);
+        
+        // 确保更新所有复习相关的显示元素
+        const todayReviewProgressEl = document.getElementById('today-review-progress');
+        const todayReviewGoalEl = document.getElementById('today-review-goal');
+        if (todayReviewProgressEl) todayReviewProgressEl.textContent = todayReviewProgress;
+        if (todayReviewGoalEl) todayReviewGoalEl.textContent = todayReviewGoal;
+        
+        // 更新复习进度条
+        const reviewProgressPercentage = todayReviewGoal > 0 ? Math.min((todayReviewProgress / todayReviewGoal) * 100, 100) : 0;
+        const settingsReviewProgressFill = document.getElementById('settings-review-progress-fill');
+        console.log('📊 复习进度条 - 百分比:', reviewProgressPercentage + '%', '元素:', settingsReviewProgressFill);
+        if (settingsReviewProgressFill) {
+            settingsReviewProgressFill.style.width = reviewProgressPercentage + '%';
+            console.log('✅ 复习进度条宽度已设置为:', reviewProgressPercentage + '%');
+        }
+        
+        console.log('📋 设置页面进度更新完成:', { 
+            todayProgress, todayGoal, progressPercentage,
+            todayReviewProgress, todayReviewGoal, reviewProgressPercentage
+        });
+        
+    } catch (error) {
+        console.error('❌ Failed to load today progress:', error);
+    }
+}
+
 
 
 // 设置页面
 function updateSettingsDisplay(userData) {
-    state.user = userData;
+    console.log('🎛️ updateSettingsDisplay 开始执行，接收到的用户数据:', userData);
     
-    // 显示访问码（明文显示）
-    const accessCode = userData.accessCode || '000000';
+    // 更新状态，但保留已存在的访问码
+    state.user = {
+        ...userData,
+        accessCode: state.user.accessCode || userData.accessCode
+    };
+    
+    // 显示访问码（优先使用状态中的访问码）
+    const accessCode = state.user.accessCode || userData.accessCode || '000000';
     document.getElementById('access-code-display').value = accessCode;
+    console.log('🔑 设置访问码:', accessCode);
     
-    // 更新设置开关
-    document.getElementById('due-only-toggle').checked = userData.settings?.dueOnly || false;
+    // 更新设置开关 - 将dueOnly默认设为false
+    document.getElementById('due-only-toggle').checked = userData.settings?.dueOnly === true;
     document.getElementById('show-explain-toggle').checked = userData.settings?.showExplain !== false;
+    console.log('🔧 更新设置开关 - dueOnly:', userData.settings?.dueOnly, 'showExplain:', userData.settings?.showExplain);
+    
+    // 更新每日学习目标 - 从preferences获取最新值
+    const dailyGoal = userData.preferences?.daily_new_target || userData.settings?.dailyGoal || 10;
+    document.getElementById('daily-goal-input').value = dailyGoal;
+    console.log('🎯 设置每日学习目标:', dailyGoal, '(来源: preferences =', userData.preferences?.daily_new_target, ', settings =', userData.settings?.dailyGoal, ')');
+    
+    // 更新每日复习目标
+    const dailyReviewGoal = userData.preferences?.daily_review_target || 20;
+    document.getElementById('daily-review-goal-input').value = dailyReviewGoal;
+    console.log('🔄 设置每日复习目标:', dailyReviewGoal, '(来源: preferences =', userData.preferences?.daily_review_target, ')');
     
     // 更新全局设置
-    state.settings = {
-        dueOnly: userData.settings?.dueOnly || false,
+    const newSettings = {
+        dueOnly: userData.settings?.dueOnly === true,
         showExplain: userData.settings?.showExplain !== false,
-        enabledForms: userData.settings?.enabledForms || []
+        enabledForms: userData.settings?.enabledForms || [],
+        dailyGoal: dailyGoal,
+        dailyReviewGoal: dailyReviewGoal
     };
+    
+    console.log('🌐 更新全局state.settings:', newSettings);
+    state.settings = newSettings;
+    
+    // 加载今日学习进度
+    console.log('📊 从 updateSettingsDisplay 调用 loadTodayProgress');
+    loadTodayProgress();
     
     // 同步当前模块的selectedForms
     const currentModuleForms = FORMS[state.currentModule].map(f => f.id);
@@ -1340,8 +2042,8 @@ async function updateFormToggle(e) {
     }
     
     try {
-        await API.updateSettings({
-            enabledForms: state.settings.enabledForms
+        await API.updatePreferences({
+            enabled_forms: JSON.stringify(state.settings.enabledForms)
         });
     } catch (error) {
         console.error('Failed to update form toggle:', error);
@@ -1376,8 +2078,29 @@ class App {
         this.router = new Router();
         this.learningManager = new LearningManager();
         window.learningManager = this.learningManager; // 设置为全局变量
+        this.restoreUserState(); // 从本地存储恢复用户状态
         this.initializeEventListeners();
+        // 确保用户状态恢复后再加载用户数据
         this.loadUserData();
+        // 用户状态恢复完成后，初始化路由处理
+        this.router.initialize();
+    }
+    
+    restoreUserState() {
+        // 从本地存储恢复用户状态
+        const savedAccessCode = localStorage.getItem('accessCode');
+        if (savedAccessCode) {
+            state.user.accessCode = savedAccessCode;
+            console.log('恢复用户状态 - 访问码:', savedAccessCode);
+        }
+    }
+    
+    saveUserState() {
+        // 保存用户状态到本地存储
+        if (state.user.accessCode) {
+            localStorage.setItem('accessCode', state.user.accessCode);
+            console.log('保存访问码:', state.user.accessCode);
+        }
     }
     
     initializeEventListeners() {
@@ -1397,6 +2120,10 @@ class App {
         document.getElementById('due-only-toggle').addEventListener('change', this.updateSetting.bind(this));
         document.getElementById('show-explain-toggle').addEventListener('change', this.updateSetting.bind(this));
         
+        // 每日目标设置
+        document.getElementById('daily-goal-input').addEventListener('change', this.updateDailyGoal.bind(this));
+        document.getElementById('daily-review-goal-input').addEventListener('change', this.updateDailyReviewGoal.bind(this));
+        
         // 进度页面事件
         const saveGoalsBtn = document.getElementById('save-goals-btn');
         if (saveGoalsBtn) {
@@ -1409,7 +2136,18 @@ class App {
     async loadUserData() {
         try {
             showLoading(true);
-            const userData = await API.getUser();
+            const [userData, preferences] = await Promise.all([
+                API.getUser(),
+                API.request('/api/preferences')
+            ]);
+            userData.preferences = preferences;
+            
+            // 更新状态并保存访问码
+            if (userData.accessCode) {
+                state.user.accessCode = userData.accessCode;
+                this.saveUserState();
+            }
+            
             updateSettingsDisplay(userData);
         } catch (error) {
             console.error('Failed to load user data:', error);
@@ -1491,7 +2229,10 @@ class App {
         state.settings[settingKey] = value;
         
         try {
-            await API.updateSettings({ [settingKey]: value });
+            // 将设置键转换为preferences表的字段名
+            const preferencesKey = settingKey === 'dueOnly' ? 'due_only' : 
+                                 settingKey === 'showExplain' ? 'show_explain' : settingKey;
+            await API.updatePreferences({ [preferencesKey]: value });
             showToast('设置已保存', 'success');
         } catch (error) {
             console.error('Failed to update setting:', error);
@@ -1501,11 +2242,50 @@ class App {
             state.settings[settingKey] = !value;
         }
     }
+    
+    async updateDailyGoal(e) {
+        const newGoal = parseInt(e.target.value) || 10;
+        
+        state.settings.dailyGoal = newGoal;
+        const todayGoalEl = document.getElementById('today-goal');
+        if (todayGoalEl) todayGoalEl.textContent = newGoal;
+        
+        try {
+            // 只需要调用preferences接口，因为settings已经重定向到preferences
+            await API.updatePreferences({ daily_new_target: newGoal });
+            showToast('每日目标已更新', 'success');
+            
+            // 重新加载今日进度以更新进度条
+            loadTodayProgress();
+        } catch (error) {
+            console.error('Failed to update daily goal:', error);
+            showToast('目标更新失败', 'error');
+        }
+    }
+    
+    async updateDailyReviewGoal(e) {
+        const newReviewGoal = parseInt(e.target.value) || 20;
+        
+        state.settings.dailyReviewGoal = newReviewGoal;
+        const todayReviewGoalEl = document.getElementById('today-review-goal');
+        if (todayReviewGoalEl) todayReviewGoalEl.textContent = newReviewGoal;
+        
+        try {
+            await API.updatePreferences({ daily_review_target: newReviewGoal });
+            showToast('每日复习目标已更新', 'success');
+            
+            // 重新加载今日进度以更新进度条
+            loadTodayProgress();
+        } catch (error) {
+            console.error('Failed to update daily review goal:', error);
+            showToast('复习目标更新失败', 'error');
+        }
+    }
 }
 
 // 启动应用
 document.addEventListener('DOMContentLoaded', () => {
-    new App();
+    window.app = new App();
 });
 
 // PWA 支持

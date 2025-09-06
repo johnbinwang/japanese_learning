@@ -9,7 +9,8 @@
     "seed": "node seed-verbs.js && node seed-adjs.js",
     "setup-db": "psql $DATABASE_URL < schema.sql",
     "migrate": "node migrate.js",
-    "build": "echo 'No build step required for static files'",
+    "build": "npm run migrate && echo 'Build completed with migrations'",
+    "vercel-build": "npm run migrate",
     "test": "mocha test_progress.js --timeout 10000",
     "test:progress": "node test_progress.js"
   },
@@ -29,7 +30,9 @@
     "crypto": "^1.0.1",
     "dotenv": "^17.2.1",
     "express": "^4.18.2",
+    "node-fetch": "^3.3.2",
     "pg": "^8.11.3",
+    "sqlite3": "^5.1.7",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-09-06T03-06-23-763Z",
+  "tables": {
+    "verbs": {
+      "file": "/Users/edy/Projects/japanese_learning/backups/verbs_backup_2025-09-06T03-06-23-763Z.json",
+      "count": 1623
+    },
+    "adjectives": {
+      "file": "/Users/edy/Projects/japanese_learning/backups/adjectives_backup_2025-09-06T03-06-23-763Z.json",
+      "count": 2049
+    },
+    "plain": {
+      "file": "/Users/edy/Projects/japanese_learning/backups/plain_backup_2025-09-06T03-06-23-763Z.json",
+      "count": 18010
+    },
+    "reviews": {
+      "file": "/Users/edy/Projects/japanese_learning/backups/reviews_backup_2025-09-06T03-06-23-763Z.json",
+      "count": 1259
+    }
+  },
+  "restoreScript": "/Users/edy/Projects/japanese_learning/backups/restore_2025-09-06T03-06-23-763Z.js"
+}

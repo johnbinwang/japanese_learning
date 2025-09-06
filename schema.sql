@@ -26,13 +26,7 @@ CREATE TABLE IF NOT EXISTS adjectives (
     meaning TEXT NOT NULL
 );
 
--- 用户设置表
-CREATE TABLE IF NOT EXISTS settings (
-    anon_id UUID PRIMARY KEY REFERENCES users_anon(id) ON DELETE CASCADE,
-    due_only BOOLEAN DEFAULT false,
-    show_explain BOOLEAN DEFAULT true,
-    enabled_forms TEXT[] DEFAULT ARRAY['masu', 'te', 'nai', 'ta', 'potential', 'volitional']
-);
+-- 用户设置表已合并到user_learning_preferences表中
 
 -- 复习记录表
 CREATE TABLE IF NOT EXISTS reviews (
@@ -66,6 +60,4 @@ INSERT INTO users_anon (id, access_code) VALUES
 ('00000000-0000-0000-0000-000000000000', 'DEMO0000')
 ON CONFLICT (access_code) DO NOTHING;
 
-INSERT INTO settings (anon_id) VALUES 
-('00000000-0000-0000-0000-000000000000')
-ON CONFLICT (anon_id) DO NOTHING;
+-- settings表已删除，相关功能已合并到user_learning_preferences表

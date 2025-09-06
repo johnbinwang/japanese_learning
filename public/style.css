@@ -26,7 +26,7 @@ body {
 /* 主要内容区域 */
 .main-content {
     flex: 1;
-    padding-bottom: 80px; /* 为底部导航留空间 */
+    padding-bottom: 120px; /* 为底部导航留空间 */
     overflow-y: auto;
 }
 
@@ -700,50 +700,7 @@ body {
     font-size: 16px;
 }
 
-/* 建议标签页样式 */
-.recommendations-section {
-    background: #1a1a2e;
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid #2a2a3e;
-    margin-bottom: 24px;
-}
 
-.recommendations-list {
-    display: grid;
-    gap: 12px;
-}
-
-.recommendation-item {
-    padding: 16px;
-    border-radius: 8px;
-    border-left: 4px solid #4a90e2;
-    background: #0f0f23;
-    border: 1px solid #2a2a3e;
-}
-
-.recommendation-item.high {
-    border-left-color: #f44336;
-}
-
-.recommendation-item.medium {
-    border-left-color: #ff9800;
-}
-
-.recommendation-item.low {
-    border-left-color: #9c27b0;
-}
-
-.recommendation-message {
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #ffffff;
-}
-
-.recommendation-action {
-    font-size: 14px;
-    color: #888;
-}
 
 .study-goals {
     background: #1a1a2e;
@@ -1055,9 +1012,116 @@ input[type="checkbox"] {
 }
 
 /* 响应式设计 */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .page {
         padding: 16px;
+    }
+    
+    .today-overview-section,
+    .mode-comparison-section,
+    .learning-insights-section {
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 16px;
+    }
+    
+    .today-progress {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .today-stats {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .today-stats .stat-card {
+        padding: 16px;
+        flex-direction: row;
+    }
+    
+    .stat-number {
+        font-size: 16px;
+    }
+    
+    .stat-icon {
+        font-size: 20px;
+    }
+    
+    .mode-comparison-charts {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .comparison-card {
+        padding: 20px;
+    }
+    
+    .insights-tabs {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .insight-tab-btn {
+        padding: 10px 14px;
+        font-size: 13px;
+        min-width: 0;
+        flex: 1;
+    }
+    
+    .trend-chart-container {
+        padding: 16px;
+    }
+    
+    .weakness-item,
+    .suggestion-card {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page {
+        padding: 12px;
+    }
+    
+    .page-header h1 {
+        font-size: 20px;
+    }
+    
+    .today-overview-section h2,
+    .mode-comparison-section h2,
+    .learning-insights-section h2 {
+        font-size: 18px;
+        margin-bottom: 16px;
+    }
+    
+    .today-overview-section,
+    .mode-comparison-section,
+    .learning-insights-section {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .progress-card,
+    .today-stats .stat-card {
+        padding: 14px;
+    }
+    
+    .stat-number {
+        font-size: 15px;
+    }
+    
+    .stat-label {
+        font-size: 11px;
+    }
+    
+    .insights-tabs {
+        padding: 4px;
+    }
+    
+    .insight-tab-btn {
+        padding: 8px 12px;
+        font-size: 12px;
     }
     
     .stats-grid {
@@ -1102,7 +1166,7 @@ input[type="checkbox"] {
     }
     
     .main-content {
-        padding-bottom: max(80px, calc(80px + env(safe-area-inset-bottom)));
+        padding-bottom: max(120px, calc(120px + env(safe-area-inset-bottom)));
     }
 }
 
@@ -1136,5 +1200,797 @@ input[type="checkbox"] {
     .next-btn:active,
     .start-btn:active {
         background: #357abd;
+    }
+}
+
+/* 新的三层结构样式 */
+.progress-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* 第一层：今日概览 */
+.today-overview-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 20px;
+    padding: 28px;
+    border: 1px solid #3a3a4e;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.today-overview-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4a90e2, #357abd, #2563eb);
+    border-radius: 20px 20px 0 0;
+}
+
+.today-overview-section h2 {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.today-progress {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.progress-card {
+    flex: 1;
+    background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #3a3a4e;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.progress-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.progress-title {
+    color: #e0e0e0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.progress-count {
+    color: #4a90e2;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #2a2a3e;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4a90e2, #357abd);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.today-stats {
+    display: flex;
+    gap: 12px;
+}
+
+.today-stats .stat-card {
+    flex: 1;
+    background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #3a3a4e;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.today-stats .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.stat-icon {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-number {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.stat-label {
+    color: #a0a0a0;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+/* 第二层：模式对比 */
+.mode-comparison-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 20px;
+    padding: 28px;
+    border: 1px solid #3a3a4e;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.mode-comparison-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #22c55e, #16a34a, #15803d);
+    border-radius: 20px 20px 0 0;
+}
+
+.mode-comparison-section h2 {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mode-comparison-charts {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.comparison-card {
+    flex: 1;
+    background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #3a3a4e;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.comparison-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.comparison-card h3 {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.mode-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mode-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #2a2a3e;
+}
+
+.mode-stat:last-child {
+    border-bottom: none;
+}
+
+.mode-stat .stat-label {
+    color: #a0a0a0;
+    font-size: 14px;
+}
+
+.mode-stat .stat-value {
+    color: #4a90e2;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.mode-recommendation {
+    margin-top: 16px;
+}
+
+.recommendation-card {
+    background: #16213e;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #3a3a4e;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.recommendation-icon {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.recommendation-content h4 {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.recommendation-content p {
+    color: #a0a0a0;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* 第三层：学习洞察 */
+.learning-insights-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 20px;
+    padding: 28px;
+    border: 1px solid #3a3a4e;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.learning-insights-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #a855f7, #8b5cf6, #7c3aed);
+    border-radius: 20px 20px 0 0;
+}
+
+.learning-insights-section h2 {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.insights-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.insight-tab-btn {
+    flex: 1;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #a0a0a0;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.insight-tab-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 8px;
+}
+
+.insight-tab-btn:hover {
+    color: #ffffff;
+}
+
+.insight-tab-btn:hover::before {
+    opacity: 0.1;
+}
+
+.insight-tab-btn.active {
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+    transform: translateY(-1px);
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.insight-tab-btn.active::before {
+    opacity: 0;
+}
+
+.insight-content {
+    display: none;
+}
+
+.insight-content.active {
+    display: block;
+}
+
+/* 趋势图表 */
+.trend-chart-container {
+    background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #3a3a4e;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.trend-chart-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.trend-summary-cards {
+    display: flex;
+    gap: 12px;
+}
+
+.summary-card {
+    flex: 1;
+    background: #16213e;
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #3a3a4e;
+    text-align: center;
+}
+
+.summary-label {
+    display: block;
+    color: #a0a0a0;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.summary-value {
+    display: block;
+    color: #4a90e2;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* 薄弱环节 */
+.weakness-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.weakness-item {
+    background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #3a3a4e;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.weakness-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #ff6b6b, #f44336);
+    border-radius: 0 16px 16px 0;
+}
+
+.weakness-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.weakness-form {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.weakness-stats {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.error-rate {
+    color: #ff6b6b;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.error-count {
+    color: #a0a0a0;
+    font-size: 14px;
+}
+
+.weakness-suggestion {
+    color: #4a90e2;
+    font-size: 13px;
+    font-style: italic;
+}
+
+.no-weaknesses {
+    text-align: center;
+    color: #a0a0a0;
+    font-size: 14px;
+    padding: 40px 20px;
+}
+
+/* 智能建议 */
+.suggestion-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.suggestion-card {
+    background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #3a3a4e;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.suggestion-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #4a90e2, #357abd);
+    border-radius: 0 16px 16px 0;
+}
+
+.suggestion-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.suggestion-icon {
+    font-size: 24px;
+    line-height: 1;
+    margin-top: 2px;
+}
+
+.suggestion-content {
+    flex: 1;
+}
+
+.suggestion-content h4 {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.suggestion-content p {
+    color: #a0a0a0;
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 8px;
+}
+
+.suggestion-action {
+    background: #4a90e2;
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 12px;
+    padding: 6px 12px;
+    display: inline-block;
+}
+
+.no-suggestions {
+    text-align: center;
+    color: #a0a0a0;
+    font-size: 14px;
+    padding: 40px 20px;
+}
+
+/* 每日学习目标设置样式 */
+.goal-setting {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.goal-setting input[type="number"] {
+    width: 80px;
+    padding: 8px 12px;
+    border: 2px solid #2a2a3e;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    background: #0f0f23;
+    color: #ffffff;
+}
+
+.goal-setting input[type="number"]:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.goal-unit {
+    color: #888;
+    font-size: 14px;
+}
+
+.goal-progress {
+    margin-top: 12px;
+    padding: 12px;
+    background: #1a1a2e;
+    border-radius: 8px;
+    border: 1px solid #2a2a3e;
+}
+
+.progress-text {
+    font-size: 14px;
+    color: #e0e0e0;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+/* 推荐功能样式 */
+.recommendations-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.recommendation-section {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.recommendation-section h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2rem;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.recommendation-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.recommendation-card {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-left: 4px solid #667eea;
+}
+
+.recommendation-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.recommendation-card.goals {
+    border-left-color: #4CAF50;
+}
+
+.recommendation-card.modes {
+    border-left-color: #2196F3;
+}
+
+.recommendation-card.schedule {
+    border-left-color: #FF9800;
+}
+
+.recommendation-card.focus {
+    border-left-color: #F44336;
+}
+
+.recommendation-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: #2c3e50;
+}
+
+.recommendation-description {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+
+.recommendation-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.apply-recommendation-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.apply-recommendation-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.apply-recommendation-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.recommendation-meta {
+    display: flex;
+    gap: 15px;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.recommendation-meta span {
+    background: rgba(102, 126, 234, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.no-recommendations {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+/* 移动端特殊优化 */
+@media (max-width: 360px) {
+    .today-overview-section,
+    .mode-comparison-section,
+    .learning-insights-section {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .today-overview-section h2,
+    .mode-comparison-section h2,
+    .learning-insights-section h2 {
+        font-size: 16px;
+        margin-bottom: 12px;
+    }
+    
+    .progress-card {
+        padding: 12px;
+    }
+    
+    .today-stats .stat-card {
+        padding: 12px;
+        gap: 12px;
+    }
+    
+    .stat-number {
+        font-size: 14px;
+    }
+    
+    .stat-label {
+        font-size: 10px;
+    }
+    
+    .insight-tab-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+    
+    .weakness-item,
+    .suggestion-card {
+        padding: 12px;
+        gap: 12px;
+    }
+    
+    .goal-setting {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .trend-summary-cards {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .recommendation-card {
+        padding: 12px;
+    }
+    
+    .recommendation-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .apply-recommendation-btn {
+        width: 100%;
+        text-align: center;
     }
 }
