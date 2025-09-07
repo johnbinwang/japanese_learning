@@ -51,6 +51,17 @@ jspm_packages/
 # dotenv environment variables file
 .env
 
+# Test files
+test_*.js
+
+# Temporary and debug files
+check_views.js
+fix_function.js
+update_database.js
+script.js
+styles.css
+project_agent_prompt.md
+
 # IDE files
 .vscode/
 .idea/

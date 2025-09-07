@@ -37,12 +37,12 @@ function generateAdjectivePlainForms(adjectives) {
 // 主要的种子函数
 async function seedPlain() {
   try {
-    console.log('开始导入plain表数据...');
+    // console.log('开始导入plain表数据...');
     
     // 获取现有数据
     const existingResult = await pool.query('SELECT COUNT(*) as count FROM plain');
     const existingCount = parseInt(existingResult.rows[0].count);
-    console.log(`Plain表现有数据量: ${existingCount}`);
+    // console.log(`Plain表现有数据量: ${existingCount}`);
     
     // 获取动词和形容词数据
      const verbsResult = await pool.query('SELECT * FROM verbs');
@@ -56,7 +56,7 @@ async function seedPlain() {
     
     if (existingCount === 0) {
       // 如果表为空，直接插入所有数据
-      console.log(`插入${allPlainForms.length}条新记录...`);
+      // console.log(`插入${allPlainForms.length}条新记录...`);
       
       for (const plainForm of allPlainForms) {
          await pool.query(
@@ -76,7 +76,7 @@ async function seedPlain() {
       );
       
       if (newPlainForms.length > 0) {
-        console.log(`发现${newPlainForms.length}条新记录，开始插入...`);
+        // console.log(`发现${newPlainForms.length}条新记录，开始插入...`);
         
         for (const plainForm of newPlainForms) {
            await pool.query(
@@ -85,28 +85,28 @@ async function seedPlain() {
            );
          }
       } else {
-        console.log('没有发现新数据，跳过插入。');
+        // console.log('没有发现新数据，跳过插入。');
       }
     }
     
     // 验证最终结果
     const finalResult = await pool.query('SELECT COUNT(*) as count FROM plain');
     const finalCount = parseInt(finalResult.rows[0].count);
-    console.log(`Plain表最终数据量: ${finalCount}`);
+    // console.log(`Plain表最终数据量: ${finalCount}`);
     
-    console.log('Plain表数据导入完成！');
+    // console.log('Plain表数据导入完成！');
   } catch (error) {
-    console.error('导入plain表数据时出错:', error);
+    // console.error('导入plain表数据时出错:', error);
   }
 }
 
 // 如果直接运行此文件，则执行种子函数
 if (require.main === module) {
   seedPlain().then(() => {
-    console.log('plain表数据导入完成');
+    // console.log('plain表数据导入完成');
     process.exit(0);
   }).catch(error => {
-    console.error('导入失败:', error);
+    // console.error('导入失败:', error);
     process.exit(1);
   });
 }

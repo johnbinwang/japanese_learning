@@ -828,6 +828,30 @@ body {
     white-space: nowrap;
 }
 
+.logout-btn {
+    padding: 12px 20px;
+    background: #dc3545;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 44px;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.logout-btn:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+.logout-btn:active {
+    transform: translateY(0);
+}
+
 .setting-desc {
     font-size: 14px;
     color: #888;

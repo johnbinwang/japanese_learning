@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
 const pool = require('../db/pool');
-const authenticateUser = require('../middleware/authenticateUser');
+const { authenticateUser } = require('../middleware/authenticateUser');
+const authRoutes = require('../routes/auth');
 let cleanWordText;
 try {
   const mod = require('../utils/cleanWordText');
@@ -15,10 +16,17 @@ const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 const app = express();
+
+// 信任代理，用于正确获取客户端IP
+app.set('trust proxy', true);
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// 认证相关路由
+app.use('/api/auth', authRoutes);
 
 // 动词变形引擎
 const conjugationEngine = {
@@ -26,7 +34,7 @@ const conjugationEngine = {
     // 这个函数专门处理 nai 形式
     // 参数验证：确保verb是字符串
     if (!verb || typeof verb !== 'string') {
-      console.error('conjugateVerb: 无效的动词参数:', verb);
+      // console.error('conjugateVerb: 无效的动词参数:', verb);
       return verb || '';
     }
     
@@ -54,12 +62,15 @@ const conjugationEngine = {
       return verb.slice(0, -2) + 'します';
     }
     
-    if (group === 'I') {
+    // 确保group参数去除所有空格
+    const normalizedGroup = (group || '').replace(/\s+/g, '');
+    
+    if (normalizedGroup === 'I') {
       const stem = verb.slice(0, -1);
       const lastChar = verb.slice(-1);
       const iRow = { 'く': 'き', 'ぐ': 'ぎ', 'す': 'し', 'つ': 'ち', 'ぬ': 'に', 'ぶ': 'び', 'む': 'み', 'る': 'り', 'う': 'い' };
       return stem + (iRow[lastChar] || 'い') + 'ます';
-    } else if (group === 'II') {
+    } else if (normalizedGroup === 'II') {
       return verb.slice(0, -1) + 'ます';
     }
     return verb + 'ます';
@@ -73,7 +84,10 @@ const conjugationEngine = {
     
     if (verb === '来る' || verb === 'くる') return 'きて';
     
-    if (group === 'I') {
+    // 确保group参数去除所有空格
+    const normalizedGroup = (group || '').replace(/\s+/g, '');
+    
+    if (normalizedGroup === 'I') {
       const stem = verb.slice(0, -1);
       const lastChar = verb.slice(-1);
       if (lastChar === 'く') {
@@ -88,9 +102,9 @@ const conjugationEngine = {
         return stem + 'んで';
       }
       return stem + 'って';
-    } else if (group === 'II') {
+    } else if (normalizedGroup === 'II') {
       return verb.slice(0, -1) + 'て';
-    } else if (group === 'IRR' || group === 'III') {
+    } else if (normalizedGroup === 'IRR' || normalizedGroup === 'III') {
       // 不规则动词的特殊处理
       if (verb === 'する') return 'して';
       if (verb === '来る' || verb === 'くる') return 'きて';
@@ -107,8 +121,11 @@ const conjugationEngine = {
     if (verb === 'する') return 'した';
     if (verb === '来る' || verb === 'くる') return 'きた';
     
+      // 确保group参数去除所有空格
+    const normalizedGroup = (group || '').replace(/\s+/g, '');
+    
     // 特殊处理：确保II类动词正确变形
-    if (group === 'II') {
+    if (normalizedGroup === 'II') {
       // II类动词：去る+た
       return verb.slice(0, -1) + 'た';
     }
@@ -128,12 +145,15 @@ const conjugationEngine = {
       return verb.slice(0, -2) + 'しない';
     }
     
-    if (group === 'I') {
+    // 确保group参数去除所有空格
+    const normalizedGroup = (group || '').replace(/\s+/g, '');
+    
+    if (normalizedGroup === 'I') {
       const stem = verb.slice(0, -1);
       const lastChar = verb.slice(-1);
       const aRow = { 'く': 'か', 'ぐ': 'が', 'す': 'さ', 'つ': 'た', 'ぬ': 'な', 'ぶ': 'ば', 'む': 'ま', 'る': 'ら', 'う': 'わ' };
       return stem + (aRow[lastChar] || 'わ') + 'ない';
-    } else if (group === 'II') {
+    } else if (normalizedGroup === 'II') {
       return verb.slice(0, -1) + 'ない';
     }
     return verb + 'ない';
@@ -148,12 +168,15 @@ const conjugationEngine = {
       return verb.slice(0, -2) + 'できる';
     }
     
-    if (group === 'I') {
+    // 确保group参数去除所有空格
+     const normalizedGroup = (group || '').replace(/\s+/g, '');
+    
+    if (normalizedGroup === 'I') {
       const stem = verb.slice(0, -1);
       const lastChar = verb.slice(-1);
       const eRow = { 'く': 'け', 'ぐ': 'げ', 'す': 'せ', 'つ': 'て', 'ぬ': 'ね', 'ぶ': 'べ', 'む': 'め', 'る': 'れ', 'う': 'え' };
       return stem + (eRow[lastChar] || 'え') + 'る';
-    } else if (group === 'II') {
+    } else if (normalizedGroup === 'II') {
       return verb.slice(0, -1) + 'られる';
     }
     return verb + 'られる';
@@ -168,12 +191,15 @@ const conjugationEngine = {
       return verb.slice(0, -2) + 'しよう';
     }
     
-    if (group === 'I') {
+    // 确保group参数去除所有空格
+     const normalizedGroup = (group || '').replace(/\s+/g, '');
+    
+    if (normalizedGroup === 'I') {
       const stem = verb.slice(0, -1);
       const lastChar = verb.slice(-1);
       const oRow = { 'く': 'こ', 'ぐ': 'ご', 'す': 'そ', 'つ': 'と', 'ぬ': 'の', 'ぶ': 'ぼ', 'む': 'も', 'る': 'ろ', 'う': 'お' };
       return stem + (oRow[lastChar] || 'お') + 'う';
-    } else if (group === 'II') {
+    } else if (normalizedGroup === 'II') {
       return verb.slice(0, -1) + 'よう';
     }
     return verb + 'よう';
@@ -317,8 +343,8 @@ app.get('/api/me', authenticateUser, async (req, res) => {
     let settings;
     
     const { rows } = await pool.query(
-      'SELECT * FROM user_learning_preferences WHERE anon_id = $1',
-      [req.user.anonId]
+      'SELECT * FROM user_learning_preferences WHERE user_id = $1',
+      [req.user.id]
     );
     
     const p = rows[0] || {};
@@ -333,42 +359,48 @@ app.get('/api/me', authenticateUser, async (req, res) => {
     };
     
     res.json({
-      anonIdMasked: req.user.anonId.slice(0, 8) + '...',
-      accessCodeMasked: req.user.accessCode,
-      accessCode: req.user.accessCode,
+      user: {
+        id: req.user.id,
+        email: req.user.email,
+        emailVerified: req.user.emailVerified,
+        createdAt: req.user.createdAt,
+        lastLoginAt: req.user.lastLoginAt
+      },
       settings
     });
   } catch (error) {
-    console.error('获取用户信息错误:', error);
+    // console.error('获取用户信息错误:', error);
     res.status(500).json({ error: '获取用户信息失败' });
   }
 });
 
-// 绑定设备
+// 更新用户信息
 app.post('/api/me', authenticateUser, async (req, res) => {
   try {
-    // authenticateUser 中间件已经处理了绑定逻辑
-    // 如果到达这里，说明绑定成功或用户已存在
-    const { settings } = await getUserLearningPreferences(req.user.anonId, true);
+    const { settings } = await getUserLearningPreferences(req.user.id, true);
     
     res.json({
-      anonIdMasked: req.user.anonId.slice(0, 8) + '...',
-      accessCodeMasked: req.user.accessCode,
-      accessCode: req.user.accessCode,
+      user: {
+        id: req.user.id,
+        email: req.user.email,
+        emailVerified: req.user.emailVerified,
+        createdAt: req.user.createdAt,
+        lastLoginAt: req.user.lastLoginAt
+      },
       settings,
-      message: '设备绑定成功'
+      message: '用户信息更新成功'
     });
   } catch (error) {
-    console.error('设备绑定错误:', error);
-    res.status(500).json({ error: '设备绑定失败' });
+    // console.error('更新用户信息错误:', error);
+    res.status(500).json({ error: '更新用户信息失败' });
   }
 });
 
 // 获取用户学习偏好的公共函数
-async function getUserLearningPreferences(anonId, includeSettings = false) {
+async function getUserLearningPreferences(userId, includeSettings = false) {
   const { rows } = await pool.query(
-    'SELECT * FROM user_learning_preferences WHERE anon_id = $1',
-    [anonId]
+    'SELECT * FROM user_learning_preferences WHERE user_id = $1',
+    [userId]
   );
   
   const p = rows[0] || {};
@@ -405,10 +437,10 @@ async function getUserLearningPreferences(anonId, includeSettings = false) {
 // 获取用户学习偏好
 app.get('/api/preferences', authenticateUser, async (req, res) => {
   try {
-    const preferences = await getUserLearningPreferences(req.user.anonId);
+    const preferences = await getUserLearningPreferences(req.user.id);
     res.json(preferences);
   } catch (error) {
-    console.error('获取用户偏好错误:', error);
+    // console.error('获取用户偏好错误:', error);
     res.status(500).json({ error: '获取用户偏好失败' });
   }
 });
@@ -436,7 +468,7 @@ app.post('/api/preferences', authenticateUser, async (req, res) => {
     
     // 构建更新字段
     const updateFields = [];
-    const values = [req.user.anonId];
+    const values = [req.user.id];
     let paramIndex = 2;
     
     if (finalDailyNewTarget !== undefined) {
@@ -549,8 +581,8 @@ app.post('/api/preferences', authenticateUser, async (req, res) => {
     ];
     
     // 构建INSERT VALUES子句
-    const insertParams = ['$1']; // anon_id
-    const insertValues = [req.user.anonId];
+    const insertParams = ['$1']; // user_id
+    const insertValues = [req.user.id];
     
     for (let i = 0; i < allFields.length; i++) {
       insertParams.push(`$${insertValues.length + 1}`);
@@ -562,19 +594,19 @@ app.post('/api/preferences', authenticateUser, async (req, res) => {
     const updateClauses = [];
     for (let i = 0; i < allFields.length; i++) {
       if (allValues[i] !== undefined) {
-        updateClauses.push(`${allFields[i]} = $${i + 2}`); // +2 because $1 is anon_id
+        updateClauses.push(`${allFields[i]} = $${i + 2}`); // +2 because $1 is user_id
       }
     }
     updateClauses.push('updated_at = NOW()');
     
     const query = `
-      INSERT INTO user_learning_preferences (anon_id, ${allFields.join(', ')})
+      INSERT INTO user_learning_preferences (user_id, ${allFields.join(', ')})
       VALUES (${insertParams.join(', ')})
-      ON CONFLICT (anon_id) DO UPDATE SET ${updateClauses.join(', ')}
+      ON CONFLICT (user_id) DO UPDATE SET ${updateClauses.join(', ')}
       RETURNING *`;
     
-    console.log('UPSERT Query:', query);
-    console.log('UPSERT Values:', insertValues);
+    // console.log('UPSERT Query:', query);
+    // console.log('UPSERT Values:', insertValues);
     const { rows } = await pool.query(query, insertValues);
     
     res.json({
@@ -582,7 +614,7 @@ app.post('/api/preferences', authenticateUser, async (req, res) => {
       preferences: rows[0]
     });
   } catch (error) {
-    console.error('更新用户偏好错误:', error);
+    // console.error('更新用户偏好错误:', error);
     res.status(500).json({ error: '更新用户偏好失败' });
   }
 });
@@ -610,7 +642,7 @@ app.get('/api/next', authenticateUser, async (req, res) => {
     }
     
     // 获取用户学习偏好设置
-    const { settings } = await getUserLearningPreferences(req.user.anonId, true);
+    const { settings } = await getUserLearningPreferences(req.user.id, true);
     
     // 转换为API内部使用的格式
     const internalSettings = {
@@ -658,7 +690,7 @@ app.get('/api/next', authenticateUser, async (req, res) => {
         WITH recent_items AS (
           SELECT DISTINCT r.item_id, r.form, r.item_type
           FROM reviews r
-          WHERE r.anon_id = $1 AND r.learning_mode = $3
+          WHERE r.user_id = $1 AND r.learning_mode = $3
             AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
         )
         SELECT r.*, i.kana, i.kanji, i.meaning, i.item_type,
@@ -669,7 +701,7 @@ app.get('/api/next', authenticateUser, async (req, res) => {
         FROM reviews r
         JOIN ${tableName} i ON r.item_id = i.id
         LEFT JOIN recent_items ri ON ri.item_id = r.item_id AND ri.form = r.form AND ri.item_type = r.item_type
-        WHERE r.anon_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
+        WHERE r.user_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
           AND ri.item_id IS NULL
       `;
     } else {
@@ -678,7 +710,7 @@ app.get('/api/next', authenticateUser, async (req, res) => {
         WITH recent_items AS (
           SELECT DISTINCT r.item_id, r.form
           FROM reviews r
-          WHERE r.anon_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
+          WHERE r.user_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
             AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
         )
         SELECT r.*, i.kana, i.kanji, i.meaning,
@@ -686,12 +718,12 @@ app.get('/api/next', authenticateUser, async (req, res) => {
         FROM reviews r
         JOIN ${tableName} i ON r.item_id = i.id
         LEFT JOIN recent_items ri ON ri.item_id = r.item_id AND ri.form = r.form
-        WHERE r.anon_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
+        WHERE r.user_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
           AND ri.item_id IS NULL
       `;
     }
     
-    const params = [req.user.anonId, itemType, learningMode];
+    const params = [req.user.id, itemType, learningMode];
     
     // 按启用的形态过滤（确保只取当前启用形态的到期题目）
     query += ' AND r.form = ANY($4)';
@@ -703,13 +735,13 @@ app.get('/api/next', authenticateUser, async (req, res) => {
     
     query += ' ORDER BY r.due_at ASC, r.streak ASC, RANDOM() LIMIT 1';
     
-    console.log('SQL查询:', query, '参数:', params);
+    // console.log('SQL查询:', query, '参数:', params);
     const result = await pool.query(query, params);
     rows = result.rows;
     
     // 如果没有到期项目，随机选择一个新项目（避免最近出现的题目）
     if (rows.length === 0) {
-      console.log('没有到期项目，随机选择一个新项目');
+      // console.log('没有到期项目，随机选择一个新项目');
       let item;
       
       let randomQuery;
@@ -719,7 +751,7 @@ app.get('/api/next', authenticateUser, async (req, res) => {
           WITH recent_items AS (
             SELECT DISTINCT r.item_id, r.form, r.item_type
             FROM reviews r
-            WHERE r.anon_id = $1 AND r.learning_mode = $3
+            WHERE r.user_id = $1 AND r.learning_mode = $3
               AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
           ),
           candidates AS (
@@ -733,26 +765,26 @@ app.get('/api/next', authenticateUser, async (req, res) => {
           SELECT c.*, 'new' AS status
           FROM candidates c
           LEFT JOIN reviews r
-            ON r.anon_id = $1
+            ON r.user_id = $1
            AND r.item_type = c.item_type
            AND r.item_id = c.item_id
            AND r.form = c.form
            AND r.learning_mode = $3
           LEFT JOIN recent_items ri
             ON ri.item_id = c.item_id
-           AND ri.form = c.form
+           And ri.form = c.form
            AND ri.item_type = c.item_type
           WHERE r.id IS NULL AND ri.item_id IS NULL
           ORDER BY RANDOM()
           LIMIT 1
         `;
-        randomParams = [req.user.anonId, enabledForms, learningMode];
+        randomParams = [req.user.id, enabledForms, learningMode];
       } else {
         randomQuery = `
           WITH recent_items AS (
             SELECT DISTINCT r.item_id, r.form
             FROM reviews r
-            WHERE r.anon_id = $1 AND r.item_type = $4 AND r.learning_mode = $3
+            WHERE r.user_id = $1 AND r.item_type = $4 AND r.learning_mode = $3
               AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
           ),
           candidates AS (
@@ -765,7 +797,7 @@ app.get('/api/next', authenticateUser, async (req, res) => {
           SELECT c.*, 'new' AS status
           FROM candidates c
           LEFT JOIN reviews r
-            ON r.anon_id = $1
+            ON r.user_id = $1
            AND r.item_type = $4
            AND r.item_id = c.item_id
            AND r.form = c.form
@@ -777,10 +809,10 @@ app.get('/api/next', authenticateUser, async (req, res) => {
           ORDER BY RANDOM()
           LIMIT 1
         `;
-        randomParams = [req.user.anonId, enabledForms, learningMode, itemType];
+        randomParams = [req.user.id, enabledForms, learningMode, itemType];
       }
       
-      console.log('SQL查询:', randomQuery, '参数:', randomParams);
+      // console.log('SQL查询:', randomQuery, '参数:', randomParams);
       const { rows: newRows } = await pool.query(randomQuery, randomParams);
       
       if (newRows.length === 0) {
@@ -791,12 +823,12 @@ app.get('/api/next', authenticateUser, async (req, res) => {
       const targetForm = item.form; // 已按item+form粒度选择
       
       // 创建新的复习记录
-      const insertSql = `INSERT INTO reviews (anon_id, item_type, item_id, form, learning_mode, due_at) 
+      const insertSql = `INSERT INTO reviews (user_id, item_type, item_id, form, learning_mode, due_at) 
          VALUES ($1, $2, $3, $4, $5, NOW()) 
-         ON CONFLICT (anon_id, item_type, item_id, form, learning_mode) 
+         ON CONFLICT (user_id, item_type, item_id, form, learning_mode) 
          DO UPDATE SET due_at = EXCLUDED.due_at`;
       const actualItemType = module === 'plain' ? item.item_type : itemType;
-      const insertParams = [req.user.anonId, actualItemType, item.item_id, targetForm, learningMode];
+      const insertParams = [req.user.id, actualItemType, item.item_id, targetForm, learningMode];
       await pool.query(insertSql, insertParams);
       
       // 处理 plain 表和其他表的数据结构差异
@@ -922,7 +954,7 @@ app.get('/api/next', authenticateUser, async (req, res) => {
       }
     }
     
-    console.log(`复习题目 - ${module}:`, review.kanji || review.kana, itemType === 'adj' ? '类型:' : '分组:', itemType === 'adj' ? review.type : review.group, '目标形式:', review.form, '正确答案:', correctAnswer);
+    // console.log(`复习题目 - ${module}:`, review.kanji || review.kana, itemType === 'adj' ? '类型:' : '分组:', itemType === 'adj' ? review.type : review.group, '目标形式:', review.form, '正确答案:', correctAnswer);
     
     const responseData = {
       itemId: review.item_id || review.id, // 兼容两种情况
@@ -949,11 +981,11 @@ app.get('/api/next', authenticateUser, async (req, res) => {
          responseData.type = reviewItem.type;
        }
      }
-    //console.log('/api/next 返回数据:', responseData);
+    // console.log('/api/next 返回数据:', responseData);
     res.json(responseData);
     
   } catch (error) {
-    console.error('获取下一题错误:', error);
+    // console.error('获取下一题错误:', error);
     res.status(500).json({ error: '获取题目失败' });
   }
 });
@@ -987,7 +1019,7 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
       sql = `SELECT * FROM ${tableName} WHERE id = $1`;
     }
     
-    console.log('SQL查询:', sql, '参数:', [itemId]);
+    // console.log('SQL查询:', sql, '参数:', [itemId]);
     const { rows: itemRows } = await pool.query(sql, [itemId]);
     
     if (itemRows.length === 0) {
@@ -1059,17 +1091,95 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
       // 闪卡模式根据用户反馈判断
       isCorrect = feedback === 'good' || feedback === 'easy';
     } else {
-      // 测验模式根据答案判断
-      isCorrect = userAnswer && userAnswer.trim() === correctAnswer;
+      // 测验模式根据答案判断 - 支持汉字和平假名两种形式
+      const trimmedUserAnswer = userAnswer ? userAnswer.trim() : '';
+      
+      // 基本答案匹配
+      isCorrect = trimmedUserAnswer === correctAnswer;
+      
+      // 如果基本匹配失败，检查是否有汉字形式的答案
+      if (!isCorrect && item && item.kanji) {
+        // 生成汉字版本的正确答案
+        let kanjiCorrectAnswer;
+        
+        if (normalizedItemType === 'pln') {
+          if (item.item_type === 'adj') {
+            // 形容词的汉字变形 - 确保传递汉字信息
+            const processedItem = { 
+              kana: item.kana, 
+              kanji: item.kanji, 
+              type: (item.adj_type || '').trim() 
+            };
+            kanjiCorrectAnswer = conjugationEngine.conjugateAdjective(processedItem, form);
+          } else {
+            // 动词的汉字变形
+            const processedItem = { ...item, group: (item.group_type || '').trim() };
+            switch (form) {
+              case 'plain_present':
+                kanjiCorrectAnswer = processedItem.kanji || processedItem.kana;
+                break;
+              case 'plain_past':
+                kanjiCorrectAnswer = conjugationEngine.conjugateToTa(processedItem.kanji || processedItem.kana, processedItem.group);
+                break;
+              case 'plain_negative':
+                kanjiCorrectAnswer = conjugationEngine.conjugateToNai(processedItem.kanji || processedItem.kana, processedItem.group);
+                break;
+              case 'plain_past_negative':
+                const naiFormKanji = conjugationEngine.conjugateToNai(processedItem.kanji || processedItem.kana, processedItem.group);
+                kanjiCorrectAnswer = naiFormKanji.replace(/ない$/, 'なかった');
+                break;
+              default:
+                kanjiCorrectAnswer = processedItem.kanji || processedItem.kana;
+            }
+          }
+        } else if (normalizedItemType === 'adj') {
+          // 普通形容词的汉字变形 - 确保传递汉字信息
+          const processedItem = {
+            kana: item.kana,
+            kanji: item.kanji,
+            type: (item.type || '').trim()
+          };
+          kanjiCorrectAnswer = conjugationEngine.conjugateAdjective(processedItem, form);
+        } else {
+          // 动词处理 - 使用汉字形式
+          switch (form) {
+            case 'masu':
+              kanjiCorrectAnswer = conjugationEngine.conjugateToMasu(item.kanji || item.kana, item.group);
+              break;
+            case 'te':
+              kanjiCorrectAnswer = conjugationEngine.conjugateToTe(item.kanji || item.kana, item.group);
+              break;
+            case 'nai':
+              kanjiCorrectAnswer = conjugationEngine.conjugateToNai(item.kanji || item.kana, item.group);
+              break;
+            case 'ta':
+              kanjiCorrectAnswer = conjugationEngine.conjugateToTa(item.kanji || item.kana, item.group);
+              break;
+            case 'potential':
+              kanjiCorrectAnswer = conjugationEngine.conjugateToPotential(item.kanji || item.kana, item.group);
+              break;
+            case 'volitional':
+              kanjiCorrectAnswer = conjugationEngine.conjugateToVolitional(item.kanji || item.kana, item.group);
+              break;
+            default:
+              kanjiCorrectAnswer = item.kanji || item.kana;
+          }
+        }
+        
+        // 检查用户答案是否匹配汉字版本
+        if (kanjiCorrectAnswer && trimmedUserAnswer === kanjiCorrectAnswer) {
+          isCorrect = true;
+        }
+      }
     }
     
     let currentStreak = 0;
     let attempts = 0;
     let correct = 0;
     
-    const reviewSql = 'SELECT * FROM reviews WHERE anon_id = $1 AND item_type = $2 AND item_id = $3 AND form = $4 AND learning_mode = $5';
-    const reviewParams = [req.user.anonId, normalizedItemType, itemId, form, learningMode];
-    console.log('SQL查询:', reviewSql, '参数:', reviewParams);
+    const reviewSql = 'SELECT * FROM reviews WHERE user_id = $1 AND item_type = $2 AND item_id = $3 AND form = $4 AND learning_mode = $5';
+    const reviewParams = [req.user.id, normalizedItemType, itemId, form, learningMode];
+    // console.log('SQL查询:', reviewSql, '参数:', reviewParams);
     const { rows: reviewRows } = await pool.query(reviewSql, reviewParams);
     
     if (reviewRows.length > 0) {
@@ -1088,12 +1198,12 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
     const { newStreak, dueAt } = srsAlgorithm.calculateNextDue(currentStreak, finalFeedback);
     
     // 更新复习记录
-    const updateSql = `INSERT INTO reviews (anon_id, item_type, item_id, form, learning_mode, attempts, correct, streak, due_at, last_reviewed)
+    const updateSql = `INSERT INTO reviews (user_id, item_type, item_id, form, learning_mode, attempts, correct, streak, due_at, last_reviewed)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
-       ON CONFLICT (anon_id, item_type, item_id, form, learning_mode)
+       ON CONFLICT (user_id, item_type, item_id, form, learning_mode)
        DO UPDATE SET attempts = $6, correct = $7, streak = $8, due_at = $9, last_reviewed = NOW()`;
-    const updateParams = [req.user.anonId, normalizedItemType, itemId, form, learningMode, attempts, correct, newStreak, dueAt];
-    console.log('SQL更新:', updateSql, '参数:', updateParams);
+    const updateParams = [req.user.id, normalizedItemType, itemId, form, learningMode, attempts, correct, newStreak, dueAt];
+    // console.log('SQL更新:', updateSql, '参数:', updateParams);
     await pool.query(updateSql, updateParams);
     
     // 更新每日学习统计
@@ -1102,10 +1212,10 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
     
     // 确保今日统计记录存在
     const ensureStatsSQL = `
-      INSERT INTO daily_learning_stats (anon_id, stat_date, learning_mode, module_type, new_items_target, new_items_completed, reviews_due, reviews_completed, total_study_time_seconds, accuracy_rate, streak_improvements)
+      INSERT INTO daily_learning_stats (user_id, stat_date, learning_mode, module_type, new_items_target, new_items_completed, reviews_due, reviews_completed, total_study_time_seconds, accuracy_rate, streak_improvements)
       VALUES ($1, $2, $3, $4, 0, 0, 0, 0, 0, 0.00, 0)
-      ON CONFLICT (anon_id, stat_date, learning_mode, module_type) DO NOTHING`;
-    await pool.query(ensureStatsSQL, [req.user.anonId, today, learningMode, normalizedItemType]);
+      ON CONFLICT (user_id, stat_date, learning_mode, module_type) DO NOTHING`;
+    await pool.query(ensureStatsSQL, [req.user.id, today, learningMode, normalizedItemType]);
     
     // 更新统计数据
     if (isNewItem) {
@@ -1114,28 +1224,28 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
         UPDATE daily_learning_stats 
         SET new_items_completed = new_items_completed + 1,
             updated_at = NOW()
-        WHERE anon_id = $1 AND stat_date = $2 AND learning_mode = $3 AND module_type = $4`;
-      await pool.query(updateNewSQL, [req.user.anonId, today, learningMode, normalizedItemType]);
+        WHERE user_id = $1 AND stat_date = $2 AND learning_mode = $3 AND module_type = $4`;
+      await pool.query(updateNewSQL, [req.user.id, today, learningMode, normalizedItemType]);
     } else {
       // 复习项目
       const updateReviewSQL = `
         UPDATE daily_learning_stats 
         SET reviews_completed = reviews_completed + 1,
             updated_at = NOW()
-        WHERE anon_id = $1 AND stat_date = $2 AND learning_mode = $3 AND module_type = $4`;
-      await pool.query(updateReviewSQL, [req.user.anonId, today, learningMode, normalizedItemType]);
+        WHERE user_id = $1 AND stat_date = $2 AND learning_mode = $3 AND module_type = $4`;
+      await pool.query(updateReviewSQL, [req.user.id, today, learningMode, normalizedItemType]);
     }
     
     // 记录学习会话 - 使用正确的表结构
     const sessionSQL = `
-      INSERT INTO learning_sessions (anon_id, module_type, learning_mode, session_date, total_questions, correct_answers)
+      INSERT INTO learning_sessions (user_id, module_type, learning_mode, session_date, total_questions, correct_answers)
       VALUES ($1, $2, $3, CURRENT_DATE, 1, $4)
-      ON CONFLICT (anon_id, session_date, learning_mode, module_type) 
+      ON CONFLICT (user_id, session_date, learning_mode, module_type) 
       DO UPDATE SET 
         total_questions = learning_sessions.total_questions + 1,
         correct_answers = learning_sessions.correct_answers + $4,
         ended_at = NOW()`;
-    await pool.query(sessionSQL, [req.user.anonId, normalizedItemType, learningMode, isCorrect ? 1 : 0]);
+    await pool.query(sessionSQL, [req.user.id, normalizedItemType, learningMode, isCorrect ? 1 : 0]);
     
     // 获取解释
     let explanation;
@@ -1170,7 +1280,7 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
     });
     
   } catch (error) {
-    console.error('提交答案错误:', error);
+    // console.error('提交答案错误:', error);
     res.status(500).json({ error: '提交答案失败' });
   }
 });
@@ -1178,11 +1288,11 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
 // 获取今日学习概览
 app.get('/api/today-overview', authenticateUser, async (req, res) => {
   try {
-    const anonId = req.user.anonId;
+    const userId = req.user.id;
     
     // 获取今日概览数据
     const overviewQuery = `
-      SELECT * FROM today_learning_overview WHERE anon_id = $1
+      SELECT * FROM today_learning_overview WHERE user_id = $1
     `;
     
     // 获取今日到期复习数量
@@ -1200,14 +1310,14 @@ app.get('/api/today-overview', authenticateUser, async (req, res) => {
         SUM(correct_answers) as correct_answers,
         SUM(session_duration_seconds) as total_time
       FROM learning_sessions 
-      WHERE anon_id = $1 AND session_date = CURRENT_DATE
+      WHERE user_id = $1 AND session_date = CURRENT_DATE
       GROUP BY learning_mode, module_type
     `;
     
     const [overviewResult, dueReviewsResult, sessionsResult] = await Promise.all([
-      pool.query(overviewQuery, [anonId]),
-      pool.query(dueReviewsQuery, [anonId]),
-      pool.query(todaySessionsQuery, [anonId])
+      pool.query(overviewQuery, [userId]),
+      pool.query(dueReviewsQuery, [userId]),
+      pool.query(todaySessionsQuery, [userId])
     ]);
     
     let overview = overviewResult.rows[0];
@@ -1228,7 +1338,7 @@ app.get('/api/today-overview', authenticateUser, async (req, res) => {
       };
     }
     
-    console.log('overview', overview);
+    // console.log('overview', overview);
     const dueReviews = dueReviewsResult.rows.reduce((acc, row) => {
       acc[row.module_type] = parseInt(row.due_count);
       return acc;
@@ -1263,7 +1373,7 @@ app.get('/api/today-overview', authenticateUser, async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('获取今日概览失败:', error);
+    // console.error('获取今日概览失败:', error);
     res.status(500).json({ error: '获取今日概览失败' });
   }
 });
@@ -1271,11 +1381,11 @@ app.get('/api/today-overview', authenticateUser, async (req, res) => {
 // 获取模式对比分析
 app.get('/api/mode-comparison', authenticateUser, async (req, res) => {
   try {
-    const anonId = req.user.anonId;
+    const userId = req.user.id;
     const { module = 'all' } = req.query;
     
-    let whereClause = 'WHERE anon_id = $1';
-    let params = [anonId];
+    let whereClause = 'WHERE user_id = $1';
+    let params = [userId];
     
     if (module !== 'all') {
       whereClause += ' AND module_type = $2';
@@ -1324,7 +1434,7 @@ app.get('/api/mode-comparison', authenticateUser, async (req, res) => {
     
     res.json(modeData);
   } catch (error) {
-    console.error('获取模式对比失败:', error);
+    // console.error('获取模式对比失败:', error);
     res.status(500).json({ error: '获取模式对比失败' });
   }
 });
@@ -1333,7 +1443,7 @@ app.get('/api/mode-comparison', authenticateUser, async (req, res) => {
 // 7天趋势分析API
 app.get('/api/insights/trends', authenticateUser, async (req, res) => {
   try {
-    const anonId = req.user.anonId;
+    const userId = req.user.id;
     
     // 获取最近7天的学习数据
     const trendsQuery = `
@@ -1344,12 +1454,12 @@ app.get('/api/insights/trends', authenticateUser, async (req, res) => {
         AVG(attempts) as avg_attempts,
         COUNT(DISTINCT item_id) as unique_items
       FROM reviews 
-      WHERE anon_id = $1 AND updated_at >= NOW() - INTERVAL '7 days'
+      WHERE user_id = $1 AND updated_at >= NOW() - INTERVAL '7 days'
       GROUP BY DATE(updated_at)
       ORDER BY date DESC
     `;
     
-    const trends = await pool.query(trendsQuery, [anonId]);
+    const trends = await pool.query(trendsQuery, [userId]);
     
     // 计算总体统计
     const totalReviews = trends.rows.reduce((sum, row) => sum + parseInt(row.total_reviews), 0);
@@ -1374,7 +1484,7 @@ app.get('/api/insights/trends', authenticateUser, async (req, res) => {
       }))
     });
   } catch (error) {
-    console.error('获取趋势数据失败:', error);
+    // console.error('获取趋势数据失败:', error);
     res.status(500).json({ error: '获取趋势数据失败' });
   }
 });
@@ -1382,7 +1492,7 @@ app.get('/api/insights/trends', authenticateUser, async (req, res) => {
 // 薄弱环节分析API
 app.get('/api/insights/weaknesses', authenticateUser, async (req, res) => {
   try {
-    const anonId = req.user.anonId;
+    const userId = req.user.id;
     
     // 获取错误率较高的变形
     const weaknessQuery = `
@@ -1393,14 +1503,14 @@ app.get('/api/insights/weaknesses', authenticateUser, async (req, res) => {
         (COUNT(*) - SUM(correct)) as error_count,
         ROUND((COUNT(*) - SUM(correct))::numeric / COUNT(*)::numeric * 100, 1) as error_rate
       FROM reviews 
-      WHERE anon_id = $1 AND updated_at >= NOW() - INTERVAL '30 days'
+      WHERE user_id = $1 AND updated_at >= NOW() - INTERVAL '30 days'
       GROUP BY form
       HAVING COUNT(*) >= 5 AND (COUNT(*) - SUM(correct))::numeric / COUNT(*)::numeric > 0.3
       ORDER BY error_rate DESC, total_attempts DESC
       LIMIT 10
     `;
     
-    const weaknesses = await pool.query(weaknessQuery, [anonId]);
+    const weaknesses = await pool.query(weaknessQuery, [userId]);
     
     res.json({
       weaknesses: weaknesses.rows.map(row => ({
@@ -1412,7 +1522,7 @@ app.get('/api/insights/weaknesses', authenticateUser, async (req, res) => {
       }))
     });
   } catch (error) {
-    console.error('获取薄弱环节失败:', error);
+    // console.error('获取薄弱环节失败:', error);
     res.status(500).json({ error: '获取薄弱环节失败' });
   }
 });
@@ -1420,7 +1530,7 @@ app.get('/api/insights/weaknesses', authenticateUser, async (req, res) => {
 // 智能建议API
 app.get('/api/insights/suggestions', authenticateUser, async (req, res) => {
   try {
-    const anonId = req.user.anonId;
+    const userId = req.user.id;
     const suggestions = [];
     
     // 分析学习模式
@@ -1430,9 +1540,9 @@ app.get('/api/insights/suggestions', authenticateUser, async (req, res) => {
         COUNT(*) as count,
         AVG(CASE WHEN correct > 0 THEN 1.0 ELSE 0.0 END) as accuracy
       FROM reviews 
-      WHERE anon_id = $1 AND updated_at >= NOW() - INTERVAL '7 days'
+      WHERE user_id = $1 AND updated_at >= NOW() - INTERVAL '7 days'
       GROUP BY learning_mode
-    `, [anonId]);
+    `, [userId]);
     
     // 分析学习频率
     const frequencyAnalysis = await pool.query(`
@@ -1440,15 +1550,15 @@ app.get('/api/insights/suggestions', authenticateUser, async (req, res) => {
         COUNT(DISTINCT DATE(updated_at)) as active_days,
         COUNT(*) as total_reviews
       FROM reviews 
-      WHERE anon_id = $1 AND updated_at >= NOW() - INTERVAL '7 days'
-    `, [anonId]);
+      WHERE user_id = $1 AND updated_at >= NOW() - INTERVAL '7 days'
+    `, [userId]);
     
     // 分析到期项目
     const dueAnalysis = await pool.query(`
       SELECT COUNT(*) as due_count
       FROM reviews 
-      WHERE anon_id = $1 AND next_due <= NOW()
-    `, [anonId]);
+      WHERE user_id = $1 AND next_due <= NOW()
+    `, [userId]);
     
     const freq = frequencyAnalysis.rows[0];
     const due = dueAnalysis.rows[0];
@@ -1504,7 +1614,7 @@ app.get('/api/insights/suggestions', authenticateUser, async (req, res) => {
     
     res.json({ suggestions });
   } catch (error) {
-    console.error('获取智能建议失败:', error);
+    // console.error('获取智能建议失败:', error);
     res.status(500).json({ error: '获取智能建议失败' });
   }
 });
@@ -1512,13 +1622,13 @@ app.get('/api/insights/suggestions', authenticateUser, async (req, res) => {
 app.get('/api/progress', authenticateUser, async (req, res) => {
   try {
     const { module, detailed, mode } = req.query;
-    console.log(`🚀 /api/progress called with: module=${module}, detailed=${detailed}, mode=${mode}, anonId=${req.user.anonId}`);
+    // console.log(`🚀 /api/progress called with: module=${module}, detailed=${detailed}, mode=${mode}, userId=${req.user.id}`);
     
     if (detailed === 'true') {
-      console.log('📊 Calling getDetailedProgress...');
+      // console.log('📊 Calling getDetailedProgress...');
       // 返回详细的进度分析
-      const progressData = await getDetailedProgress(req.user.anonId, module, mode);
-      console.log('✅ getDetailedProgress completed, returning data');
+      const progressData = await getDetailedProgress(req.user.id, module, mode);
+      // console.log('✅ getDetailedProgress completed, returning data');
       res.json(progressData);
       return;
     }
@@ -1529,8 +1639,8 @@ app.get('/api/progress', authenticateUser, async (req, res) => {
     else itemType = 'pln';
     
     // 构建查询条件
-    let whereClause = 'WHERE anon_id = $1 AND item_type = $2';
-    let params = [req.user.anonId, itemType];
+    let whereClause = 'WHERE user_id = $1 AND item_type = $2';
+    let params = [req.user.id, itemType];
     
     if (mode) {
       whereClause += ' AND learning_mode = $3';
@@ -1604,29 +1714,29 @@ app.get('/api/progress', authenticateUser, async (req, res) => {
     });
     
   } catch (error) {
-    console.error('获取进度错误:', error);
+    // console.error('获取进度错误:', error);
     res.status(500).json({ error: '获取进度失败' });
   }
 });
 
 // 详细进度分析函数
-async function getDetailedProgress(anonId, module, mode = null) {
-  console.log(`🔍 getDetailedProgress called with: anonId=${anonId}, module=${module}, mode=${mode}`);
+async function getDetailedProgress(userId, module, mode = null) {
+  // console.log(`🔍 getDetailedProgress called with: userId=${userId}, module=${module}, mode=${mode}`);
   
-  const moduleStats = await getModuleComparison(anonId, mode, module);
-  console.log('📊 moduleStats:', moduleStats);
+  const moduleStats = await getModuleComparison(userId, mode, module);
+  // console.log('📊 moduleStats:', moduleStats);
   
-  const formAnalysis = await getFormAnalysis(anonId, module, mode);
-  console.log('📋 formAnalysis:', formAnalysis);
+  const formAnalysis = await getFormAnalysis(userId, module, mode);
+  // console.log('📋 formAnalysis:', formAnalysis);
   
-  const errorAnalysis = await getErrorAnalysis(anonId, module, mode);
-  console.log('❌ errorAnalysis:', errorAnalysis);
+  const errorAnalysis = await getErrorAnalysis(userId, module, mode);
+  // console.log('❌ errorAnalysis:', errorAnalysis);
   
-  const learningTrends = await getLearningTrends(anonId, module, mode);
-  console.log('📈 learningTrends:', learningTrends);
+  const learningTrends = await getLearningTrends(userId, module, mode);
+  // console.log('📈 learningTrends:', learningTrends);
   
-  const recommendations = await getRecommendations(anonId, module);
-  console.log('💡 recommendations:', recommendations);
+  const recommendations = await getRecommendations(userId, module);
+  // console.log('💡 recommendations:', recommendations);
   
   return {
     moduleComparison: moduleStats,
@@ -1638,7 +1748,7 @@ async function getDetailedProgress(anonId, module, mode = null) {
 }
 
 // 模块对比分析
-async function getModuleComparison(anonId, mode = null, module = null) {
+async function getModuleComparison(userId, mode = null, module = null) {
   if (!pool) {
     return [];
   }
@@ -1653,9 +1763,9 @@ async function getModuleComparison(anonId, mode = null, module = null) {
        COUNT(CASE WHEN due_at <= NOW() THEN 1 END) as due_count,
        AVG(CASE WHEN attempts > 0 THEN correct::float / attempts ELSE 0 END) as accuracy
      FROM reviews 
-     WHERE anon_id = $1`;
+     WHERE user_id = $1`;
   
-  const params = [anonId];
+  const params = [userId];
   let paramIndex = 2;
   
   if (module) {
@@ -1691,7 +1801,7 @@ async function getModuleComparison(anonId, mode = null, module = null) {
 }
 
 // 变形掌握度分析
-async function getFormAnalysis(anonId, module, mode = null) {
+async function getFormAnalysis(userId, module, mode = null) {
   if (!pool) {
     return [];
   }
@@ -1710,9 +1820,9 @@ async function getFormAnalysis(anonId, module, mode = null) {
        AVG(streak) as avg_streak,
        COUNT(CASE WHEN streak >= 5 THEN 1 END) as mastered_count
      FROM reviews 
-     WHERE anon_id = $1 AND item_type = $2`;
+     WHERE user_id = $1 AND item_type = $2`;
   
-  const params = [anonId, itemType];
+  const params = [userId, itemType];
   if (mode) {
     sql += ` AND learning_mode = $3`;
     params.push(mode);
@@ -1736,7 +1846,7 @@ async function getFormAnalysis(anonId, module, mode = null) {
 }
 
 // 错误模式分析
-async function getErrorAnalysis(anonId, module, mode = null) {
+async function getErrorAnalysis(userId, module, mode = null) {
   if (!pool) {
     return { errorItems: [], errorStats: [] };
   }
@@ -1755,9 +1865,9 @@ async function getErrorAnalysis(anonId, module, mode = null) {
        streak,
        (attempts - correct) as errors
      FROM reviews 
-     WHERE anon_id = $1 AND item_type = $2 AND attempts > correct`;
+     WHERE user_id = $1 AND item_type = $2 AND attempts > correct`;
   
-  const params = [anonId, itemType];
+  const params = [userId, itemType];
   if (mode) {
     sql += ` AND learning_mode = $3`;
     params.push(mode);
@@ -1774,9 +1884,9 @@ async function getErrorAnalysis(anonId, module, mode = null) {
        SUM(attempts - correct) as total_errors,
        AVG(attempts - correct) as avg_errors_per_item
      FROM reviews 
-     WHERE anon_id = $1 AND item_type = $2 AND attempts > correct`;
+     WHERE user_id = $1 AND item_type = $2 AND attempts > correct`;
   
-  const errorStatsParams = [anonId, itemType];
+  const errorStatsParams = [userId, itemType];
   if (mode) {
     errorStatsSql += ` AND learning_mode = $3`;
     errorStatsParams.push(mode);
@@ -1805,7 +1915,7 @@ async function getErrorAnalysis(anonId, module, mode = null) {
 }
 
 // 学习趋势分析
-async function getLearningTrends(anonId, module, mode = null) {
+async function getLearningTrends(userId, module, mode = null) {
   if (!pool) {
     return { dailyTrends: [], weeklyTrends: [] };
   }
@@ -1822,10 +1932,10 @@ async function getLearningTrends(anonId, module, mode = null) {
        SUM(CASE WHEN correct > 0 THEN 1 ELSE 0 END) as correct_reviews,
        AVG(CASE WHEN attempts > 0 THEN correct::float / attempts ELSE 0 END) as daily_accuracy
      FROM reviews 
-     WHERE anon_id = $1 AND item_type = $2 
+     WHERE user_id = $1 AND item_type = $2 
        AND last_reviewed >= NOW() - INTERVAL '30 days'`;
   
-  const dailyParams = [anonId, itemType];
+  const dailyParams = [userId, itemType];
   if (mode) {
     dailySql += ` AND learning_mode = $3`;
     dailyParams.push(mode);
@@ -1842,10 +1952,10 @@ async function getLearningTrends(anonId, module, mode = null) {
        SUM(CASE WHEN correct > 0 THEN 1 ELSE 0 END) as correct_reviews,
        AVG(streak) as avg_streak
      FROM reviews 
-     WHERE anon_id = $1 AND item_type = $2 
+     WHERE user_id = $1 AND item_type = $2 
        AND last_reviewed >= NOW() - INTERVAL '12 weeks'`;
   
-  const weeklyParams = [anonId, itemType];
+  const weeklyParams = [userId, itemType];
   if (mode) {
     weeklySql += ` AND learning_mode = $3`;
     weeklyParams.push(mode);
@@ -1898,7 +2008,7 @@ function getWeaknessSuggestion(form, errorRate) {
   }
 }
 
-async function getRecommendations(anonId, module) {
+async function getRecommendations(userId, module) {
   if (!pool) {
     return [];
   }
@@ -1913,8 +2023,8 @@ async function getRecommendations(anonId, module) {
   // 检查待复习项目
   const { rows: dueItems } = await pool.query(
     `SELECT COUNT(*) as due_count FROM reviews 
-     WHERE anon_id = $1 AND item_type = $2 AND due_at <= NOW()`,
-    [anonId, itemType]
+     WHERE user_id = $1 AND item_type = $2 AND due_at <= NOW()`,
+    [userId, itemType]
   );
   
   if (dueItems[0].due_count > 0) {
@@ -1931,11 +2041,11 @@ async function getRecommendations(anonId, module) {
     `SELECT form, 
        AVG(CASE WHEN attempts > 0 THEN correct::float / attempts ELSE 0 END) as accuracy
      FROM reviews 
-     WHERE anon_id = $1 AND item_type = $2 AND attempts >= 3
+     WHERE user_id = $1 AND item_type = $2 AND attempts >= 3
      GROUP BY form
      HAVING AVG(CASE WHEN attempts > 0 THEN correct::float / attempts ELSE 0 END) < 0.7
      ORDER BY accuracy`,
-    [anonId, itemType]
+    [userId, itemType]
   );
   
   if (problemForms.length > 0) {
@@ -1951,9 +2061,9 @@ async function getRecommendations(anonId, module) {
   // 检查学习频率
   const { rows: recentActivity } = await pool.query(
     `SELECT COUNT(*) as recent_reviews FROM reviews 
-     WHERE anon_id = $1 AND item_type = $2 
+     WHERE user_id = $1 AND item_type = $2 
        AND last_reviewed >= NOW() - INTERVAL '3 days'`,
-    [anonId, itemType]
+    [userId, itemType]
   );
   
   if (recentActivity[0].recent_reviews === 0) {
@@ -1968,7 +2078,63 @@ async function getRecommendations(anonId, module) {
   return recommendations;
 }
 
+// 推荐系统API
+app.get('/api/recommendations', authenticateUser, async (req, res) => {
+  try {
+    const { module = 'verb' } = req.query;
+    const recommendations = await getRecommendations(req.user.id, module);
+    res.json({ recommendations });
+  } catch (error) {
+    // console.error('获取推荐失败:', error);
+    res.status(500).json({ error: '获取推荐失败' });
+  }
+});
+
+app.post('/api/recommendations/apply', authenticateUser, async (req, res) => {
+  try {
+    const { action, data } = req.body;
+    
+    // 根据推荐动作执行相应操作
+    switch (action) {
+      case 'start_review':
+        res.json({ success: true, redirect: '/index.html?mode=quiz&focus=review' });
+        break;
+      case 'focus_form':
+        const form = data?.form || '';
+        res.json({ success: true, redirect: `/index.html?mode=quiz&focus=form&form=${encodeURIComponent(form)}` });
+        break;
+      case 'start_practice':
+        res.json({ success: true, redirect: '/index.html?mode=quiz' });
+        break;
+      default:
+        res.status(400).json({ error: '未知的推荐动作' });
+    }
+  } catch (error) {
+    // console.error('应用推荐失败:', error);
+    res.status(500).json({ error: '应用推荐失败' });
+  }
+});
+
 // 静态文件服务
+// 处理认证相关的前端路由重定向
+app.get('/reset-password', (req, res) => {
+  const token = req.query.token;
+  if (token) {
+    res.redirect(`/auth.html#reset-password?token=${token}`);
+  } else {
+    res.redirect('/auth.html#reset-password');
+  }
+});
+
+app.get('/verify-email', (req, res) => {
+  const token = req.query.token;
+  if (token) {
+    res.redirect(`/auth.html#verify-email?token=${token}`);
+  } else {
+    res.redirect('/auth.html#verify-email');
+  }
+});
+
 app.use(express.static(path.join(__dirname, '../public')));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
@@ -1976,11 +2142,11 @@ app.get('/', (req, res) => {
 
 // 错误处理
 app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err);
+  // console.error('Unhandled error:', err);
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}/`);
+  // console.log(`🚀 Server running at http://localhost:${PORT}/`);
 });

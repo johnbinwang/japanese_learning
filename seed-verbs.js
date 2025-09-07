@@ -431,7 +431,7 @@ async function seedVerbs() {
     const { rows } = await pool.query('SELECT COUNT(*) FROM verbs');
     const count = parseInt(rows[0].count);
     
-    console.log(`动词表当前有 ${count} 条数据`);
+    // console.log(`动词表当前有 ${count} 条数据`);
     
     // 过滤出尚未存在的动词
     const existingVerbs = await pool.query('SELECT kana FROM verbs');
@@ -439,13 +439,13 @@ async function seedVerbs() {
     const newVerbs = verbsData.filter(verb => !existingKanaSet.has(verb.kana));
     
     if (newVerbs.length === 0) {
-      console.log('所有动词已存在，无需导入新数据');
+      // console.log('所有动词已存在，无需导入新数据');
       return;
     }
     
-    console.log(`准备导入 ${newVerbs.length} 个新动词...`);
+    // console.log(`准备导入 ${newVerbs.length} 个新动词...`);
 
-    console.log('开始导入动词种子数据...');
+    // console.log('开始导入动词种子数据...');
     
     // 批量插入新动词数据
     for (let i = 0; i < newVerbs.length; i += 100) {
@@ -461,12 +461,12 @@ async function seedVerbs() {
         params
       );
       
-      console.log(`已导入 ${Math.min(i + 100, verbsData.length)} / ${verbsData.length} 个动词`);
+      // console.log(`已导入 ${Math.min(i + 100, verbsData.length)} / ${verbsData.length} 个动词`);
     }
     
-    console.log(`成功导入 ${verbsData.length} 个动词到数据库`);
+    // console.log(`成功导入 ${verbsData.length} 个动词到数据库`);
   } catch (error) {
-    console.error('导入动词数据时出错:', error);
+    // console.error('导入动词数据时出错:', error);
   } finally {
     await pool.end();
   }

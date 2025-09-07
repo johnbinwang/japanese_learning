@@ -25,13 +25,18 @@
   "author": "Japanese Learning App",
   "license": "MIT",
   "dependencies": {
+    "@playwright/test": "^1.55.0",
+    "axios": "^1.11.0",
+    "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^17.2.1",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
     "node-fetch": "^3.3.2",
     "pg": "^8.11.3",
+    "resend": "^6.0.2",
     "sqlite3": "^5.1.7",
     "uuid": "^9.0.1"
   },

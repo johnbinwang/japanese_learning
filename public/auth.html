@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>用户认证 - 日语形态练习</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>日语形态练习</h1>
+            <p class="auth-subtitle">开始您的日语学习之旅</p>
+        </div>
+
+        <!-- 登录表单 -->
+        <div id="login-form" class="auth-form active">
+            <h2>登录</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="login-email">邮箱地址</label>
+                    <input type="email" id="login-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">密码</label>
+                    <input type="password" id="login-password" name="password" required>
+                </div>
+                <button type="submit" class="auth-btn primary">登录</button>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="show-register">还没有账户？注册</a>
+                <a href="#" id="show-forgot-password">忘记密码？</a>
+            </div>
+        </div>
+
+        <!-- 注册表单 -->
+        <div id="register-form" class="auth-form">
+            <h2>注册</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="register-email">邮箱地址</label>
+                    <input type="email" id="register-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">密码</label>
+                    <input type="password" id="register-password" name="password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm-password">确认密码</label>
+                    <input type="password" id="register-confirm-password" name="confirmPassword" required minlength="6">
+                </div>
+                <button type="submit" class="auth-btn primary">注册</button>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="show-login">已有账户？登录</a>
+            </div>
+        </div>
+
+        <!-- 忘记密码表单 -->
+        <div id="forgot-password-form" class="auth-form">
+            <h2>重置密码</h2>
+            <p class="form-description">请输入您的邮箱地址，我们将发送重置密码的验证码。</p>
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <label for="forgot-email">邮箱地址</label>
+                    <input type="email" id="forgot-email" name="email" required>
+                </div>
+                <button type="submit" class="auth-btn primary">发送验证码</button>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="back-to-login">返回登录</a>
+            </div>
+        </div>
+
+        <!-- 邮箱验证表单 -->
+        <div id="verify-email-form" class="auth-form">
+            <h2>验证邮箱</h2>
+            <p class="form-description">我们已向您的邮箱发送了验证码，请输入4位验证码。</p>
+            <form id="verifyEmailForm">
+                <div class="form-group">
+                    <label for="verification-code">验证码</label>
+                    <input type="text" id="verification-code" name="code" required maxlength="4" pattern="[0-9]{4}">
+                </div>
+                <button type="submit" class="auth-btn primary">验证</button>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="resend-code">重新发送验证码</a>
+                <a href="#" id="back-to-register">返回注册</a>
+            </div>
+        </div>
+
+        <!-- 密码重置验证码表单 -->
+        <div id="reset-verify-form" class="auth-form">
+            <h2>验证重置码</h2>
+            <p class="form-description">我们已向您的邮箱发送了重置验证码，请输入4位验证码。</p>
+            <form id="resetVerifyForm">
+                <div class="form-group">
+                    <label for="reset-verification-code">验证码</label>
+                    <input type="text" id="reset-verification-code" name="code" required maxlength="4" pattern="[0-9]{4}">
+                </div>
+                <button type="submit" class="auth-btn primary">验证</button>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="resend-reset-code">重新发送验证码</a>
+                <a href="#" id="back-to-forgot">返回重置密码</a>
+            </div>
+        </div>
+
+        <!-- 重置密码表单 -->
+        <div id="reset-password-form" class="auth-form">
+            <h2>设置新密码</h2>
+            <p class="form-description">请输入您的新密码</p>
+            <form id="resetPasswordForm">
+                <input type="hidden" id="reset-email" name="email">
+                <input type="hidden" id="reset-code" name="code">
+                <div class="form-group">
+                    <label for="new-password">新密码</label>
+                    <input type="password" id="new-password" name="password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-new-password">确认新密码</label>
+                    <input type="password" id="confirm-new-password" name="confirmPassword" required minlength="6">
+                </div>
+                <button type="submit" class="auth-btn primary">重置密码</button>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="back-to-reset-verify">返回验证码输入</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载提示 -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">处理中...</div>
+    </div>
+
+    <!-- 提示消息 -->
+    <div class="toast" id="toast"></div>
+
+    <script src="auth.js"></script>
+</body>
+</html>

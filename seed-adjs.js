@@ -359,7 +359,7 @@ async function seedAdjectives() {
     const { rows } = await pool.query('SELECT COUNT(*) FROM adjectives');
     const count = parseInt(rows[0].count);
     
-    console.log(`形容词表当前有 ${count} 条数据`);
+    // console.log(`形容词表当前有 ${count} 条数据`);
     
     // 过滤出尚未存在的形容词
     const existingAdjs = await pool.query('SELECT kana FROM adjectives');
@@ -367,13 +367,13 @@ async function seedAdjectives() {
     const newAdjectives = adjectivesData.filter(adj => !existingKanaSet.has(adj.kana));
     
     if (newAdjectives.length === 0) {
-      console.log('所有形容词已存在，无需导入新数据');
+      // console.log('所有形容词已存在，无需导入新数据');
       return;
     }
     
-    console.log(`准备导入 ${newAdjectives.length} 个新形容词...`);
+    // console.log(`准备导入 ${newAdjectives.length} 个新形容词...`);
 
-    console.log('开始导入形容词种子数据...');
+    // console.log('开始导入形容词种子数据...');
     
     // 批量插入新形容词数据
     for (let i = 0; i < newAdjectives.length; i += 100) {
@@ -389,12 +389,12 @@ async function seedAdjectives() {
         params
       );
       
-      console.log(`已导入 ${Math.min(i + 100, adjectivesData.length)} / ${adjectivesData.length} 个形容词`);
+      // console.log(`已导入 ${Math.min(i + 100, adjectivesData.length)} / ${adjectivesData.length} 个形容词`);
     }
     
-    console.log(`成功导入 ${adjectivesData.length} 个形容词到数据库`);
+    // console.log(`成功导入 ${adjectivesData.length} 个形容词到数据库`);
   } catch (error) {
-    console.error('导入形容词数据时出错:', error);
+    // console.error('导入形容词数据时出错:', error);
   } finally {
     await pool.end();
   }

@@ -36,16 +36,16 @@ async function executeMigration(filename) {
   const filePath = path.join(__dirname, 'migrations', filename);
   const sql = fs.readFileSync(filePath, 'utf8');
   
-  console.log(`执行迁移: ${filename}`);
+  // console.log(`执行迁移: ${filename}`);
   await pool.query(sql);
   await recordMigration(filename);
-  console.log(`✅ 迁移完成: ${filename}`);
+  // console.log(`✅ 迁移完成: ${filename}`);
 }
 
 // 主迁移函数
 async function migrate() {
   try {
-    console.log('🚀 开始数据库迁移...');
+    // console.log('🚀 开始数据库迁移...');
     
     // 创建迁移记录表
     await createMigrationsTable();
@@ -87,7 +87,7 @@ async function migrate() {
       await executeMigration(file);
     }
     
-    console.log('🎉 所有迁移执行完成！');
+    // console.log('🎉 所有迁移执行完成！');
     
   } catch (error) {
     console.error('❌ 迁移失败:', error);

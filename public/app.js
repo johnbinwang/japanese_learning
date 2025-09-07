@@ -12,8 +12,9 @@ const state = {
         dailyGoal: 10
     },
     user: {
-        anonId: null,
-        accessCode: null
+        id: null,
+        email: null,
+        isAuthenticated: false
     },
     isFlashcardFlipped: false
 };
@@ -70,7 +71,7 @@ class TodayOverviewManager {
             try {
                 callback(data);
             } catch (error) {
-                console.error('Error in subscriber callback:', error);
+                // console.error('Error in subscriber callback:', error);
             }
         });
     }
@@ -81,17 +82,17 @@ class TodayOverviewManager {
         
         // 如果有缓存且未过期，直接返回缓存
         if (!forceRefresh && this.cache && (now - this.lastFetchTime) < this.cacheDuration) {
-            console.log('📋 使用缓存的今日概览数据');
+            // console.log('📋 使用缓存的今日概览数据');
             return this.cache;
         }
 
         // 如果已有请求在进行中，等待该请求完成
         if (this.pendingRequest) {
-            console.log('📋 等待进行中的今日概览请求');
+            // console.log('📋 等待进行中的今日概览请求');
             return this.pendingRequest;
         }
 
-        console.log('📋 发起新的今日概览API请求');
+        // console.log('📋 发起新的今日概览API请求');
         this.pendingRequest = this.fetchTodayOverview();
         
         try {
@@ -109,10 +110,10 @@ class TodayOverviewManager {
     async fetchTodayOverview() {
         try {
             const response = await API.request('/api/today-overview');
-            console.log('📡 今日概览API请求成功');
+            // console.log('📡 今日概览API请求成功');
             return response;
         } catch (error) {
-            console.error('❌ 今日概览API请求失败:', error);
+            // console.error('❌ 今日概览API请求失败:', error);
             throw error;
         }
     }
@@ -121,7 +122,7 @@ class TodayOverviewManager {
     clearCache() {
         this.cache = null;
         this.lastFetchTime = 0;
-        console.log('🗑️ 今日概览缓存已清除');
+        // console.log('🗑️ 今日概览缓存已清除');
     }
 
     // 强制刷新数据
@@ -138,14 +139,15 @@ const todayOverviewManager = new TodayOverviewManager();
 class API {
     static async request(endpoint, options = {}) {
         try {
-            // 自动添加访问码头部（如果存在）
+            // 自动添加JWT认证头部（如果存在）
             const headers = {
                 'Content-Type': 'application/json',
                 ...options.headers
             };
             
-            if (state.user.accessCode) {
-                headers['X-Access-Code'] = state.user.accessCode;
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
             }
     
             const response = await fetch(endpoint, {
@@ -154,6 +156,14 @@ class API {
             });
             
             if (!response.ok) {
+                // 处理401未授权错误
+                if (response.status === 401) {
+                    localStorage.removeItem('authToken');
+                    state.user.isAuthenticated = false;
+                    window.location.href = '/auth.html';
+                    return;
+                }
+                
                 // 尝试解析错误响应中的具体错误信息
                 let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
                 try {
@@ -169,7 +179,7 @@ class API {
             
             return await response.json();
         } catch (error) {
-            console.error('API Error:', error);
+            // console.error('API Error:', error);
             showToast('网络错误，请稍后重试', 'error');
             throw error;
         }
@@ -214,21 +224,7 @@ class API {
         return this.request(`/api/progress?module=${module}`);
     }
     
-    static async bindDevice(accessCode) {
-        const result = await this.request('/api/me', {
-            method: 'POST',
-            headers: {
-                'X-Access-Code': accessCode
-            }
-        });
-        
-        // 绑定成功后保存访问码到状态
-        if (result && result.accessCode) {
-            state.user.accessCode = result.accessCode;
-        }
-        
-        return result;
-    }
+
 }
 
 // 路由管理
@@ -240,8 +236,25 @@ class Router {
             'settings': () => this.showPage('settings')
         };
         
+        // 检查是否是认证相关的路由
+        this.checkAuthRoutes();
+        
         window.addEventListener('hashchange', () => this.handleRoute());
         // 不在构造函数中立即处理路由，等待App初始化完成
+    }
+    
+    // 检查认证相关路由
+    checkAuthRoutes() {
+        const path = window.location.pathname;
+        const authRoutes = ['/reset-password', '/verify-email', '/login', '/register', '/forgot-password'];
+        
+        if (authRoutes.includes(path)) {
+            // 重定向到认证页面，保留查询参数
+            const search = window.location.search;
+            const hash = path.replace('/', '');
+            window.location.href = `/auth.html#${hash}${search}`;
+            return;
+        }
     }
     
     // 新增方法：App初始化完成后调用
@@ -265,12 +278,15 @@ class Router {
     }
     
     showPage(pageId) {
-        console.log('🔄 Router.showPage 被调用，目标页面:', pageId);
+        // console.log('🔄 Router.showPage 被调用，目标页面:', pageId);
         
         // 隐藏所有页面
-        document.querySelectorAll('.page').forEach(page => {
-            page.classList.remove('active');
-        });
+        const pages = document.querySelectorAll('.page');
+        if (pages && pages.length > 0) {
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+        }
         
         // 显示目标页面
         const targetPage = document.getElementById(pageId);
@@ -282,9 +298,12 @@ class Router {
         window.scrollTo(0, 0);
         
         // 更新导航状态
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
+        const navItems = document.querySelectorAll('.nav-item');
+        if (navItems && navItems.length > 0) {
+            navItems.forEach(item => {
+                item.classList.remove('active');
+            });
+        }
         
         const activeNav = document.querySelector(`[data-page="${pageId}"]`);
         if (activeNav) {
@@ -293,34 +312,34 @@ class Router {
         
         // 页面特定初始化和数据刷新
         if (pageId === 'progress') {
-            console.log('📊 切换到进度页面，调用 loadProgress');
+            // console.log('📊 切换到进度页面，调用 loadProgress');
             this.loadProgress();
         } else if (pageId === 'settings') {
-            console.log('⚙️ 切换到设置页面，调用 loadSettings');
+            // console.log('⚙️ 切换到设置页面，调用 loadSettings');
             this.loadSettings();
         }
     }
     
     async loadProgress() {
         try {
-            console.log('📊 loadProgress 开始执行');
+            // console.log('📊 loadProgress 开始执行');
             // 初始化进度页面结构（仅在首次需要时）
             initProgressPage();
             // 使用统一的数据管理器加载今日概览数据
             await loadTodayOverview();
-            console.log('✅ loadProgress 执行完成');
+            // console.log('✅ loadProgress 执行完成');
         } catch (error) {
-            console.error('❌ Failed to load progress:', error);
+            // console.error('❌ Failed to load progress:', error);
         }
     }
 
     async loadSettings() {
         try {
-            console.log('🔧 loadSettings 开始执行');
+            // console.log('🔧 loadSettings 开始执行');
             
             // 确保在API调用前先恢复用户状态
             if (!state.user.accessCode) {
-                console.log('🔄 检测到访问码为空，尝试恢复用户状态');
+                // console.log('🔄 检测到访问码为空，尝试恢复用户状态');
                 // 使用App实例的restoreUserState方法
                 if (window.app) {
                     window.app.restoreUserState();
@@ -329,8 +348,8 @@ class Router {
             
             // 添加时间戳参数防止缓存，确保获取最新数据
             const timestamp = Date.now();
-            console.log('📡 发送API请求获取用户数据和偏好设置，时间戳:', timestamp);
-            console.log('🔑 当前访问码:', state.user.accessCode);
+            // console.log('📡 发送API请求获取用户数据和偏好设置，时间戳:', timestamp);
+            // console.log('🔑 当前访问码:', state.user.accessCode);
             
             // 同时获取用户数据和偏好设置
             const [userData, preferences] = await Promise.all([
@@ -345,22 +364,22 @@ class Router {
             // 将preferences数据合并到userData中
             userData.preferences = preferences;
             
-            console.log('📥 收到用户数据:', userData);
-            console.log('📥 收到偏好设置:', preferences);
-            console.log('📋 调用 updateSettingsDisplay 更新设置显示');
+            // console.log('📥 收到用户数据:', userData);
+            // console.log('📥 收到偏好设置:', preferences);
+            // console.log('📋 调用 updateSettingsDisplay 更新设置显示');
             updateSettingsDisplay(userData);
             
             // 使用统一的数据管理器加载今日进度，避免重复调用
-            console.log('📈 调用 loadTodayOverview 加载今日进度');
+            // console.log('📈 调用 loadTodayOverview 加载今日进度');
             await loadTodayOverview();
             
-            console.log('✅ loadSettings 执行完成');
+            // console.log('✅ loadSettings 执行完成');
         } catch (error) {
-            console.error('❌ Failed to load settings:', error);
+            // console.error('❌ Failed to load settings:', error);
             
             // 如果是访问码无效错误，清除本地存储并重新加载用户数据
             if (error.message && error.message.includes('访问码无效')) {
-                console.log('Access code invalid, clearing and reloading user data');
+                // console.log('Access code invalid, clearing and reloading user data');
                 localStorage.removeItem('accessCode');
                 state.user.accessCode = null;
                 
@@ -395,55 +414,85 @@ class LearningManager {
     
     initializeEventListeners() {
         // 模块选择
-        document.querySelectorAll('.module-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const module = e.currentTarget.dataset.module;
-                this.selectModule(module);
+        const moduleButtons = document.querySelectorAll('.module-btn');
+        if (moduleButtons && moduleButtons.length > 0) {
+            moduleButtons.forEach(btn => {
+                if (btn) {
+                    btn.addEventListener('click', (e) => {
+                        const module = e.currentTarget.dataset.module;
+                        this.selectModule(module);
+                    });
+                }
             });
-        });
+        }
         
         // 模式切换
-        document.querySelectorAll('.mode-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const mode = e.currentTarget.dataset.mode;
-                this.selectMode(mode);
+        const modeButtons = document.querySelectorAll('.mode-btn');
+        if (modeButtons && modeButtons.length > 0) {
+            modeButtons.forEach(btn => {
+                if (btn) {
+                    btn.addEventListener('click', (e) => {
+                        const mode = e.currentTarget.dataset.mode;
+                        this.selectMode(mode);
+                    });
+                }
             });
-        });
+        }
         
         // 开始练习
-        document.getElementById('start-btn').addEventListener('click', () => {
-            this.startPractice();
-        });
+        const startBtn = document.getElementById('start-btn');
+        if (startBtn) {
+            startBtn.addEventListener('click', () => {
+                this.startPractice();
+            });
+        }
         
         // 提交答案
-        document.getElementById('submit-btn').addEventListener('click', () => {
-            this.submitAnswer();
-        });
+        const submitBtn = document.getElementById('submit-btn');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', () => {
+                this.submitAnswer();
+            });
+        }
         
         // 下一题
-        document.getElementById('next-btn').addEventListener('click', () => {
-            this.nextQuestion();
-        });
+        const nextBtn = document.getElementById('next-btn');
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                this.nextQuestion();
+            });
+        }
         
         // 闪卡翻转
-        document.getElementById('flip-btn').addEventListener('click', () => {
-            this.flipFlashcard();
-        });
+        const flipBtn = document.getElementById('flip-btn');
+        if (flipBtn) {
+            flipBtn.addEventListener('click', () => {
+                this.flipFlashcard();
+            });
+        }
         
         // 闪卡反馈
-        document.querySelectorAll('.feedback-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const feedback = e.currentTarget.dataset.feedback;
-                this.submitFlashcardFeedback(feedback);
+        const feedbackButtons = document.querySelectorAll('.feedback-btn');
+        if (feedbackButtons && feedbackButtons.length > 0) {
+            feedbackButtons.forEach(btn => {
+                if (btn) {
+                    btn.addEventListener('click', (e) => {
+                        const feedback = e.currentTarget.dataset.feedback;
+                        this.submitFlashcardFeedback(feedback);
+                    });
+                }
             });
-        });
+        }
         
         // 答案输入回车提交
-        document.getElementById('answer-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                this.submitAnswer();
-            }
-        });
+        const answerInput = document.getElementById('answer-input');
+        if (answerInput) {
+            answerInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.submitAnswer();
+                }
+            });
+        }
     }
     
     selectModule(module) {
@@ -522,14 +571,17 @@ class LearningManager {
     }
     
     updateFormSelection() {
-        document.querySelectorAll('.form-chip').forEach(chip => {
-            const formId = chip.dataset.form;
-            if (state.selectedForms.includes(formId)) {
-                chip.classList.add('active');
-            } else {
-                chip.classList.remove('active');
-            }
-        });
+        const formChips = document.querySelectorAll('.form-chip');
+        if (formChips && formChips.length > 0) {
+            formChips.forEach(chip => {
+                const formId = chip.dataset.form;
+                if (state.selectedForms.includes(formId)) {
+                    chip.classList.add('active');
+                } else {
+                    chip.classList.remove('active');
+                }
+            });
+        }
     }
     
     resetPracticeArea() {
@@ -588,7 +640,7 @@ class LearningManager {
             await this.loadNextQuestion();
             this.showPracticeCard();
         } catch (error) {
-            console.error('Failed to start practice:', error);
+            // console.error('Failed to start practice:', error);
         } finally {
             showLoading(false);
         }
@@ -682,7 +734,7 @@ class LearningManager {
             
             this.showResult(result);
         } catch (error) {
-            console.error('Failed to submit answer:', error);
+            // console.error('Failed to submit answer:', error);
         } finally {
             showLoading(false);
         }
@@ -803,7 +855,7 @@ class LearningManager {
         let normalizedGroup = group;
         if (!group || group.trim() === '') {
             normalizedGroup = this.inferVerbGroup(base);
-            console.log(`警告: 动词 ${base} 缺少group信息，推断为 ${normalizedGroup} 类`);
+            // console.log(`警告: 动词 ${base} 缺少group信息，推断为 ${normalizedGroup} 类`);
         }
         
         switch (form) {
@@ -1141,7 +1193,7 @@ class LearningManager {
             
             await this.nextQuestion();
         } catch (error) {
-            console.error('Failed to submit feedback:', error);
+            // console.error('Failed to submit feedback:', error);
         } finally {
             showLoading(false);
         }
@@ -1152,7 +1204,7 @@ class LearningManager {
             showLoading(true);
             await this.loadNextQuestion();
         } catch (error) {
-            console.error('Failed to load next question:', error);
+            // console.error('Failed to load next question:', error);
         } finally {
             showLoading(false);
         }
@@ -1293,18 +1345,18 @@ function updateProgressDisplayWithModule() {
 // 加载今日概览数据
 async function loadTodayOverview() {
     try {
-        console.log('📋 loadTodayOverview 开始执行');
+        // console.log('📋 loadTodayOverview 开始执行');
         const data = await todayOverviewManager.getTodayOverview();
         updateTodayOverview(data);
-        console.log('✅ loadTodayOverview 执行完成');
+        // console.log('✅ loadTodayOverview 执行完成');
     } catch (error) {
-        console.error('❌ 获取今日概览数据失败:', error);
+        // console.error('❌ 获取今日概览数据失败:', error);
     }
 }
 
 // 更新今日概览显示
 function updateTodayOverview(data) {
-    console.log('更新今日概览数据:', data);
+    // console.log('更新今日概览数据:', data);
     
     // 从API返回的嵌套结构中提取数据
     const overview = data.overview || {};
@@ -1314,22 +1366,43 @@ function updateTodayOverview(data) {
     // 更新新学进度
     const newProgress = parseInt(progress.newItemsProgress?.completed) || 0;
     const newTarget = parseInt(progress.newItemsProgress?.target) || 10;
-    document.getElementById('new-progress').textContent = `${newProgress}/${newTarget}`;
+    const newProgressEl = document.getElementById('new-progress');
+    if (newProgressEl) {
+        newProgressEl.textContent = `${newProgress}/${newTarget}`;
+    }
     const newProgressPercentage = newTarget > 0 ? (newProgress / newTarget) * 100 : 0;
-    document.getElementById('new-progress-fill').style.width = `${newProgressPercentage}%`;
+    const newProgressFillEl = document.getElementById('new-progress-fill');
+    if (newProgressFillEl) {
+        newProgressFillEl.style.width = `${newProgressPercentage}%`;
+    }
     
     // 更新复习进度
     const reviewProgress = parseInt(progress.reviewsProgress?.completed) || 0;
     const reviewTarget = parseInt(progress.reviewsProgress?.target) || 50;
-    document.getElementById('review-progress').textContent = `${reviewProgress}/${reviewTarget}`;
+    const reviewProgressEl = document.getElementById('review-progress');
+    if (reviewProgressEl) {
+        reviewProgressEl.textContent = `${reviewProgress}/${reviewTarget}`;
+    }
     const reviewProgressPercentage = reviewTarget > 0 ? (reviewProgress / reviewTarget) * 100 : 0;
-    document.getElementById('review-progress-fill').style.width = `${reviewProgressPercentage}%`;
+    const reviewProgressFillEl = document.getElementById('review-progress-fill');
+    if (reviewProgressFillEl) {
+        reviewProgressFillEl.style.width = `${reviewProgressPercentage}%`;
+    }
     
     // 更新统计卡片
     const totalDueCount = Object.values(dueReviews).reduce((sum, count) => sum + count, 0);
-    document.getElementById('study-time-today').textContent = `${Math.round(overview.total_study_time_today / 60) || 0}分钟`;
-    document.getElementById('study-streak').textContent = `${overview.study_streak_days || 0}天`;
-    document.getElementById('due-total').textContent = totalDueCount;
+    const studyTimeTodayEl = document.getElementById('study-time-today');
+    if (studyTimeTodayEl) {
+        studyTimeTodayEl.textContent = `${Math.round(overview.total_study_time_today / 60) || 0}分钟`;
+    }
+    const studyStreakEl = document.getElementById('study-streak');
+    if (studyStreakEl) {
+        studyStreakEl.textContent = `${overview.study_streak_days || 0}天`;
+    }
+    const dueTotalEl = document.getElementById('due-total');
+    if (dueTotalEl) {
+        dueTotalEl.textContent = totalDueCount;
+    }
 }
 
 // 加载模式对比数据
@@ -1345,7 +1418,7 @@ function loadModeComparison() {
             updateModeComparison(data);
         })
         .catch(error => {
-            console.error('获取模式对比数据失败:', error);
+            // console.error('获取模式对比数据失败:', error);
         });
 }
 
@@ -1416,7 +1489,7 @@ function loadWeeklyTrends() {
             }
         })
         .catch(error => {
-            console.error('获取趋势数据失败:', error);
+            // console.error('获取趋势数据失败:', error);
         });
 }
 
@@ -1457,7 +1530,7 @@ function loadWeaknesses() {
             }
         })
         .catch(error => {
-            console.error('获取薄弱环节数据失败:', error);
+            // console.error('获取薄弱环节数据失败:', error);
         });
 }
 
@@ -1498,7 +1571,7 @@ function loadSuggestions() {
             updateRecommendationCards(data);
         })
         .catch(error => {
-            console.error('获取智能推荐失败:', error);
+            // console.error('获取智能推荐失败:', error);
         });
 }
 
@@ -1619,7 +1692,7 @@ function applyGoalRecommendation(newTarget, reviewTarget) {
         }
     })
     .catch(error => {
-        console.error('应用推荐失败:', error);
+        // console.error('应用推荐失败:', error);
         showNotification('应用推荐失败', 'error');
     });
 }
@@ -1880,20 +1953,20 @@ function saveStudyGoals() {
 // 加载今日学习进度
 async function loadTodayProgress() {
     try {
-        console.log('📈 loadTodayProgress 开始执行');
-        console.log('🔍 当前 state.settings:', state.settings);
+        // console.log('📈 loadTodayProgress 开始执行');
+        // console.log('🔍 当前 state.settings:', state.settings);
         
         const data = await todayOverviewManager.getTodayOverview();
         
-        console.log('📡 收到今日概览数据:', data);
+        // console.log('📡 收到今日概览数据:', data);
         
         // 更新今日新学习进度显示
         const todayProgress = parseInt(data.progress?.newItemsProgress?.completed) || 0;
         // 优先使用state.settings中的目标值，确保与输入框一致
         const todayGoal = state.settings.dailyGoal || parseInt(data.overview?.daily_new_target) || 10;
         
-        console.log('🎯 学习进度数据 - 完成:', todayProgress, '目标:', todayGoal);
-        console.log('📊 目标值来源 - state.settings.dailyGoal:', state.settings.dailyGoal, 'API daily_new_target:', data.overview?.daily_new_target);
+        // console.log('🎯 学习进度数据 - 完成:', todayProgress, '目标:', todayGoal);
+        // console.log('📊 目标值来源 - state.settings.dailyGoal:', state.settings.dailyGoal, 'API daily_new_target:', data.overview?.daily_new_target);
         
         const todayProgressEl = document.getElementById('today-progress');
         const todayGoalEl = document.getElementById('today-goal');
@@ -1903,10 +1976,10 @@ async function loadTodayProgress() {
         // 更新新学习进度条
         const progressPercentage = todayGoal > 0 ? Math.min((todayProgress / todayGoal) * 100, 100) : 0;
         const settingsNewProgressFill = document.getElementById('settings-new-progress-fill');
-        console.log('📊 新学习进度条 - 百分比:', progressPercentage + '%', '元素:', settingsNewProgressFill);
+        // console.log('📊 新学习进度条 - 百分比:', progressPercentage + '%', '元素:', settingsNewProgressFill);
         if (settingsNewProgressFill) {
             settingsNewProgressFill.style.width = progressPercentage + '%';
-            console.log('✅ 新学习进度条宽度已设置为:', progressPercentage + '%');
+            // console.log('✅ 新学习进度条宽度已设置为:', progressPercentage + '%');
         }
         
         // 更新今日复习进度显示
@@ -1914,8 +1987,8 @@ async function loadTodayProgress() {
         // 优先使用state.settings中的目标值，确保与输入框一致
         const todayReviewGoal = state.settings.dailyReviewGoal || parseInt(data.overview?.daily_review_target) || 20;
         
-        console.log('🔄 复习进度数据 - 完成:', todayReviewProgress, '目标:', todayReviewGoal);
-        console.log('📊 复习目标值来源 - state.settings.dailyReviewGoal:', state.settings.dailyReviewGoal, 'API daily_review_target:', data.overview?.daily_review_target);
+        // console.log('🔄 复习进度数据 - 完成:', todayReviewProgress, '目标:', todayReviewGoal);
+        // console.log('📊 复习目标值来源 - state.settings.dailyReviewGoal:', state.settings.dailyReviewGoal, 'API daily_review_target:', data.overview?.daily_review_target);
         
         // 确保更新所有复习相关的显示元素
         const todayReviewProgressEl = document.getElementById('today-review-progress');
@@ -1926,19 +1999,19 @@ async function loadTodayProgress() {
         // 更新复习进度条
         const reviewProgressPercentage = todayReviewGoal > 0 ? Math.min((todayReviewProgress / todayReviewGoal) * 100, 100) : 0;
         const settingsReviewProgressFill = document.getElementById('settings-review-progress-fill');
-        console.log('📊 复习进度条 - 百分比:', reviewProgressPercentage + '%', '元素:', settingsReviewProgressFill);
+        // console.log('📊 复习进度条 - 百分比:', reviewProgressPercentage + '%', '元素:', settingsReviewProgressFill);
         if (settingsReviewProgressFill) {
             settingsReviewProgressFill.style.width = reviewProgressPercentage + '%';
-            console.log('✅ 复习进度条宽度已设置为:', reviewProgressPercentage + '%');
+            // console.log('✅ 复习进度条宽度已设置为:', reviewProgressPercentage + '%');
         }
         
-        console.log('📋 设置页面进度更新完成:', { 
-            todayProgress, todayGoal, progressPercentage,
-            todayReviewProgress, todayReviewGoal, reviewProgressPercentage
-        });
+        // console.log('📋 设置页面进度更新完成:', { 
+        //     todayProgress, todayGoal, progressPercentage,
+        //     todayReviewProgress, todayReviewGoal, reviewProgressPercentage
+        // });
         
     } catch (error) {
-        console.error('❌ Failed to load today progress:', error);
+        // console.error('❌ Failed to load today progress:', error);
     }
 }
 
@@ -1946,33 +2019,33 @@ async function loadTodayProgress() {
 
 // 设置页面
 function updateSettingsDisplay(userData) {
-    console.log('🎛️ updateSettingsDisplay 开始执行，接收到的用户数据:', userData);
+    // console.log('🎛️ updateSettingsDisplay 开始执行，接收到的用户数据:', userData);
     
-    // 更新状态，但保留已存在的访问码
+    // 更新用户状态
     state.user = {
-        ...userData,
-        accessCode: state.user.accessCode || userData.accessCode
+        ...state.user,
+        ...userData
     };
     
-    // 显示访问码（优先使用状态中的访问码）
-    const accessCode = state.user.accessCode || userData.accessCode || '000000';
-    document.getElementById('access-code-display').value = accessCode;
-    console.log('🔑 设置访问码:', accessCode);
+    // 显示用户邮箱
+    const userEmail = state.user.email || userData.email || '未登录';
+    document.getElementById('user-email-display').textContent = userEmail;
+    // console.log('📧 设置用户邮箱:', userEmail);
     
     // 更新设置开关 - 将dueOnly默认设为false
     document.getElementById('due-only-toggle').checked = userData.settings?.dueOnly === true;
     document.getElementById('show-explain-toggle').checked = userData.settings?.showExplain !== false;
-    console.log('🔧 更新设置开关 - dueOnly:', userData.settings?.dueOnly, 'showExplain:', userData.settings?.showExplain);
+    // console.log('🔧 更新设置开关 - dueOnly:', userData.settings?.dueOnly, 'showExplain:', userData.settings?.showExplain);
     
     // 更新每日学习目标 - 从preferences获取最新值
     const dailyGoal = userData.preferences?.daily_new_target || userData.settings?.dailyGoal || 10;
     document.getElementById('daily-goal-input').value = dailyGoal;
-    console.log('🎯 设置每日学习目标:', dailyGoal, '(来源: preferences =', userData.preferences?.daily_new_target, ', settings =', userData.settings?.dailyGoal, ')');
+    // console.log('🎯 设置每日学习目标:', dailyGoal, '(来源: preferences =', userData.preferences?.daily_new_target, ', settings =', userData.settings?.dailyGoal, ')');
     
     // 更新每日复习目标
     const dailyReviewGoal = userData.preferences?.daily_review_target || 20;
     document.getElementById('daily-review-goal-input').value = dailyReviewGoal;
-    console.log('🔄 设置每日复习目标:', dailyReviewGoal, '(来源: preferences =', userData.preferences?.daily_review_target, ')');
+    // console.log('🔄 设置每日复习目标:', dailyReviewGoal, '(来源: preferences =', userData.preferences?.daily_review_target, ')');
     
     // 更新全局设置
     const newSettings = {
@@ -1983,11 +2056,11 @@ function updateSettingsDisplay(userData) {
         dailyReviewGoal: dailyReviewGoal
     };
     
-    console.log('🌐 更新全局state.settings:', newSettings);
+    // console.log('🌐 更新全局state.settings:', newSettings);
     state.settings = newSettings;
     
     // 加载今日学习进度
-    console.log('📊 从 updateSettingsDisplay 调用 loadTodayProgress');
+    // console.log('📊 从 updateSettingsDisplay 调用 loadTodayProgress');
     loadTodayProgress();
     
     // 同步当前模块的selectedForms
@@ -2046,7 +2119,7 @@ async function updateFormToggle(e) {
             enabled_forms: JSON.stringify(state.settings.enabledForms)
         });
     } catch (error) {
-        console.error('Failed to update form toggle:', error);
+        // console.error('Failed to update form toggle:', error);
         // 回滚状态
         e.target.checked = !enabled;
     }
@@ -2088,43 +2161,79 @@ class App {
     
     restoreUserState() {
         // 从本地存储恢复用户状态
-        const savedAccessCode = localStorage.getItem('accessCode');
-        if (savedAccessCode) {
-            state.user.accessCode = savedAccessCode;
-            console.log('恢复用户状态 - 访问码:', savedAccessCode);
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            state.user.isAuthenticated = true;
+            // 从token中解析用户信息（简单解析，生产环境应该验证token）
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                state.user.id = payload.userId;
+                state.user.email = payload.email;
+                // console.log('恢复用户状态 - 用户ID:', payload.userId);
+            } catch (e) {
+                // console.error('Invalid token:', e);
+                localStorage.removeItem('authToken');
+                state.user.isAuthenticated = false;
+            }
         }
     }
     
     saveUserState() {
-        // 保存用户状态到本地存储
-        if (state.user.accessCode) {
-            localStorage.setItem('accessCode', state.user.accessCode);
-            console.log('保存访问码:', state.user.accessCode);
-        }
+        // JWT token已经保存在localStorage中，这里不需要额外操作
+    }
+    
+    // 登出功能
+    logout() {
+        localStorage.removeItem('authToken');
+        state.user.isAuthenticated = false;
+        state.user.id = null;
+        state.user.email = null;
+        window.location.href = '/auth.html';
     }
     
     initializeEventListeners() {
         // 底部导航
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                const page = e.currentTarget.dataset.page;
-                this.router.navigate(page);
+        const navItems = document.querySelectorAll('.nav-item');
+        if (navItems && navItems.length > 0) {
+            navItems.forEach(item => {
+                if (item) {
+                    item.addEventListener('click', (e) => {
+                        const page = e.currentTarget.dataset.page;
+                        this.router.navigate(page);
+                    });
+                }
             });
-        });
+        }
         
-        // 设置页面事件
-        document.getElementById('copy-code-btn').addEventListener('click', this.copyAccessCode.bind(this));
-        document.getElementById('bind-btn').addEventListener('click', this.bindDevice.bind(this));
+        // 设置页面事件 - 只在元素存在时添加监听器
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', this.logout.bind(this));
+        }
         
-        // 设置开关
-        document.getElementById('due-only-toggle').addEventListener('change', this.updateSetting.bind(this));
-        document.getElementById('show-explain-toggle').addEventListener('change', this.updateSetting.bind(this));
+        // 设置开关 - 只在元素存在时添加监听器
+        const dueOnlyToggle = document.getElementById('due-only-toggle');
+        if (dueOnlyToggle) {
+            dueOnlyToggle.addEventListener('change', this.updateSetting.bind(this));
+        }
         
-        // 每日目标设置
-        document.getElementById('daily-goal-input').addEventListener('change', this.updateDailyGoal.bind(this));
-        document.getElementById('daily-review-goal-input').addEventListener('change', this.updateDailyReviewGoal.bind(this));
+        const showExplainToggle = document.getElementById('show-explain-toggle');
+        if (showExplainToggle) {
+            showExplainToggle.addEventListener('change', this.updateSetting.bind(this));
+        }
         
-        // 进度页面事件
+        // 每日目标设置 - 只在元素存在时添加监听器
+        const dailyGoalInput = document.getElementById('daily-goal-input');
+        if (dailyGoalInput) {
+            dailyGoalInput.addEventListener('change', this.updateDailyGoal.bind(this));
+        }
+        
+        const dailyReviewGoalInput = document.getElementById('daily-review-goal-input');
+        if (dailyReviewGoalInput) {
+            dailyReviewGoalInput.addEventListener('change', this.updateDailyReviewGoal.bind(this));
+        }
+        
+        // 进度页面事件 - 只在元素存在时添加监听器
         const saveGoalsBtn = document.getElementById('save-goals-btn');
         if (saveGoalsBtn) {
             saveGoalsBtn.addEventListener('click', () => {
@@ -2135,6 +2244,12 @@ class App {
     
     async loadUserData() {
         try {
+            // 检查是否已认证
+            if (!state.user.isAuthenticated) {
+                window.location.href = '/auth.html';
+                return;
+            }
+
             showLoading(true);
             const [userData, preferences] = await Promise.all([
                 API.getUser(),
@@ -2142,77 +2257,25 @@ class App {
             ]);
             userData.preferences = preferences;
             
-            // 更新状态并保存访问码
-            if (userData.accessCode) {
-                state.user.accessCode = userData.accessCode;
-                this.saveUserState();
+            // 更新用户状态
+            if (userData.id) {
+                state.user.id = userData.id;
+                state.user.email = userData.email;
             }
             
             updateSettingsDisplay(userData);
         } catch (error) {
-            console.error('Failed to load user data:', error);
-        } finally {
-            showLoading(false);
-        }
-    }
-    
-    async copyAccessCode() {
-        try {
-            const userData = await API.getUser();
-            
-            // 尝试使用现代剪贴板API
-            if (navigator.clipboard && window.isSecureContext) {
-                await navigator.clipboard.writeText(userData.accessCode);
-                showToast('访问码已复制到剪贴板', 'success');
-            } else {
-                // 降级方案：选择文本
-                const accessCodeInput = document.getElementById('access-code-display');
-                accessCodeInput.select();
-                accessCodeInput.setSelectionRange(0, 99999); // 移动端兼容
-                
-                // 尝试使用传统的execCommand
-                try {
-                    document.execCommand('copy');
-                    showToast('访问码已复制到剪贴板', 'success');
-                } catch (execError) {
-                    showToast('请手动复制访问码', 'info');
-                }
+            // console.error('Failed to load user data:', error);
+            // 如果加载失败，可能是token过期，跳转到登录页
+            if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+                this.logout();
             }
-        } catch (error) {
-            console.error('Failed to copy access code:', error);
-            showToast('请手动复制访问码', 'info');
-        }
-    }
-    
-    async bindDevice() {
-        const input = document.getElementById('bind-code-input');
-        const accessCode = input.value.trim();
-        
-        if (!accessCode) {
-            showToast('请输入访问码', 'error');
-            return;
-        }
-        
-        if (accessCode.length !== 6 || !/^\d{6}$/.test(accessCode)) {
-            showToast('访问码应为6位数字', 'error');
-            return;
-        }
-        
-        try {
-            showLoading(true);
-            await API.bindDevice(accessCode);
-            showToast('设备绑定成功', 'success');
-            input.value = '';
-            
-            // 重新加载用户数据
-            await this.loadUserData();
-        } catch (error) {
-            console.error('Failed to bind device:', error);
-            showToast('绑定失败，请检查访问码', 'error');
         } finally {
             showLoading(false);
         }
     }
+    
+
     
     async updateSetting(e) {
         const setting = e.target.id.replace('-toggle', '').replace('-', '');
@@ -2235,7 +2298,7 @@ class App {
             await API.updatePreferences({ [preferencesKey]: value });
             showToast('设置已保存', 'success');
         } catch (error) {
-            console.error('Failed to update setting:', error);
+            // console.error('Failed to update setting:', error);
             showToast('设置保存失败', 'error');
             // 回滚状态
             e.target.checked = !value;
@@ -2258,7 +2321,7 @@ class App {
             // 重新加载今日进度以更新进度条
             loadTodayProgress();
         } catch (error) {
-            console.error('Failed to update daily goal:', error);
+            // console.error('Failed to update daily goal:', error);
             showToast('目标更新失败', 'error');
         }
     }
@@ -2277,7 +2340,7 @@ class App {
             // 重新加载今日进度以更新进度条
             loadTodayProgress();
         } catch (error) {
-            console.error('Failed to update daily review goal:', error);
+            // console.error('Failed to update daily review goal:', error);
             showToast('复习目标更新失败', 'error');
         }
     }
@@ -2293,10 +2356,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
             .then(registration => {
-                console.log('SW registered: ', registration);
+                // console.log('SW registered: ', registration);
             })
             .catch(registrationError => {
-                console.log('SW registration failed: ', registrationError);
+                // console.log('SW registration failed: ', registrationError);
             });
     });
 }

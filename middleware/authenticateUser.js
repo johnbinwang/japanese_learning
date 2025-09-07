@@ -1,49 +1,119 @@
-const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
 const pool = require('../db/pool');
 
-// Simple authenticate/bind middleware
-// - Reads X-Access-Code header for binding existing anon user
-// - If no header, ensures a device session by creating a new anon user if missing
-// - Attaches req.user = { anonId, accessCode }
-module.exports = async function authenticateUser(req, res, next) {
+const authenticateUser = async (req, res, next) => {
   try {
-    // Ensure JSON body/headers are parsed (express.json should be applied in app)
-    const accessCode = req.header('X-Access-Code');
-    const cookieAnonId = req.cookies.anon_id;
+    // 从Authorization头部获取JWT token
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: '需要有效的认证token' });
+    }
 
-    if (accessCode) {
-      // Try find existing user by access_code
-      const { rows } = await pool.query('SELECT id, access_code, created_at FROM users_anon WHERE access_code = $1', [accessCode]);
-      if (rows.length === 0) {
-        return res.status(400).json({ error: '访问码无效' });
+    const token = authHeader.substring(7); // 移除 'Bearer ' 前缀
+    
+    // 验证JWT token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (jwtError) {
+      if (jwtError.name === 'TokenExpiredError') {
+        return res.status(401).json({ error: 'Token已过期' });
+      } else if (jwtError.name === 'JsonWebTokenError') {
+        return res.status(401).json({ error: '无效的token' });
+      } else {
+        return res.status(401).json({ error: 'Token验证失败' });
       }
-      req.user = { anonId: rows[0].id, accessCode: rows[0].access_code, createdAt: rows[0].created_at };
+    }
+
+    // 查询用户信息
+    const userQuery = 'SELECT id, email, email_verified, created_at, last_login_at FROM users WHERE id = $1';
+    const userResult = await pool.query(userQuery, [decoded.userId]);
+
+    if (userResult.rows.length === 0) {
+      return res.status(401).json({ error: '用户不存在' });
+    }
+
+    const user = userResult.rows[0];
+    
+    // 检查邮箱是否已验证（某些接口可能需要）
+    if (req.requireEmailVerified && !user.email_verified) {
+      return res.status(403).json({ error: '请先验证您的邮箱' });
+    }
+
+    // 更新会话最后使用时间
+    if (decoded.sessionId) {
+      await pool.query(
+        'UPDATE user_sessions SET last_used_at = NOW() WHERE id = $1 AND user_id = $2',
+        [decoded.sessionId, decoded.userId]
+      );
+    }
+
+    // 将用户信息添加到请求对象
+    req.user = {
+      id: user.id,
+      email: user.email,
+      emailVerified: user.email_verified,
+      createdAt: user.created_at,
+      lastLoginAt: user.last_login_at,
+      sessionId: decoded.sessionId
+    };
+    
+    next();
+  } catch (error) {
+    console.error('认证错误:', error);
+    res.status(500).json({ error: '服务器错误' });
+  }
+};
+
+// 中间件：要求邮箱已验证
+const requireEmailVerified = (req, res, next) => {
+  req.requireEmailVerified = true;
+  authenticateUser(req, res, next);
+};
+
+// 中间件：可选认证（用于某些公开接口）
+const optionalAuth = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      req.user = null;
       return next();
     }
 
-    if (cookieAnonId) {
-      // Try find existing user by anon_id from cookie
-      const { rows } = await pool.query('SELECT id, access_code, created_at FROM users_anon WHERE id = $1', [cookieAnonId]);
-      if (rows.length > 0) {
-        req.user = { anonId: rows[0].id, accessCode: rows[0].access_code, createdAt: rows[0].created_at };
-        return next();
+    const token = authHeader.substring(7);
+    
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      
+      const userQuery = 'SELECT id, email, email_verified FROM users WHERE id = $1';
+      const userResult = await pool.query(userQuery, [decoded.userId]);
+      
+      if (userResult.rows.length > 0) {
+        req.user = {
+          id: userResult.rows[0].id,
+          email: userResult.rows[0].email,
+          emailVerified: userResult.rows[0].email_verified,
+          sessionId: decoded.sessionId
+        };
+      } else {
+        req.user = null;
       }
+    } catch (jwtError) {
+      req.user = null;
     }
-
-    // No access code provided: create or reuse a pseudo session per-IP (minimal)
-    // For simplicity, create a new anon user if not present in a temporary header
-    // In a real app, you might use cookies or persistent storage
-    const newAccessCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit
-
-    // Create anon user
-    const insertSql = `INSERT INTO users_anon (id, access_code) VALUES ($1, $2) RETURNING id, access_code, created_at`;
-    const newId = uuidv4();
-    const { rows: created } = await pool.query(insertSql, [newId, newAccessCode]);
-
-    req.user = { anonId: created[0].id, accessCode: created[0].access_code, createdAt: created[0].created_at };
-    return next();
-  } catch (err) {
-    console.error('authenticateUser error:', err);
-    return res.status(500).json({ error: '认证失败' });
+    
+    next();
+  } catch (error) {
+    console.error('可选认证错误:', error);
+    req.user = null;
+    next();
   }
+};
+
+module.exports = {
+  authenticateUser,
+  requireEmailVerified,
+  optionalAuth
 };
