@@ -137,13 +137,13 @@ class AuthManager {
             });
         }
 
-        // 验证码输入框自动格式化
+        // 验证码输入框自动格式化（4位数字）
         const codeInputs = ['verification-code', 'reset-verification-code'];
         codeInputs.forEach(id => {
             const input = document.getElementById(id);
             if (input) {
                 input.addEventListener('input', (e) => {
-                    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
                 });
             }
         });
