@@ -203,7 +203,14 @@ class AuthManager {
                     window.location.href = '/index.html';
                 }, 1000);
             } else {
-                this.showError(data.message || '登录失败');
+                // 检查是否需要邮箱验证
+                if (data.needEmailVerification) {
+                    this.userEmail = data.email;
+                    this.showInfo('请先验证邮箱后再登录');
+                    this.showForm('verify-email');
+                } else {
+                    this.showError(data.error || data.message || '登录失败');
+                }
             }
         } catch (error) {
             // console.error('Login error:', error);

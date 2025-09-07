@@ -132,6 +132,15 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: '邮箱或密码错误' });
     }
 
+    // 检查邮箱是否已验证
+    if (!user.email_verified) {
+      return res.status(403).json({ 
+        error: '请先验证邮箱后再登录',
+        needEmailVerification: true,
+        email: user.email
+      });
+    }
+
     // 生成JWT token
     const sessionId = uuidv4();
     const token = jwt.sign(
@@ -213,12 +222,37 @@ router.post('/verify-email', async (req, res) => {
 
     // 更新用户验证状态
     await pool.query(
-      'UPDATE users SET email_verified = true, email_verified_at = NOW() WHERE id = $1',
+      'UPDATE users SET email_verified = true WHERE id = $1',
       [user.id]
+    );
+
+    // 生成JWT token
+    const sessionId = uuidv4();
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        sessionId: sessionId,
+        email: user.email
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '30d' }
+    );
+
+    // 创建token hash用于数据库存储
+    const crypto = require('crypto');
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
+    // 创建会话
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30天后过期
+
+    await pool.query(
+      'INSERT INTO user_sessions (id, user_id, token_hash, expires_at, created_at, last_used_at) VALUES ($1, $2, $3, $4, NOW(), NOW())',
+      [sessionId, user.id, tokenHash, expiresAt]
     );
 
     res.json({
       message: '邮箱验证成功',
+      token,
       user: {
         id: user.id,
         email: user.email,
