@@ -9,8 +9,8 @@
     "seed": "node seed-verbs.js && node seed-adjs.js",
     "setup-db": "psql $DATABASE_URL < schema.sql",
     "migrate": "node migrate.js",
-    "build": "npm run migrate && echo 'Build completed with migrations'",
-    "vercel-build": "npm run migrate",
+    "build": "echo 'Build completed'",
+    "vercel-build": "echo 'Vercel build completed'",
     "test": "mocha test_progress.js --timeout 10000",
     "test:progress": "node test_progress.js"
   },
