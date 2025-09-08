@@ -1587,17 +1587,39 @@ input[type="checkbox"] {
 .trend-chart-container {
     background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
     border-radius: 16px;
-    padding: 24px;
+    padding: 20px;
     border: 1px solid #3a3a4e;
     margin-bottom: 20px;
     text-align: center;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.trend-chart-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4a90e2, #357abd);
+    border-radius: 16px 16px 0 0;
 }
 
 .trend-chart-container:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+#weekly-trend-chart {
+    width: 100%;
+    height: 280px;
+    max-width: 500px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .trend-summary-cards {
@@ -1850,48 +1872,76 @@ input[type="checkbox"] {
 }
 
 .recommendation-card {
-    background: rgba(255, 255, 255, 0.95);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
     color: #333;
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    border-left: 4px solid #667eea;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.recommendation-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #667eea, #764ba2);
+    transition: width 0.3s ease;
 }
 
 .recommendation-card:hover {
-    transform: translateX(5px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
 }
 
-.recommendation-card.goals {
-    border-left-color: #4CAF50;
+.recommendation-card:hover::before {
+    width: 6px;
 }
 
-.recommendation-card.modes {
-    border-left-color: #2196F3;
+.recommendation-card.goals::before {
+    background: linear-gradient(180deg, #4CAF50, #45a049);
 }
 
-.recommendation-card.schedule {
-    border-left-color: #FF9800;
+.recommendation-card.modes::before {
+    background: linear-gradient(180deg, #2196F3, #1976D2);
 }
 
-.recommendation-card.focus {
-    border-left-color: #F44336;
+.recommendation-card.schedule::before {
+    background: linear-gradient(180deg, #FF9800, #F57C00);
+}
+
+.recommendation-card.focus::before {
+    background: linear-gradient(180deg, #F44336, #D32F2F);
 }
 
 .recommendation-title {
-    font-weight: 600;
-    font-size: 1.1rem;
-    margin-bottom: 8px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
     color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.recommendation-title::before {
+    content: attr(data-icon);
+    font-size: 1.4rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
 .recommendation-description {
-    font-size: 0.95rem;
+    font-size: 1rem;
     color: #555;
-    line-height: 1.4;
-    margin-bottom: 12px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    font-weight: 400;
 }
 
 .recommendation-actions {
@@ -1926,17 +1976,26 @@ input[type="checkbox"] {
 
 .recommendation-meta {
     display: flex;
-    gap: 15px;
-    margin-top: 8px;
-    font-size: 0.85rem;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 0.9rem;
     color: #666;
 }
 
 .recommendation-meta span {
-    background: rgba(102, 126, 234, 0.1);
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-weight: 500;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.1));
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+}
+
+.recommendation-meta span:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.25), rgba(118, 75, 162, 0.2));
+    transform: translateY(-1px);
 }
 
 .no-recommendations {

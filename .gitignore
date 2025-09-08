@@ -77,3 +77,6 @@ project_agent_prompt.md
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Markdown files
+*.md

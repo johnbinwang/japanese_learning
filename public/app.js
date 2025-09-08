@@ -1549,12 +1549,17 @@ function loadWeaknesses() {
     const timestamp = Date.now();
     API.request(`/api/progress?detailed=true&_t=${timestamp}`)
         .then(data => {
-            if (data.detailed && data.detailed.errorPatterns) {
-                updateWeaknessList(data.detailed.errorPatterns.problems);
+            if (data && data.errorPatterns && data.errorPatterns.problems) {
+                updateWeaknessList(data.errorPatterns.problems);
+            } else {
+                // 如果没有薄弱环节数据，显示空状态
+                updateWeaknessList([]);
             }
         })
         .catch(error => {
-            // console.error('获取薄弱环节数据失败:', error);
+            console.error('获取薄弱环节数据失败:', error);
+            // 出错时也显示空状态
+            updateWeaknessList([]);
         });
 }
 
@@ -1575,8 +1580,8 @@ function updateWeaknessList(weaknesses) {
         weaknessDiv.innerHTML = `
             <div class="weakness-form">${weakness.form}</div>
             <div class="weakness-stats">
-                <span class="error-rate">错误率: ${Math.round((weakness.errors / weakness.total) * 100)}%</span>
-                <span class="error-count">${weakness.errors}/${weakness.total}</span>
+                <span class="error-rate">错误率: ${Math.round((weakness.errors / weakness.attempts) * 100)}%</span>
+                <span class="error-count">${weakness.errors}/${weakness.attempts}</span>
             </div>
             <div class="weakness-suggestion">建议加强练习</div>
         `;
@@ -1635,6 +1640,14 @@ function updateRecommendationSection(sectionId, items, options) {
         return;
     }
     
+    // 定义图标映射
+    const iconMap = {
+        'goals': '🎯',
+        'modes': '📚',
+        'schedule': '⏰',
+        'focus': '🔍'
+    };
+    
     items.forEach(item => {
         const card = document.createElement('div');
         card.className = `recommendation-card ${options.cardClass}`;
@@ -1652,30 +1665,82 @@ function updateRecommendationSection(sectionId, items, options) {
                 </div>
             `;
         } else if (sectionId === 'modes') {
-            metaHtml = `
-                <div class="recommendation-meta">
-                    <span>正确率: ${(item.accuracy * 100).toFixed(1)}%</span>
-                </div>
-            `;
+            const mode = item.data?.mode || item.mode || '闪卡模式';
+            const accuracy = item.data?.accuracy || item.accuracy;
+            const avgStreak = item.data?.avg_streak || item.avg_streak;
+            
+            // 根据模式类型显示不同的指标
+            if (mode === 'flashcard' || mode === '闪卡模式') {
+                if (avgStreak) {
+                    metaHtml = `
+                        <div class="recommendation-meta">
+                            <span>推荐模式: ${mode}</span>
+                            <span>平均连击: ${avgStreak}次</span>
+                        </div>
+                    `;
+                } else {
+                    metaHtml = `
+                        <div class="recommendation-meta">
+                            <span>推荐模式: ${mode}</span>
+                        </div>
+                    `;
+                }
+            } else if (mode === 'quiz' || mode === '测验模式') {
+                if (accuracy) {
+                    metaHtml = `
+                        <div class="recommendation-meta">
+                            <span>推荐模式: ${mode}</span>
+                            <span>正确率: ${accuracy}%</span>
+                        </div>
+                    `;
+                } else {
+                    metaHtml = `
+                        <div class="recommendation-meta">
+                            <span>推荐模式: ${mode}</span>
+                        </div>
+                    `;
+                }
+            } else {
+                metaHtml = `
+                    <div class="recommendation-meta">
+                        <span>推荐模式: ${mode}</span>
+                    </div>
+                `;
+            }
         } else if (sectionId === 'schedule') {
+            const hour = item.data?.hour || item.hour;
+            const timeRange = item.data?.timeRange || item.timeRange || '深夜';
+            const accuracy = item.data?.accuracy || item.accuracy;
+            
+            // 确保时间显示正确
+            const timeDisplay = (hour !== undefined && hour !== null) ? `${hour}:00` : '未知时间';
+            // 确保正确率显示正确
+            const accuracyDisplay = (accuracy !== undefined && accuracy !== null && !isNaN(accuracy)) 
+                ? `${Math.round(accuracy * 100)}%` : '数据不足';
+            
             metaHtml = `
                 <div class="recommendation-meta">
-                    <span>时间: ${item.hour}:00</span>
-                    <span>正确率: ${(item.accuracy * 100).toFixed(1)}%</span>
+                    <span>时间段: ${timeRange}</span>
+                    <span>最佳时间: ${timeDisplay}</span>
+                    <span>正确率: ${accuracyDisplay}</span>
                 </div>
             `;
         } else if (sectionId === 'focus') {
+            const form = item.data?.form || item.form || 'present';
+            const errorRate = item.data?.error_rate || item.error_rate || 0;
+            const practiceCount = item.data?.practice_count || item.practice_count || 0;
             metaHtml = `
                 <div class="recommendation-meta">
-                    <span>错误率: ${item.error_rate}%</span>
-                    <span>练习次数: ${item.total_attempts}</span>
+                    <span>重点变形: ${form}</span>
+                    <span>错误率: ${errorRate}%</span>
+                    <span>练习次数: ${practiceCount}</span>
                 </div>
             `;
         }
         
         card.innerHTML = `
-            <div class="recommendation-title">${item.title}</div>
-            <div class="recommendation-description">${item.description}</div>
+            <div class="recommendation-title" data-icon="${iconMap[sectionId] || '💡'}">${item.title || item.message}</div>
+            <div class="recommendation-description">${item.description || item.message}</div>
             ${metaHtml}
             ${actionsHtml}
         `;
@@ -1966,32 +2031,95 @@ function updateWeeklyTrendChart(weeklyData) {
     // 清空画布
     ctx.clearRect(0, 0, width, height);
     
+    // 设置图表边距
+    const margin = { top: 40, right: 30, bottom: 50, left: 50 };
+    const chartWidth = width - margin.left - margin.right;
+    const chartHeight = height - margin.top - margin.bottom;
+    
+    // 反转数据顺序，让最新日期显示在右侧
+    const reversedData = [...weeklyData].reverse();
+    
     // 处理 dailyData 格式的数据
-    const maxValue = Math.max(...weeklyData.map(d => {
+    const maxValue = Math.max(...reversedData.map(d => {
         const val = d.reviews || d.value || 0;
         return isNaN(val) ? 0 : Number(val);
     }));
     
-    console.log('Chart data processed:', { maxValue, dataCount: weeklyData.length });
+    console.log('Chart data processed:', { maxValue, dataCount: reversedData.length });
     
     if (maxValue === 0 || isNaN(maxValue)) {
         // 如果没有数据，显示提示文本
-        ctx.fillStyle = '#999';
-        ctx.font = '14px Arial';
+        ctx.fillStyle = '#a0a0a0';
+        ctx.font = '16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('暂无学习数据', width / 2, height / 2);
         return;
     }
     
-    const barWidth = Math.max(10, (width - 40) / weeklyData.length - 5);
+    // 绘制图表标题
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('7天学习趋势', width / 2, 25);
     
-    weeklyData.forEach((d, i) => {
+    // 绘制Y轴标签
+    ctx.fillStyle = '#a0a0a0';
+    ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.save();
+    ctx.translate(15, height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('复习次数', 0, 0);
+    ctx.restore();
+    
+    // 绘制网格线和Y轴刻度
+    const ySteps = 5;
+    const stepValue = Math.ceil(maxValue / ySteps);
+    ctx.strokeStyle = '#2a2a3e';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = '#888';
+    ctx.font = '10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.textAlign = 'right';
+    
+    for (let i = 0; i <= ySteps; i++) {
+        const yValue = i * stepValue;
+        const y = margin.top + chartHeight - (yValue / maxValue) * chartHeight;
+        
+        // 绘制网格线
+        ctx.beginPath();
+        ctx.moveTo(margin.left, y);
+        ctx.lineTo(margin.left + chartWidth, y);
+        ctx.stroke();
+        
+        // 绘制Y轴刻度标签
+        ctx.fillText(yValue.toString(), margin.left - 5, y + 3);
+    }
+    
+    // 绘制X轴
+    ctx.strokeStyle = '#3a3a4e';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(margin.left, margin.top + chartHeight);
+    ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
+    ctx.stroke();
+    
+    // 绘制Y轴
+    ctx.beginPath();
+    ctx.moveTo(margin.left, margin.top);
+    ctx.lineTo(margin.left, margin.top + chartHeight);
+    ctx.stroke();
+    
+    // 计算柱状图参数
+    const barWidth = Math.max(15, chartWidth / reversedData.length * 0.7);
+    const barSpacing = chartWidth / reversedData.length;
+    
+    reversedData.forEach((d, i) => {
         const value = d.reviews || d.value || 0;
         const numValue = isNaN(value) ? 0 : Number(value);
         
-        const x = 20 + i * (barWidth + 5);
-        const barHeight = Math.max(0, (numValue / maxValue) * (height - 80));
-        const y = height - 40 - barHeight;
+        const x = margin.left + i * barSpacing + (barSpacing - barWidth) / 2;
+        const barHeight = Math.max(0, (numValue / maxValue) * chartHeight);
+        const y = margin.top + chartHeight - barHeight;
         
         // 确保所有值都是有效数字
         if (isNaN(x) || isNaN(y) || isNaN(barWidth) || isNaN(barHeight)) {
@@ -1999,31 +2127,55 @@ function updateWeeklyTrendChart(weeklyData) {
             return;
         }
         
-        // 绘制柱状图
-        ctx.fillStyle = '#4a90e2';
-        ctx.globalAlpha = 0.8;
+        // 绘制柱状图渐变效果（绿色主题）
+        const gradient = ctx.createLinearGradient(0, y, 0, y + barHeight);
+        gradient.addColorStop(0, '#4ade80');
+        gradient.addColorStop(1, '#16a34a');
+        
+        ctx.fillStyle = gradient;
         ctx.fillRect(x, y, barWidth, barHeight);
+        
+        // 添加柱状图边框
+        ctx.strokeStyle = '#16a34a';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x, y, barWidth, barHeight);
         
         // 添加数值标签
         if (numValue > 0) {
-            ctx.globalAlpha = 1.0;
-            ctx.fillStyle = '#333';
-            ctx.font = '12px Arial';
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText(numValue.toString(), x + barWidth / 2, y - 5);
+            
+            // 如果柱子太短，将数值显示在柱子上方
+            const labelY = barHeight < 20 ? y - 8 : y + barHeight / 2 + 4;
+            ctx.fillText(numValue.toString(), x + barWidth / 2, labelY);
         }
         
-        // 添加日期标签（如果有的话）
+        // 添加日期标签
+        ctx.fillStyle = '#a0a0a0';
+        ctx.font = '10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.textAlign = 'center';
+        
+        let dateStr;
         if (d.date) {
-            ctx.fillStyle = '#666';
-            ctx.font = '10px Arial';
-            ctx.textAlign = 'center';
-            const dateStr = new Date(d.date).toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' });
-            ctx.fillText(dateStr, x + barWidth / 2, height - 10);
+            dateStr = new Date(d.date).toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' });
+        } else {
+            // 如果没有日期，生成最近7天的日期（因为数据已反转，需要调整索引计算）
+            const date = new Date();
+            date.setDate(date.getDate() - (reversedData.length - 1 - i));
+            dateStr = date.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' });
         }
+        
+        ctx.fillText(dateStr, x + barWidth / 2, margin.top + chartHeight + 20);
     });
     
-    console.log('Chart rendered successfully');
+    // 添加图例
+    ctx.fillStyle = '#a0a0a0';
+    ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('最近7天复习数据统计', width - 10, height - 10);
+    
+    console.log('Chart rendered successfully with enhanced styling');
 }
 
 // 更新建议标签页

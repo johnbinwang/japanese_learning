@@ -1425,7 +1425,7 @@ app.get('/api/mode-comparison', authenticateUser, async (req, res) => {
         SUM(correct) as total_correct,
         AVG(streak) as avg_streak,
         COUNT(CASE WHEN due_at <= NOW() THEN 1 END) as due_count,
-        COUNT(CASE WHEN streak >= 5 THEN 1 END) as mastered_count,
+        COUNT(CASE WHEN (correct::DECIMAL / GREATEST(attempts, 1)) >= 0.75 AND streak >= 3 THEN 1 END) as mastered_count,
         -- 测验模式使用正确率，闪卡模式使用平均熟练度
         CASE 
           WHEN learning_mode = 'quiz' THEN 
@@ -2119,6 +2119,138 @@ async function getRecommendations(userId, module) {
     });
   }
   
+  // 分析学习模式偏好（基于使用频率和学习效果）
+  const { rows: modeStats } = await pool.query(
+    `SELECT 
+       COUNT(CASE WHEN learning_mode = 'quiz' THEN 1 END) as quiz_count,
+       COUNT(CASE WHEN learning_mode = 'flashcard' THEN 1 END) as flashcard_count,
+       AVG(CASE WHEN learning_mode = 'quiz' AND attempts > 0 THEN correct::float / attempts ELSE NULL END) as quiz_accuracy,
+       -- 闪卡模式使用学习效率指标（完成速度和复习间隔）
+       AVG(CASE WHEN learning_mode = 'flashcard' THEN streak ELSE NULL END) as flashcard_avg_streak,
+       AVG(CASE WHEN learning_mode = 'quiz' THEN streak ELSE NULL END) as quiz_avg_streak
+     FROM reviews 
+     WHERE user_id = $1 AND item_type = $2 AND last_reviewed >= NOW() - INTERVAL '7 days'`,
+    [userId, itemType]
+  );
+  
+  const modeData = modeStats[0];
+  if (modeData.quiz_count > 0 && modeData.flashcard_count > 0) {
+    const quizAccuracy = parseFloat(modeData.quiz_accuracy) || 0;
+    const flashcardStreak = parseFloat(modeData.flashcard_avg_streak) || 0;
+    const quizStreak = parseFloat(modeData.quiz_avg_streak) || 0;
+    
+    // 测验模式：基于正确率
+    // 闪卡模式：基于学习连击数（反映记忆效果）
+    if (quizAccuracy > 0.8 && quizStreak > flashcardStreak) {
+      recommendations.push({
+        type: 'mode',
+        priority: 'medium',
+        message: `测验模式学习效果更好，建议多使用测验模式练习`,
+        action: 'switch_mode',
+        data: { mode: 'quiz', accuracy: Math.round(quizAccuracy * 100) }
+      });
+    } else if (flashcardStreak > quizStreak && flashcardStreak > 2) {
+      recommendations.push({
+        type: 'mode',
+        priority: 'medium',
+        message: `闪卡模式记忆效果更好，建议多使用闪卡模式练习`,
+        action: 'switch_mode',
+        data: { mode: 'flashcard', avg_streak: Math.round(flashcardStreak) }
+      });
+    }
+  } else if (modeData.quiz_count === 0 && modeData.flashcard_count > 5) {
+    // 只使用闪卡模式的用户，建议尝试测验模式
+    recommendations.push({
+      type: 'mode',
+      priority: 'low',
+      message: `建议尝试测验模式，可以更好地检验学习效果`,
+      action: 'switch_mode',
+      data: { mode: 'quiz' }
+    });
+  } else if (modeData.flashcard_count === 0 && modeData.quiz_count > 5) {
+    // 只使用测验模式的用户，建议尝试闪卡模式
+    recommendations.push({
+      type: 'mode',
+      priority: 'low',
+      message: `建议尝试闪卡模式，可以更好地加强记忆`,
+      action: 'switch_mode',
+      data: { mode: 'flashcard' }
+    });
+  }
+  
+  // 分析最佳学习时间（转换为东8区时间）
+  const { rows: timeStats } = await pool.query(
+    `SELECT 
+       EXTRACT(HOUR FROM (last_reviewed AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Shanghai')) as hour,
+       COUNT(*) as session_count,
+       AVG(CASE WHEN attempts > 0 THEN correct::float / attempts ELSE 0 END) as accuracy
+     FROM reviews 
+     WHERE user_id = $1 AND item_type = $2 
+       AND last_reviewed >= NOW() - INTERVAL '14 days'
+     GROUP BY EXTRACT(HOUR FROM (last_reviewed AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Shanghai'))
+     HAVING COUNT(*) >= 3
+     ORDER BY accuracy DESC
+     LIMIT 1`,
+    [userId, itemType]
+  );
+  
+  if (timeStats.length > 0) {
+    const bestHour = parseInt(timeStats[0].hour);
+    const accuracy = parseFloat(timeStats[0].accuracy);
+    
+    if (accuracy > 0.8) {
+      let timeRange;
+      if (bestHour >= 6 && bestHour < 12) {
+        timeRange = '上午';
+      } else if (bestHour >= 12 && bestHour < 18) {
+        timeRange = '下午';
+      } else if (bestHour >= 18 && bestHour < 22) {
+        timeRange = '晚上';
+      } else {
+        timeRange = '深夜';
+      }
+      
+      recommendations.push({
+        type: 'schedule',
+        priority: 'low',
+        message: `您在${timeRange}(${bestHour}点左右)学习效果最好，建议在此时间段学习`,
+        action: 'set_reminder',
+        data: { hour: bestHour, timeRange }
+      });
+    }
+  }
+  
+  // 检查学习目标完成情况
+  const { rows: goalProgress } = await pool.query(
+    `SELECT 
+       COUNT(CASE WHEN DATE(last_reviewed) = CURRENT_DATE THEN 1 END) as today_reviews,
+       COUNT(CASE WHEN DATE(last_reviewed) = CURRENT_DATE AND correct > 0 THEN 1 END) as today_correct
+     FROM reviews 
+     WHERE user_id = $1 AND item_type = $2`,
+    [userId, itemType]
+  );
+  
+  const todayReviews = parseInt(goalProgress[0].today_reviews);
+  const todayCorrect = parseInt(goalProgress[0].today_correct);
+  
+  if (todayReviews >= 20 && todayCorrect / todayReviews > 0.9) {
+    recommendations.push({
+      type: 'achievement',
+      priority: 'low',
+      message: `今日表现优秀！正确率达到${Math.round(todayCorrect / todayReviews * 100)}%，继续保持！`,
+      action: 'celebrate',
+      data: { accuracy: todayCorrect / todayReviews }
+    });
+  } else if (todayReviews < 5) {
+    recommendations.push({
+      type: 'goal',
+      priority: 'medium',
+      message: `今日还需要完成更多练习，建议至少完成10个项目`,
+      action: 'continue_practice',
+      data: { remaining: Math.max(0, 10 - todayReviews) }
+    });
+  }
+  
   return recommendations;
 }
 
@@ -2148,6 +2280,50 @@ app.get('/api/recommendations', authenticateUser, async (req, res) => {
             data: rec.data
           });
           break;
+        case 'goal':
+          groupedRecommendations.goals.push({
+            icon: '🎯',
+            title: '学习目标',
+            description: rec.message,
+            action: rec.action,
+            priority: rec.priority,
+            data: rec.data
+          });
+          break;
+        case 'achievement':
+          groupedRecommendations.goals.push({
+            icon: '🏆',
+            title: '学习成就',
+            description: rec.message,
+            action: rec.action,
+            priority: rec.priority,
+            data: rec.data
+          });
+          break;
+        case 'mode':
+          groupedRecommendations.modes.push({
+            icon: '🎮',
+            title: '学习模式建议',
+            description: rec.message,
+            action: rec.action,
+            priority: rec.priority,
+            data: {
+              ...rec.data,
+              accuracy: rec.accuracy || 0,
+              mode: rec.data?.mode || 'unknown'
+            }
+          });
+          break;
+        case 'schedule':
+          groupedRecommendations.schedule.push({
+            icon: '⏰',
+            title: '最佳学习时间',
+            description: rec.message,
+            action: rec.action,
+            priority: rec.priority,
+            data: rec.data
+          });
+          break;
         case 'focus':
           groupedRecommendations.focus_areas.push({
             icon: '🎯',
@@ -2160,7 +2336,7 @@ app.get('/api/recommendations', authenticateUser, async (req, res) => {
           break;
         case 'motivation':
           groupedRecommendations.schedule.push({
-            icon: '⏰',
+            icon: '💪',
             title: '学习提醒',
             description: rec.message,
             action: rec.action,
