@@ -271,3 +271,28 @@
 .form-group.error .error-message {
     display: block;
 }
+
+/* 版权声明样式 */
+.copyright {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+.copyright p {
+    margin: 0;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 300;
+}
+
+.copyright a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.copyright a:hover {
+    color: #4facfe;
+    text-decoration: underline;
+}

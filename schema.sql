@@ -244,26 +244,15 @@ GROUP BY u.user_id, u.daily_new_target, u.daily_review_target, u.study_streak_da
 CREATE OR REPLACE VIEW mode_comparison_analysis AS
 SELECT 
     user_id,
-    -- Quiz模式统计
-    COALESCE(SUM(CASE WHEN learning_mode = 'quiz' THEN new_items_completed ELSE 0 END), 0) as quiz_total_new,
-    COALESCE(SUM(CASE WHEN learning_mode = 'quiz' THEN reviews_completed ELSE 0 END), 0) as quiz_total_reviews,
-    COALESCE(AVG(CASE WHEN learning_mode = 'quiz' THEN accuracy_rate END), 0) as quiz_avg_accuracy,
-    COALESCE(SUM(CASE WHEN learning_mode = 'quiz' THEN total_study_time_seconds ELSE 0 END), 0) as quiz_total_time,
-    
-    -- Flashcard模式统计
-    COALESCE(SUM(CASE WHEN learning_mode = 'flashcard' THEN new_items_completed ELSE 0 END), 0) as flashcard_total_new,
-    COALESCE(SUM(CASE WHEN learning_mode = 'flashcard' THEN reviews_completed ELSE 0 END), 0) as flashcard_total_reviews,
-    COALESCE(AVG(CASE WHEN learning_mode = 'flashcard' THEN accuracy_rate END), 0) as flashcard_avg_accuracy,
-    COALESCE(SUM(CASE WHEN learning_mode = 'flashcard' THEN total_study_time_seconds ELSE 0 END), 0) as flashcard_total_time,
-    
-    -- 总体统计
-    COALESCE(SUM(new_items_completed), 0) as total_new_items,
-    COALESCE(SUM(reviews_completed), 0) as total_reviews,
-    COALESCE(AVG(accuracy_rate), 0) as overall_accuracy,
-    COALESCE(SUM(total_study_time_seconds), 0) as total_study_time,
-    COUNT(DISTINCT stat_date) as active_days
+    learning_mode,
+    module_type,
+    COALESCE(SUM(new_items_completed + reviews_completed), 0) as total_items,
+    COALESCE(AVG(accuracy_rate), 0) as accuracy_rate,
+    COALESCE(AVG(CASE WHEN reviews_completed > 0 THEN streak_improvements::DECIMAL / reviews_completed ELSE 0 END), 0) as avg_streak,
+    COALESCE(SUM(reviews_due), 0) as due_count,
+    COALESCE(SUM(CASE WHEN accuracy_rate >= 80 THEN new_items_completed ELSE 0 END), 0) as mastered_count
 FROM daily_learning_stats
-GROUP BY user_id;
+GROUP BY user_id, learning_mode, module_type;
 
 -- 插入示例用户（仅用于开发测试）
 INSERT INTO users (id, email, password_hash, email_verified) VALUES 
@@ -316,6 +305,59 @@ BEGIN
     VALUES (p_user_id, p_email, v_code, p_code_type, v_expires_at);
     
     RETURN v_code;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 带频率限制的验证码生成函数
+CREATE OR REPLACE FUNCTION generate_verification_code_with_rate_limit(
+    p_user_id UUID,
+    p_email VARCHAR(255),
+    p_code_type VARCHAR(20),
+    p_expires_minutes INTEGER DEFAULT 10,
+    p_client_ip INET DEFAULT NULL
+)
+RETURNS TABLE(
+    success BOOLEAN,
+    message TEXT,
+    code CHAR(4)
+) AS $$
+DECLARE
+    v_code CHAR(4);
+    v_expires_at TIMESTAMPTZ;
+    v_request_count INTEGER;
+    v_rate_limit_minutes INTEGER := 1; -- 1分钟时间窗口
+    v_max_requests INTEGER := 3; -- 1分钟内最多3次请求
+BEGIN
+    -- 检查频率限制：统计最近1分钟内的请求次数
+    SELECT COUNT(*) INTO v_request_count
+    FROM verification_codes 
+    WHERE user_id = p_user_id 
+      AND code_type = p_code_type
+      AND created_at > NOW() - (v_rate_limit_minutes || ' minutes')::INTERVAL;
+    
+    -- 如果请求次数已达上限，返回错误
+    IF v_request_count >= v_max_requests THEN
+        RETURN QUERY SELECT FALSE, 
+            '请求过于频繁，1分钟内最多只能请求 ' || v_max_requests || ' 次验证码'::TEXT, 
+            NULL::CHAR(4);
+        RETURN;
+    END IF;
+    
+    -- 清理该用户该类型的旧验证码（保留最近1分钟内的）
+    DELETE FROM verification_codes 
+    WHERE user_id = p_user_id 
+      AND code_type = p_code_type
+      AND created_at <= NOW() - (v_rate_limit_minutes || ' minutes')::INTERVAL;
+    
+    -- 生成4位随机数字
+    v_code := LPAD(FLOOR(RANDOM() * 10000)::TEXT, 4, '0');
+    v_expires_at := NOW() + (p_expires_minutes || ' minutes')::INTERVAL;
+    
+    -- 插入新验证码
+    INSERT INTO verification_codes (user_id, email, code, code_type, expires_at)
+    VALUES (p_user_id, p_email, v_code, p_code_type, v_expires_at);
+    
+    RETURN QUERY SELECT TRUE, '验证码生成成功'::TEXT, v_code;
 END;
 $$ LANGUAGE plpgsql;
 

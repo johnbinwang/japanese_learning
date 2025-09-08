@@ -16,7 +16,10 @@ const state = {
         email: null,
         isAuthenticated: false
     },
-    isFlashcardFlipped: false
+    isFlashcardFlipped: false,
+    // 学习时间计时器
+    sessionStartTime: null,
+    totalSessionTime: 0
 };
 
 // 变形形式定义
@@ -631,6 +634,10 @@ class LearningManager {
         try {
             showLoading(true);
             
+            // 记录学习会话开始时间
+            state.sessionStartTime = new Date();
+            state.totalSessionTime = 0;
+            
             // 将选择的变形类型同步到设置中
             state.settings.enabledForms = [...state.selectedForms];
             await API.updatePreferences({
@@ -716,7 +723,13 @@ class LearningManager {
             return;
         }
         
-
+        // 计算学习时长
+        let sessionDuration = 0;
+        if (state.sessionStartTime) {
+            const currentTime = new Date();
+            sessionDuration = Math.floor((currentTime - state.sessionStartTime) / 1000); // 转换为秒
+            state.totalSessionTime = sessionDuration;
+        }
         
         try {
             showLoading(true);
@@ -727,7 +740,8 @@ class LearningManager {
                 itemId: state.currentQuestion.itemId,
                 form: state.currentQuestion.targetForm,
                 userAnswer: userAnswer,
-                mode: state.currentMode
+                mode: state.currentMode,
+                sessionDuration: sessionDuration // 添加学习时长
             };
             
             const result = await API.submit(submitData);
@@ -1177,6 +1191,14 @@ class LearningManager {
     }
     
     async submitFlashcardFeedback(feedback) {
+        // 计算学习时长
+        let sessionDuration = 0;
+        if (state.sessionStartTime) {
+            const currentTime = new Date();
+            sessionDuration = Math.floor((currentTime - state.sessionStartTime) / 1000); // 转换为秒
+            state.totalSessionTime = sessionDuration;
+        }
+        
         try {
             showLoading(true);
             
@@ -1186,7 +1208,8 @@ class LearningManager {
                 itemId: state.currentQuestion.itemId,
                 form: state.currentQuestion.targetForm,
                 feedback: feedback,
-                mode: state.currentMode
+                mode: state.currentMode,
+                sessionDuration: sessionDuration // 添加学习时长
             };
             
             await API.submit(submitData);
@@ -1410,10 +1433,9 @@ function loadModeComparison() {
     const selectedModule = state.selectedModule || 'all';
     // 添加时间戳参数防止缓存
     const timestamp = Date.now();
-    fetch(`/api/mode-comparison?module=${selectedModule}&_t=${timestamp}`, {
+    API.request(`/api/mode-comparison?module=${selectedModule}&_t=${timestamp}`, {
         cache: 'no-cache'
     })
-        .then(response => response.json())
         .then(data => {
             updateModeComparison(data);
         })
@@ -1425,17 +1447,18 @@ function loadModeComparison() {
 // 更新模式对比显示
 function updateModeComparison(data) {
     // 更新测验模式统计
-    const quizData = data.quiz || {};
-    document.getElementById('quiz-total').textContent = quizData.total_reviews || 0;
-    document.getElementById('quiz-accuracy').textContent = `${quizData.accuracy || 0}%`;
-    document.getElementById('quiz-streak').textContent = quizData.avg_streak || 0;
+    const quizData = data.quiz && data.quiz.totals ? data.quiz.totals : {};
+    document.getElementById('quiz-total').textContent = quizData.total_items || 0;
+    document.getElementById('quiz-accuracy').textContent = `${(quizData.accuracy_rate || 0).toFixed(1)}%`;
+    document.getElementById('quiz-streak').textContent = (quizData.avg_streak || 0).toFixed(1);
     document.getElementById('quiz-mastered').textContent = quizData.mastered_count || 0;
     
     // 更新闪卡模式统计
-    const flashcardData = data.flashcard || {};
-    document.getElementById('flashcard-total').textContent = flashcardData.total_reviews || 0;
-    document.getElementById('flashcard-accuracy').textContent = `${flashcardData.accuracy || 0}%`;
-    document.getElementById('flashcard-streak').textContent = flashcardData.avg_streak || 0;
+    const flashcardData = data.flashcard && data.flashcard.totals ? data.flashcard.totals : {};
+    document.getElementById('flashcard-total').textContent = flashcardData.total_items || 0;
+    // 闪卡模式显示平均熟练度而不是正确率
+    document.getElementById('flashcard-accuracy').textContent = `${(flashcardData.accuracy_rate || 0).toFixed(1)}%`;
+    document.getElementById('flashcard-streak').textContent = (flashcardData.avg_streak || 0).toFixed(1);
     document.getElementById('flashcard-mastered').textContent = flashcardData.mastered_count || 0;
     
     // 更新模式推荐
@@ -1478,14 +1501,14 @@ function loadLearningInsights() {
 // 加载7天趋势数据
 function loadWeeklyTrends() {
     const timestamp = Date.now();
-    fetch(`/api/progress?detailed=true&_t=${timestamp}`, {
+    API.request(`/api/insights/trends?_t=${timestamp}`, {
         cache: 'no-cache'
     })
-        .then(response => response.json())
         .then(data => {
-            if (data.detailed && data.detailed.learningTrends) {
-                updateWeeklyTrendChart(data.detailed.learningTrends.weekly);
-                updateTrendSummary(data.detailed.learningTrends);
+            if (data.dailyData) {
+                // 使用 dailyData 更新趋势图表
+                updateWeeklyTrendChart(data.dailyData);
+                updateTrendSummary(data);
             }
         })
         .catch(error => {
@@ -1502,16 +1525,20 @@ function updateTrendSummary(trendsData) {
     container.innerHTML = `
         <div class="trend-summary-cards">
             <div class="summary-card">
-                <span class="summary-label">本周学习天数</span>
-                <span class="summary-value">${summary.study_days || 0}天</span>
+                <span class="summary-label">活跃天数</span>
+                <span class="summary-value">${summary.activeDays || 0}天</span>
             </div>
             <div class="summary-card">
                 <span class="summary-label">平均正确率</span>
-                <span class="summary-value">${summary.avg_accuracy || 0}%</span>
+                <span class="summary-value">${summary.avgAccuracy || 0}%</span>
             </div>
             <div class="summary-card">
                 <span class="summary-label">总复习数</span>
-                <span class="summary-value">${summary.total_reviews || 0}</span>
+                <span class="summary-value">${summary.totalReviews || 0}</span>
+            </div>
+            <div class="summary-card">
+                <span class="summary-label">日均复习</span>
+                <span class="summary-value">${summary.avgDailyReviews || 0}</span>
             </div>
         </div>
     `;
@@ -1520,10 +1547,7 @@ function updateTrendSummary(trendsData) {
 // 加载薄弱环节数据
 function loadWeaknesses() {
     const timestamp = Date.now();
-    fetch(`/api/progress?detailed=true&_t=${timestamp}`, {
-        cache: 'no-cache'
-    })
-        .then(response => response.json())
+    API.request(`/api/progress?detailed=true&_t=${timestamp}`)
         .then(data => {
             if (data.detailed && data.detailed.errorPatterns) {
                 updateWeaknessList(data.detailed.errorPatterns.problems);
@@ -1563,10 +1587,7 @@ function updateWeaknessList(weaknesses) {
 // 加载智能推荐数据
 function loadSuggestions() {
     const timestamp = Date.now();
-    fetch(`/api/recommendations?_t=${timestamp}`, {
-        cache: 'no-cache'
-    })
-        .then(response => response.json())
+    API.request(`/api/recommendations?_t=${timestamp}`)
         .then(data => {
             updateRecommendationCards(data);
         })
@@ -1665,18 +1686,14 @@ function updateRecommendationSection(sectionId, items, options) {
 
 // 应用目标推荐
 function applyGoalRecommendation(newTarget, reviewTarget) {
-    fetch('/api/recommendations/apply', {
+    API.request('/api/recommendations/apply', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
             type: 'goals',
             new_target: newTarget,
             review_target: reviewTarget
         })
     })
-    .then(response => response.json())
     .then(data => {
         if (data.success) {
             showNotification('学习目标已更新！', 'success');
@@ -1855,75 +1872,158 @@ function updateTrendsTab(data) {
 
 // 更新趋势图表
 function updateTrendCharts(trendsData) {
-    // 更新日趋势图表
-    if (trendsData.daily) {
-        updateDailyTrendChart(trendsData.daily);
-    }
-    
-    // 更新周趋势图表
+    // 只更新周趋势图表，因为HTML中只有一个canvas元素
     if (trendsData.weekly) {
         updateWeeklyTrendChart(trendsData.weekly);
     }
+    
+    console.log('updateTrendCharts: Updated with weekly data only');
 }
 
 // 更新日趋势图表
 function updateDailyTrendChart(dailyData) {
-    const svg = document.getElementById('daily-trend-chart');
-    if (!svg || !dailyData) return;
+    const canvas = document.getElementById('weekly-trend-chart');
+    if (!canvas || !dailyData || dailyData.length === 0) {
+        console.log('updateDailyTrendChart: canvas not found or no data');
+        return;
+    }
     
-    // 简单的SVG图表实现
-    svg.innerHTML = '';
-    const width = 400;
-    const height = 200;
-    svg.setAttribute('width', width);
-    svg.setAttribute('height', height);
-    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    console.log('updateDailyTrendChart called with data:', dailyData);
     
-    // 绘制趋势线
-    const maxValue = Math.max(...dailyData.map(d => d.value));
-    const points = dailyData.map((d, i) => {
-        const x = (i / (dailyData.length - 1)) * (width - 40) + 20;
-        const y = height - 40 - (d.value / maxValue) * (height - 80);
-        return `${x},${y}`;
-    }).join(' ');
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width || 400;
+    const height = canvas.height || 200;
     
-    const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-    polyline.setAttribute('points', points);
-    polyline.setAttribute('fill', 'none');
-    polyline.setAttribute('stroke', '#4a90e2');
-    polyline.setAttribute('stroke-width', '2');
-    svg.appendChild(polyline);
+    // 清空画布
+    ctx.clearRect(0, 0, width, height);
+    
+    // 处理数据
+    const values = dailyData.map(d => d.reviews || d.value || 0);
+    const maxValue = Math.max(...values, 1);
+    
+    console.log('Daily chart values:', values, 'maxValue:', maxValue);
+    
+    // 设置样式
+    ctx.strokeStyle = '#4a90e2';
+    ctx.fillStyle = '#4a90e2';
+    ctx.lineWidth = 2;
+    
+    if (dailyData.length === 1) {
+        // 只有一个数据点时，绘制一个圆点
+        const x = width / 2;
+        const y = height - 40 - (values[0] / maxValue) * (height - 80);
+        
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, 2 * Math.PI);
+        ctx.fill();
+    } else {
+        // 多个数据点时，绘制折线
+        ctx.beginPath();
+        
+        dailyData.forEach((d, i) => {
+            const value = d.reviews || d.value || 0;
+            const x = (i / (dailyData.length - 1)) * (width - 40) + 20;
+            const y = height - 40 - (value / maxValue) * (height - 80);
+            
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+        
+        ctx.stroke();
+        
+        // 添加数据点
+        dailyData.forEach((d, i) => {
+            const value = d.reviews || d.value || 0;
+            const x = (i / (dailyData.length - 1)) * (width - 40) + 20;
+            const y = height - 40 - (value / maxValue) * (height - 80);
+            
+            ctx.beginPath();
+            ctx.arc(x, y, 3, 0, 2 * Math.PI);
+            ctx.fill();
+        });
+    }
+    
+    console.log('updateDailyTrendChart: Canvas drawing completed');
 }
 
 // 更新周趋势图表
 function updateWeeklyTrendChart(weeklyData) {
-    const svg = document.getElementById('weekly-trend-chart');
-    if (!svg || !weeklyData) return;
+    console.log('updateWeeklyTrendChart called with:', weeklyData);
     
-    // 简单的SVG柱状图实现
-    svg.innerHTML = '';
-    const width = 400;
-    const height = 200;
-    svg.setAttribute('width', width);
-    svg.setAttribute('height', height);
-    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    const canvas = document.getElementById('weekly-trend-chart');
+    if (!canvas || !weeklyData || weeklyData.length === 0) {
+        console.log('Canvas not found or no data:', { canvas: !!canvas, dataLength: weeklyData?.length });
+        return;
+    }
     
-    const maxValue = Math.max(...weeklyData.map(d => d.value));
-    const barWidth = (width - 40) / weeklyData.length - 5;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    // 清空画布
+    ctx.clearRect(0, 0, width, height);
+    
+    // 处理 dailyData 格式的数据
+    const maxValue = Math.max(...weeklyData.map(d => {
+        const val = d.reviews || d.value || 0;
+        return isNaN(val) ? 0 : Number(val);
+    }));
+    
+    console.log('Chart data processed:', { maxValue, dataCount: weeklyData.length });
+    
+    if (maxValue === 0 || isNaN(maxValue)) {
+        // 如果没有数据，显示提示文本
+        ctx.fillStyle = '#999';
+        ctx.font = '14px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('暂无学习数据', width / 2, height / 2);
+        return;
+    }
+    
+    const barWidth = Math.max(10, (width - 40) / weeklyData.length - 5);
     
     weeklyData.forEach((d, i) => {
+        const value = d.reviews || d.value || 0;
+        const numValue = isNaN(value) ? 0 : Number(value);
+        
         const x = 20 + i * (barWidth + 5);
-        const barHeight = (d.value / maxValue) * (height - 80);
+        const barHeight = Math.max(0, (numValue / maxValue) * (height - 80));
         const y = height - 40 - barHeight;
         
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('x', x);
-        rect.setAttribute('y', y);
-        rect.setAttribute('width', barWidth);
-        rect.setAttribute('height', barHeight);
-        rect.setAttribute('fill', '#4a90e2');
-        svg.appendChild(rect);
+        // 确保所有值都是有效数字
+        if (isNaN(x) || isNaN(y) || isNaN(barWidth) || isNaN(barHeight)) {
+            console.error('Invalid canvas coordinates:', { x, y, barWidth, barHeight, value: numValue, maxValue });
+            return;
+        }
+        
+        // 绘制柱状图
+        ctx.fillStyle = '#4a90e2';
+        ctx.globalAlpha = 0.8;
+        ctx.fillRect(x, y, barWidth, barHeight);
+        
+        // 添加数值标签
+        if (numValue > 0) {
+            ctx.globalAlpha = 1.0;
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(numValue.toString(), x + barWidth / 2, y - 5);
+        }
+        
+        // 添加日期标签（如果有的话）
+        if (d.date) {
+            ctx.fillStyle = '#666';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            const dateStr = new Date(d.date).toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' });
+            ctx.fillText(dateStr, x + barWidth / 2, height - 10);
+        }
     });
+    
+    console.log('Chart rendered successfully');
 }
 
 // 更新建议标签页
@@ -2351,15 +2451,337 @@ document.addEventListener('DOMContentLoaded', () => {
     window.app = new App();
 });
 
+// 版本检查和更新管理
+class UpdateManager {
+    constructor() {
+        this.currentVersion = null; // 当前本地版本，将通过API动态获取
+        this.checkInterval = 30 * 60 * 1000; // 30分钟检查一次
+        this.lastCheckTime = 0;
+        this.updateModal = null;
+    }
+
+    async init() {
+        this.updateModal = document.getElementById('updateModal');
+        this.setupEventListeners();
+        
+        // 动态获取当前版本号
+        await this.loadCurrentVersion();
+        
+        this.startVersionCheck();
+    }
+
+    async loadCurrentVersion() {
+        try {
+            const response = await fetch('/api/version');
+            if (response.ok) {
+                const data = await response.json();
+                this.currentVersion = data.version;
+                console.log('当前版本:', this.currentVersion);
+                
+                // 更新版权声明中的版本号显示
+                this.updateVersionDisplay(this.currentVersion);
+            } else {
+                console.warn('无法获取版本信息，使用默认版本');
+                this.currentVersion = '1.0.0'; // 降级方案
+                this.updateVersionDisplay(this.currentVersion);
+            }
+        } catch (error) {
+            console.error('获取版本信息失败:', error);
+            this.currentVersion = '1.0.0'; // 降级方案
+            this.updateVersionDisplay(this.currentVersion);
+        }
+    }
+    
+    updateVersionDisplay(version) {
+        const versionElement = document.getElementById('app-version');
+        if (versionElement) {
+            versionElement.textContent = version;
+        }
+    }
+
+    setupEventListeners() {
+        const updateNowBtn = document.getElementById('updateNow');
+        const updateLaterBtn = document.getElementById('updateLater');
+        const updateCloseBtn = document.getElementById('updateClose');
+        const updateModal = document.getElementById('updateModal');
+
+        if (updateNowBtn) {
+            updateNowBtn.addEventListener('click', () => this.performUpdate());
+        }
+
+        if (updateLaterBtn) {
+            updateLaterBtn.addEventListener('click', () => this.hideUpdateModal());
+        }
+        
+        if (updateCloseBtn) {
+            updateCloseBtn.addEventListener('click', () => this.hideUpdateModal());
+        }
+        
+        // 点击模态框背景关闭
+        if (updateModal) {
+            updateModal.addEventListener('click', (e) => {
+                if (e.target.id === 'updateModal') {
+                    this.hideUpdateModal();
+                }
+            });
+        }
+    }
+
+    startVersionCheck() {
+        // 立即检查一次
+        this.checkForUpdates();
+        
+        // 定期检查
+        setInterval(() => {
+            this.checkForUpdates();
+        }, this.checkInterval);
+
+        // 页面获得焦点时检查
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                const now = Date.now();
+                if (now - this.lastCheckTime > 5 * 60 * 1000) { // 5分钟内不重复检查
+                    this.checkForUpdates();
+                }
+            }
+        });
+    }
+
+    async checkForUpdates() {
+        try {
+            // 如果当前版本号还未加载完成，跳过检查
+            if (!this.currentVersion) {
+                console.log('版本号尚未加载，跳过版本检查');
+                return;
+            }
+            
+            this.lastCheckTime = Date.now();
+            const response = await fetch('/api/version', {
+                cache: 'no-cache',
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
+            });
+            
+            if (!response.ok) {
+                console.warn('版本检查失败:', response.status);
+                return;
+            }
+
+            const versionData = await response.json();
+            const serverVersion = versionData.version;
+
+            console.log('版本检查:', {
+                current: this.currentVersion,
+                server: serverVersion
+            });
+
+            if (this.isNewerVersion(serverVersion, this.currentVersion)) {
+                this.showUpdateModal(serverVersion);
+            }
+        } catch (error) {
+            console.warn('版本检查出错:', error);
+        }
+    }
+
+    isNewerVersion(serverVersion, currentVersion) {
+        // 简单的版本比较，支持 x.y.z 格式
+        const parseVersion = (version) => {
+            return version.split('.').map(num => parseInt(num, 10));
+        };
+
+        const server = parseVersion(serverVersion);
+        const current = parseVersion(currentVersion);
+
+        for (let i = 0; i < Math.max(server.length, current.length); i++) {
+            const s = server[i] || 0;
+            const c = current[i] || 0;
+            
+            if (s > c) return true;
+            if (s < c) return false;
+        }
+        
+        return false;
+    }
+
+    showUpdateModal(newVersion) {
+        if (this.updateModal) {
+            // 更新版本信息
+            const versionText = this.updateModal.querySelector('p');
+            if (versionText) {
+                versionText.textContent = `发现新版本 ${newVersion}，建议立即更新以获得最佳体验。`;
+            }
+            
+            this.updateModal.classList.add('show');
+        }
+    }
+
+    hideUpdateModal() {
+        if (this.updateModal) {
+            this.updateModal.classList.remove('show');
+        }
+    }
+
+    async performUpdate() {
+        try {
+            // 显示更新中状态
+            const updateBtn = document.getElementById('updateNow');
+            if (updateBtn) {
+                updateBtn.textContent = '更新中...';
+                updateBtn.disabled = true;
+            }
+
+            console.log('开始执行应用更新...');
+            
+            // 清除所有缓存
+            await this.clearAllCaches();
+            
+            // 强制清除所有存储
+            await this.forceClearAllStorage();
+            
+            // 等待更长时间确保缓存清理完成
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            console.log('准备刷新页面...');
+            
+            // 使用最强制的刷新方式
+            const timestamp = Date.now();
+            const randomId = Math.random().toString(36).substring(7);
+            const currentUrl = window.location.href.split('?')[0]; // 移除现有查询参数
+            const newUrl = `${currentUrl}?_refresh=${timestamp}&_nocache=${randomId}&_force=1`;
+            
+            // 立即跳转到新URL
+            window.location.href = newUrl;
+            
+        } catch (error) {
+            console.error('更新失败:', error);
+            showToast('更新失败，请手动刷新页面', 'error');
+            
+            // 恢复按钮状态
+            const updateBtn = document.getElementById('updateNow');
+            if (updateBtn) {
+                updateBtn.textContent = '立即更新';
+                updateBtn.disabled = false;
+            }
+        }
+    }
+
+    async forceClearAllStorage() {
+        try {
+            console.log('开始强制清除所有存储...');
+            
+            // 清除所有localStorage（除了用户认证相关）
+            const preserveKeys = ['access_code', 'user_id', 'anon_id'];
+            const allKeys = Object.keys(localStorage);
+            allKeys.forEach(key => {
+                if (!preserveKeys.includes(key)) {
+                    console.log('强制删除 localStorage 键:', key);
+                    localStorage.removeItem(key);
+                }
+            });
+            
+            // 清除所有sessionStorage
+            sessionStorage.clear();
+            
+            // 清除IndexedDB（如果存在）
+            if ('indexedDB' in window) {
+                try {
+                    const databases = await indexedDB.databases();
+                    for (const db of databases) {
+                        if (db.name) {
+                            console.log('删除 IndexedDB:', db.name);
+                            indexedDB.deleteDatabase(db.name);
+                        }
+                    }
+                } catch (e) {
+                    console.log('IndexedDB 清理失败:', e);
+                }
+            }
+            
+            // 清除应用版本信息
+            localStorage.removeItem('app_version');
+            localStorage.removeItem('last_version_check');
+            
+            console.log('强制存储清理完成');
+        } catch (error) {
+            console.error('强制清除存储时出错:', error);
+        }
+    }
+
+    async clearAllCaches() {
+        try {
+            console.log('开始清除所有缓存...');
+            
+            // 1. 清除所有 Service Worker 缓存
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                console.log('发现缓存:', cacheNames);
+                await Promise.all(
+                    cacheNames.map(async cacheName => {
+                        console.log('删除缓存:', cacheName);
+                        return caches.delete(cacheName);
+                    })
+                );
+                console.log('已清除所有 Service Worker 缓存');
+            }
+
+            // 2. 强制更新 Service Worker
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                for (let registration of registrations) {
+                    console.log('注销 Service Worker:', registration);
+                    await registration.unregister();
+                }
+                console.log('已注销所有 Service Worker');
+            }
+
+            // 3. 清除 localStorage 中的缓存数据（保留用户数据）
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.includes('cache') || key.includes('version'))) {
+                    keysToRemove.push(key);
+                }
+            }
+            keysToRemove.forEach(key => {
+                console.log('删除 localStorage 键:', key);
+                localStorage.removeItem(key);
+            });
+
+            // 4. 清除 sessionStorage
+            sessionStorage.clear();
+            console.log('已清除 sessionStorage');
+
+            console.log('缓存清理完成');
+        } catch (error) {
+            console.error('清除缓存时出错:', error);
+            throw error;
+        }
+    }
+}
+
 // PWA 支持
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
             .then(registration => {
                 // console.log('SW registered: ', registration);
+                
+                // 监听 Service Worker 更新
+                registration.addEventListener('updatefound', () => {
+                    console.log('发现 Service Worker 更新');
+                });
             })
             .catch(registrationError => {
                 // console.log('SW registration failed: ', registrationError);
             });
     });
 }
+
+// 初始化更新管理器
+let updateManager;
+document.addEventListener('DOMContentLoaded', async () => {
+    updateManager = new UpdateManager();
+    // 等待初始化完成
+    await updateManager.init();
+});

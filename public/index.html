@@ -224,11 +224,11 @@
                                         <span class="stat-value" id="flashcard-total">0</span>
                                     </div>
                                     <div class="mode-stat">
-                                        <span class="stat-label">正确率</span>
+                                        <span class="stat-label">平均熟练度</span>
                                         <span class="stat-value" id="flashcard-accuracy">0%</span>
                                     </div>
                                     <div class="mode-stat">
-                                        <span class="stat-label">平均熟练度</span>
+                                        <span class="stat-label">平均连击数</span>
                                         <span class="stat-value" id="flashcard-streak">0</span>
                                     </div>
                                     <div class="mode-stat">
@@ -390,6 +390,15 @@
                         <!-- 动态生成 -->
                     </div>
                 </div>
+                
+                <!-- 版权声明 -->
+                <div class="copyright-section">
+                    <div class="copyright-text">
+                        <p>&copy; 2025 日语形态练习应用</p>
+                        <p>基于 MIT 许可证开源</p>
+                        <p>版本 <span id="app-version">1.0.2</span></p>
+                    </div>
+                </div>
             </div>
         </main>
         
@@ -418,6 +427,19 @@
     
     <!-- 提示消息 -->
     <div class="toast" id="toast"></div>
+    
+    <!-- 应用更新提示 -->
+    <div class="update-modal" id="updateModal">
+        <div class="update-content">
+            <div class="update-icon">🔄</div>
+            <h3>发现新版本</h3>
+            <p>有新版本可用，建议立即更新以获得最佳体验。</p>
+            <div class="update-actions">
+                <button class="btn-secondary" id="updateLater">稍后提醒</button>
+                <button class="btn-primary" id="updateNow">立即更新</button>
+            </div>
+        </div>
+    </div>
     
     <script src="app.js"></script>
 </body>

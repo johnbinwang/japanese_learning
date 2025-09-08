@@ -2018,3 +2018,161 @@ input[type="checkbox"] {
         text-align: center;
     }
 }
+
+/* 应用更新提示样式 */
+.update-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+}
+
+.update-modal.show {
+    display: flex;
+}
+
+.update-content {
+    background: #1a1a2e;
+    border-radius: 16px;
+    padding: 32px 24px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    border: 1px solid #333;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    animation: updateModalSlideIn 0.3s ease-out;
+}
+
+@keyframes updateModalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.update-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    animation: updateIconSpin 2s linear infinite;
+}
+
+@keyframes updateIconSpin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.update-content h3 {
+    color: #4CAF50;
+    font-size: 20px;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.update-content p {
+    color: #b0b0b0;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.update-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.update-actions button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+}
+
+.btn-secondary {
+    background: #333;
+    color: #e0e0e0;
+}
+
+.btn-secondary:hover {
+    background: #444;
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #45a049;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+@media (max-width: 480px) {
+    .update-content {
+        padding: 24px 20px;
+        margin: 20px;
+    }
+    
+    .update-actions {
+        flex-direction: column;
+    }
+    
+    .update-actions button {
+        width: 100%;
+    }
+}
+
+/* 版权声明样式 */
+.copyright-section {
+    margin-top: 40px;
+    padding: 20px 0;
+    border-top: 1px solid #333;
+    text-align: center;
+}
+
+.copyright-text {
+    color: #888;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.copyright-text p {
+    margin: 4px 0;
+}
+
+.copyright-text #app-version {
+    color: #4CAF50;
+    font-weight: 500;
+}
+
+@media (max-width: 480px) {
+    .copyright-section {
+        margin-top: 30px;
+        padding: 15px 0;
+    }
+    
+    .copyright-text {
+        font-size: 11px;
+    }
+}

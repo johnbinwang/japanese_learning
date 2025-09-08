@@ -993,9 +993,9 @@ app.get('/api/next', authenticateUser, async (req, res) => {
 // 提交答案
 app.post('/api/submit', authenticateUser, async (req, res) => {
   try {
-    const { itemType, itemId, form, userAnswer, feedback, mode } = req.body;
+    const { itemType, itemId, form, userAnswer, feedback, mode, sessionDuration } = req.body;
     const learningMode = mode || 'quiz'; // 默认为quiz模式
-    // console.log('/api/submit 收到的数据:', { itemType, itemId, form, userAnswer, feedback, mode });
+    // console.log('/api/submit 收到的数据:', { itemType, itemId, form, userAnswer, feedback, mode, sessionDuration });
     
     // 标准化itemType - 处理大小写不匹配问题
     const normalizedItemType = itemType.toUpperCase() === 'VRB' || itemType.toLowerCase() === 'verb' ? 'vrb' : 
@@ -1208,14 +1208,14 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
     
     // 更新每日学习统计
     const isNewItem = attempts === 1; // 如果是第一次尝试，则为新学习项目
-    const today = new Date().toISOString().split('T')[0];
+    const todayDate = new Date().toISOString().split('T')[0];
     
     // 确保今日统计记录存在
     const ensureStatsSQL = `
       INSERT INTO daily_learning_stats (user_id, stat_date, learning_mode, module_type, new_items_target, new_items_completed, reviews_due, reviews_completed, total_study_time_seconds, accuracy_rate, streak_improvements)
       VALUES ($1, $2, $3, $4, 0, 0, 0, 0, 0, 0.00, 0)
       ON CONFLICT (user_id, stat_date, learning_mode, module_type) DO NOTHING`;
-    await pool.query(ensureStatsSQL, [req.user.id, today, learningMode, normalizedItemType]);
+    await pool.query(ensureStatsSQL, [req.user.id, todayDate, learningMode, normalizedItemType]);
     
     // 更新统计数据
     if (isNewItem) {
@@ -1223,29 +1223,47 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
       const updateNewSQL = `
         UPDATE daily_learning_stats 
         SET new_items_completed = new_items_completed + 1,
+            total_study_time_seconds = total_study_time_seconds + $5,
             updated_at = NOW()
         WHERE user_id = $1 AND stat_date = $2 AND learning_mode = $3 AND module_type = $4`;
-      await pool.query(updateNewSQL, [req.user.id, today, learningMode, normalizedItemType]);
+      await pool.query(updateNewSQL, [req.user.id, todayDate, learningMode, normalizedItemType, sessionDuration || 0]);
     } else {
       // 复习项目
       const updateReviewSQL = `
         UPDATE daily_learning_stats 
         SET reviews_completed = reviews_completed + 1,
+            total_study_time_seconds = total_study_time_seconds + $5,
             updated_at = NOW()
         WHERE user_id = $1 AND stat_date = $2 AND learning_mode = $3 AND module_type = $4`;
-      await pool.query(updateReviewSQL, [req.user.id, today, learningMode, normalizedItemType]);
+      await pool.query(updateReviewSQL, [req.user.id, todayDate, learningMode, normalizedItemType, sessionDuration || 0]);
     }
     
     // 记录学习会话 - 使用正确的表结构
     const sessionSQL = `
-      INSERT INTO learning_sessions (user_id, module_type, learning_mode, session_date, total_questions, correct_answers)
-      VALUES ($1, $2, $3, CURRENT_DATE, 1, $4)
+      INSERT INTO learning_sessions (user_id, module_type, learning_mode, session_date, total_questions, correct_answers, session_duration_seconds)
+      VALUES ($1, $2, $3, CURRENT_DATE, 1, $4, $5)
       ON CONFLICT (user_id, session_date, learning_mode, module_type) 
       DO UPDATE SET 
         total_questions = learning_sessions.total_questions + 1,
         correct_answers = learning_sessions.correct_answers + $4,
+        session_duration_seconds = GREATEST(learning_sessions.session_duration_seconds, $5),
         ended_at = NOW()`;
-    await pool.query(sessionSQL, [req.user.id, normalizedItemType, learningMode, isCorrect ? 1 : 0]);
+    await pool.query(sessionSQL, [req.user.id, normalizedItemType, learningMode, isCorrect ? 1 : 0, sessionDuration || 0]);
+    
+    // 更新用户学习偏好和连击天数
+    const updatePreferencesSQL = `
+      INSERT INTO user_learning_preferences (user_id, last_study_date, study_streak_days, total_study_time_seconds)
+      VALUES ($1, $2, 1, $3)
+      ON CONFLICT (user_id) 
+      DO UPDATE SET 
+        study_streak_days = CASE 
+          WHEN user_learning_preferences.last_study_date = $2 THEN user_learning_preferences.study_streak_days
+          WHEN user_learning_preferences.last_study_date = ($2::date - interval '1 day')::date THEN user_learning_preferences.study_streak_days + 1
+          ELSE 1
+        END,
+        last_study_date = $2,
+        total_study_time_seconds = user_learning_preferences.total_study_time_seconds + $3`;
+    await pool.query(updatePreferencesSQL, [req.user.id, todayDate, sessionDuration || 0]);
     
     // 获取解释
     let explanation;
@@ -1297,7 +1315,12 @@ app.get('/api/today-overview', authenticateUser, async (req, res) => {
     
     // 获取今日到期复习数量
     const dueReviewsQuery = `
-      SELECT * FROM get_today_due_reviews($1)
+      SELECT 
+        item_type as module_type,
+        COUNT(*) as due_count
+      FROM reviews 
+      WHERE user_id = $1 AND due_at <= NOW()
+      GROUP BY item_type
     `;
     
     // 获取今日已完成的学习会话
@@ -1388,13 +1411,31 @@ app.get('/api/mode-comparison', authenticateUser, async (req, res) => {
     let params = [userId];
     
     if (module !== 'all') {
-      whereClause += ' AND module_type = $2';
+      whereClause += ' AND item_type = $2';
       params.push(module);
     }
     
+    // 直接从reviews表查询，为不同模式使用不同的计算逻辑
     const comparisonQuery = `
-      SELECT * FROM mode_comparison_analysis ${whereClause}
-      ORDER BY learning_mode, module_type
+      SELECT 
+        learning_mode,
+        item_type,
+        COUNT(*) as total_items,
+        SUM(attempts) as total_attempts,
+        SUM(correct) as total_correct,
+        AVG(streak) as avg_streak,
+        COUNT(CASE WHEN due_at <= NOW() THEN 1 END) as due_count,
+        COUNT(CASE WHEN streak >= 5 THEN 1 END) as mastered_count,
+        -- 测验模式使用正确率，闪卡模式使用平均熟练度
+        CASE 
+          WHEN learning_mode = 'quiz' THEN 
+            CASE WHEN SUM(attempts) > 0 THEN (SUM(correct)::DECIMAL / SUM(attempts) * 100) ELSE 0 END
+          ELSE AVG(streak) * 20  -- 闪卡模式：将熟练度转换为百分比显示
+        END as performance_metric
+      FROM reviews 
+      ${whereClause}
+      GROUP BY learning_mode, item_type
+      ORDER BY learning_mode, item_type
     `;
     
     const result = await pool.query(comparisonQuery, params);
@@ -1407,12 +1448,12 @@ app.get('/api/mode-comparison', authenticateUser, async (req, res) => {
     
     result.rows.forEach(row => {
       const mode = row.learning_mode;
-      const moduleType = row.module_type;
+      const moduleType = row.item_type;
       
       modeData[mode].modules[moduleType] = {
         total_items: parseInt(row.total_items),
-        accuracy_rate: parseFloat(row.accuracy_rate),
-        avg_streak: parseFloat(row.avg_streak),
+        accuracy_rate: Math.min(parseFloat(row.performance_metric) || 0, 100),
+        avg_streak: parseFloat(row.avg_streak) || 0,
         due_count: parseInt(row.due_count),
         mastered_count: parseInt(row.mastered_count)
       };
@@ -1448,14 +1489,15 @@ app.get('/api/insights/trends', authenticateUser, async (req, res) => {
     // 获取最近7天的学习数据
     const trendsQuery = `
       SELECT 
-        DATE(updated_at) as date,
+        DATE(last_reviewed) as date,
         COUNT(*) as total_reviews,
+        SUM(attempts) as total_attempts,
         SUM(correct) as correct_reviews,
         AVG(attempts) as avg_attempts,
         COUNT(DISTINCT item_id) as unique_items
       FROM reviews 
-      WHERE user_id = $1 AND updated_at >= NOW() - INTERVAL '7 days'
-      GROUP BY DATE(updated_at)
+      WHERE user_id = $1 AND last_reviewed >= NOW() - INTERVAL '7 days'
+      GROUP BY DATE(last_reviewed)
       ORDER BY date DESC
     `;
     
@@ -1463,8 +1505,9 @@ app.get('/api/insights/trends', authenticateUser, async (req, res) => {
     
     // 计算总体统计
     const totalReviews = trends.rows.reduce((sum, row) => sum + parseInt(row.total_reviews), 0);
+    const totalAttempts = trends.rows.reduce((sum, row) => sum + parseInt(row.total_attempts), 0);
     const totalCorrect = trends.rows.reduce((sum, row) => sum + parseInt(row.correct_reviews), 0);
-    const avgAccuracy = totalReviews > 0 ? (totalCorrect / totalReviews * 100).toFixed(1) : '0.0';
+    const avgAccuracy = totalAttempts > 0 ? Math.min((totalCorrect / totalAttempts * 100), 100).toFixed(1) : '0.0';
     const avgDailyReviews = trends.rows.length > 0 ? (totalReviews / trends.rows.length).toFixed(1) : '0.0';
     
     res.json({
@@ -1477,14 +1520,15 @@ app.get('/api/insights/trends', authenticateUser, async (req, res) => {
       dailyData: trends.rows.map(row => ({
         date: row.date,
         reviews: parseInt(row.total_reviews),
+        attempts: parseInt(row.total_attempts),
         correct: parseInt(row.correct_reviews),
-        accuracy: row.total_reviews > 0 ? (row.correct_reviews / row.total_reviews * 100).toFixed(1) : '0.0',
+        accuracy: row.total_attempts > 0 ? Math.min((row.correct_reviews / row.total_attempts * 100), 100).toFixed(1) : '0.0',
         avgAttempts: parseFloat(row.avg_attempts || 0).toFixed(1),
         uniqueItems: parseInt(row.unique_items)
       }))
     });
   } catch (error) {
-    // console.error('获取趋势数据失败:', error);
+    console.error('获取趋势数据失败:', error);
     res.status(500).json({ error: '获取趋势数据失败' });
   }
 });
@@ -1503,7 +1547,7 @@ app.get('/api/insights/weaknesses', authenticateUser, async (req, res) => {
         (COUNT(*) - SUM(correct)) as error_count,
         ROUND((COUNT(*) - SUM(correct))::numeric / COUNT(*)::numeric * 100, 1) as error_rate
       FROM reviews 
-      WHERE user_id = $1 AND updated_at >= NOW() - INTERVAL '30 days'
+      WHERE user_id = $1 AND last_reviewed >= NOW() - INTERVAL '30 days'
       GROUP BY form
       HAVING COUNT(*) >= 5 AND (COUNT(*) - SUM(correct))::numeric / COUNT(*)::numeric > 0.3
       ORDER BY error_rate DESC, total_attempts DESC
@@ -1522,7 +1566,7 @@ app.get('/api/insights/weaknesses', authenticateUser, async (req, res) => {
       }))
     });
   } catch (error) {
-    // console.error('获取薄弱环节失败:', error);
+    console.error('获取薄弱环节失败:', error);
     res.status(500).json({ error: '获取薄弱环节失败' });
   }
 });
@@ -1540,24 +1584,24 @@ app.get('/api/insights/suggestions', authenticateUser, async (req, res) => {
         COUNT(*) as count,
         AVG(CASE WHEN correct > 0 THEN 1.0 ELSE 0.0 END) as accuracy
       FROM reviews 
-      WHERE user_id = $1 AND updated_at >= NOW() - INTERVAL '7 days'
+      WHERE anon_id = $1 AND last_reviewed >= NOW() - INTERVAL '7 days'
       GROUP BY learning_mode
     `, [userId]);
     
     // 分析学习频率
     const frequencyAnalysis = await pool.query(`
       SELECT 
-        COUNT(DISTINCT DATE(updated_at)) as active_days,
+        COUNT(DISTINCT DATE(last_reviewed)) as active_days,
         COUNT(*) as total_reviews
       FROM reviews 
-      WHERE user_id = $1 AND updated_at >= NOW() - INTERVAL '7 days'
+      WHERE anon_id = $1 AND last_reviewed >= NOW() - INTERVAL '7 days'
     `, [userId]);
     
     // 分析到期项目
     const dueAnalysis = await pool.query(`
       SELECT COUNT(*) as due_count
       FROM reviews 
-      WHERE user_id = $1 AND next_due <= NOW()
+      WHERE anon_id = $1 AND due_at <= NOW()
     `, [userId]);
     
     const freq = frequencyAnalysis.rows[0];
@@ -1614,7 +1658,7 @@ app.get('/api/insights/suggestions', authenticateUser, async (req, res) => {
     
     res.json({ suggestions });
   } catch (error) {
-    // console.error('获取智能建议失败:', error);
+    console.error('获取智能建议失败:', error);
     res.status(500).json({ error: '获取智能建议失败' });
   }
 });
@@ -1761,7 +1805,7 @@ async function getModuleComparison(userId, mode = null, module = null) {
        SUM(correct) as total_correct,
        AVG(streak) as avg_streak,
        COUNT(CASE WHEN due_at <= NOW() THEN 1 END) as due_count,
-       AVG(CASE WHEN attempts > 0 THEN correct::float / attempts ELSE 0 END) as accuracy
+       CASE WHEN SUM(attempts) > 0 THEN SUM(correct)::float / SUM(attempts) ELSE 0 END as accuracy
      FROM reviews 
      WHERE user_id = $1`;
   
@@ -1897,7 +1941,7 @@ async function getErrorAnalysis(userId, module, mode = null) {
   const errorStats = await pool.query(errorStatsSql, errorStatsParams);
   
   return {
-    problemItems: rows.map(row => ({
+    problems: rows.map(row => ({
       form: row.form,
       itemId: row.item_id,
       attempts: parseInt(row.attempts),
@@ -2083,7 +2127,60 @@ app.get('/api/recommendations', authenticateUser, async (req, res) => {
   try {
     const { module = 'verb' } = req.query;
     const recommendations = await getRecommendations(req.user.id, module);
-    res.json({ recommendations });
+    
+    // 将推荐数据按类型分组，匹配前端期望的数据结构
+    const groupedRecommendations = {
+      goals: [],
+      modes: [],
+      schedule: [],
+      focus_areas: []
+    };
+    
+    recommendations.forEach(rec => {
+      switch (rec.type) {
+        case 'review':
+          groupedRecommendations.goals.push({
+            icon: '📚',
+            title: '复习提醒',
+            description: rec.message,
+            action: rec.action,
+            priority: rec.priority,
+            data: rec.data
+          });
+          break;
+        case 'focus':
+          groupedRecommendations.focus_areas.push({
+            icon: '🎯',
+            title: '重点练习',
+            description: rec.message,
+            action: rec.action,
+            priority: rec.priority,
+            data: rec.data
+          });
+          break;
+        case 'motivation':
+          groupedRecommendations.schedule.push({
+            icon: '⏰',
+            title: '学习提醒',
+            description: rec.message,
+            action: rec.action,
+            priority: rec.priority,
+            data: rec.data
+          });
+          break;
+        default:
+          groupedRecommendations.goals.push({
+            icon: '💡',
+            title: '学习建议',
+            description: rec.message,
+            action: rec.action,
+            priority: rec.priority,
+            data: rec.data
+          });
+      }
+    });
+    
+    res.json(groupedRecommendations);
   } catch (error) {
     // console.error('获取推荐失败:', error);
     res.status(500).json({ error: '获取推荐失败' });
@@ -2092,7 +2189,30 @@ app.get('/api/recommendations', authenticateUser, async (req, res) => {
 
 app.post('/api/recommendations/apply', authenticateUser, async (req, res) => {
   try {
-    const { action, data } = req.body;
+    const { action, data, type, new_target, review_target } = req.body;
+    
+    // 处理目标推荐应用
+    if (type === 'goals' && new_target !== undefined) {
+      // 更新用户学习偏好中的目标设置
+      await pool.query(
+        `INSERT INTO user_learning_preferences (user_id, daily_new_target, daily_review_target)
+         VALUES ($1, $2, $3)
+         ON CONFLICT (user_id) 
+         DO UPDATE SET 
+           daily_new_target = EXCLUDED.daily_new_target,
+           daily_review_target = COALESCE(EXCLUDED.daily_review_target, user_learning_preferences.daily_review_target)`,
+        [req.user.id, new_target, review_target || 50]
+      );
+      
+      res.json({ success: true, message: '学习目标已更新' });
+      return;
+    }
+    
+    // 如果没有action参数，返回错误
+    if (!action) {
+      res.status(400).json({ error: '缺少推荐动作参数' });
+      return;
+    }
     
     // 根据推荐动作执行相应操作
     switch (action) {
@@ -2140,13 +2260,24 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
+// 版本检查接口
+app.get('/api/version', (req, res) => {
+    const packageJson = require('../package.json');
+    res.json({
+        version: packageJson.version,
+        name: packageJson.name,
+        timestamp: new Date().toISOString()
+    });
+});
+
 // 错误处理
 app.use((err, req, res, next) => {
   // console.error('Unhandled error:', err);
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
+// 启动服务器
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}/`);
+    console.log(`🚀 Server running at http://localhost:${PORT}/`);
 });

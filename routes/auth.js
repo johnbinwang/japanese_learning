@@ -59,13 +59,13 @@ router.post('/register', async (req, res) => {
                     (req.connection.socket ? req.connection.socket.remoteAddress : null);
 
     // 生成验证码（带频率限制）
-    const generateCodeQuery = 'SELECT * FROM generate_verification_code_with_rate_limit($1, $2, $3, $4, $5)';
+    const generateCodeQuery = 'SELECT * FROM generate_verification_code_with_rate_limit($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::INTEGER, $5::INET)';
     const codeResult = await pool.query(generateCodeQuery, [
       user.id,
       email.toLowerCase(),
       'email_verification',
       10, // 10分钟过期
-      clientIP
+      clientIP || null
     ]);
     
     const result = codeResult.rows[0];
@@ -294,13 +294,13 @@ router.post('/send-verification', async (req, res) => {
                     (req.connection.socket ? req.connection.socket.remoteAddress : null);
 
     // 生成验证码（带频率限制）
-    const generateCodeQuery = 'SELECT * FROM generate_verification_code_with_rate_limit($1, $2, $3, $4, $5)';
+    const generateCodeQuery = 'SELECT * FROM generate_verification_code_with_rate_limit($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::INTEGER, $5::INET)';
     const codeResult = await pool.query(generateCodeQuery, [
       user.id,
       email.toLowerCase(),
       'email_verification',
       10, // 10分钟过期
-      clientIP
+      clientIP || null
     ]);
     
     const result = codeResult.rows[0];
@@ -406,13 +406,13 @@ router.post('/forgot-password', async (req, res) => {
                     (req.connection.socket ? req.connection.socket.remoteAddress : null);
 
     // 生成验证码（带频率限制）
-    const generateCodeQuery = 'SELECT * FROM generate_verification_code_with_rate_limit($1, $2, $3, $4, $5)';
+    const generateCodeQuery = 'SELECT * FROM generate_verification_code_with_rate_limit($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::INTEGER, $5::INET)';
     const codeResult = await pool.query(generateCodeQuery, [
       user.id,
       email.toLowerCase(),
       'password_reset',
       60, // 60分钟过期
-      clientIP
+      clientIP || null
     ]);
     
     const result = codeResult.rows[0];
