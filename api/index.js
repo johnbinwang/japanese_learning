@@ -246,24 +246,25 @@ const conjugationEngine = {
   },
   
   conjugateNaAdjective(adj, form) {
-    const base = adj.replace(/な$/, '');
+    const base = adj.replace(/な$/, '').replace(/だ$/, '');
     
     switch (form) {
       case 'negative':
       case 'plain_negative':
-        return base + 'じゃない / ' + base + 'ではない';
+        return base + 'じゃない';
       case 'past':
       case 'plain_past':
         return base + 'だった';
       case 'past_negative':
       case 'plain_past_negative':
-        return base + 'じゃなかった / ' + base + 'ではなかった';
+        return base + 'じゃなかった';
       case 'adverb':
         return base + 'に';
       case 'rentai':
         return base + 'な';
       case 'te':
         return base + 'で';
+      case 'plain_present':
       default:
         return base + 'だ';
     }
