@@ -624,74 +624,67 @@ app.post('/api/preferences', authenticateUser, async (req, res) => {
 // settings接口已合并到preferences接口中
 
 // 获取下一题
-app.get('/api/next', authenticateUser, async (req, res) => {
-  try {
-    // 禁用缓存，确保每次请求都返回新的随机题目
-    res.set({
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0'
-    });
-    
-    const { module, forms, mode } = req.query; // verb, adj, plain
-    const learningMode = mode || 'flashcard'; // 默认改为闪卡模式
-    
-    // 处理前端传递的 forms 参数
-    let selectedForms = [];
-    if (forms) {
-      selectedForms = forms.split(',').map(f => f.trim()).filter(Boolean);
+/**
+ * 获取模块配置信息
+ * @param {string} module - 模块类型 (verb, adj, plain)
+ * @returns {Object} 包含 itemType, tableName, defaultForms 的配置对象
+ */
+function getModuleConfig(module) {
+  const configs = {
+    verb: {
+      itemType: 'vrb',
+      tableName: 'verbs',
+      defaultForms: ['masu', 'te', 'nai', 'ta']
+    },
+    adj: {
+      itemType: 'adj',
+      tableName: 'adjectives',
+      defaultForms: ['negative', 'past', 'past_negative', 'adverb']
+    },
+    plain: {
+      itemType: null,
+      tableName: 'plain',
+      defaultForms: ['plain_present', 'plain_past', 'plain_negative']
     }
-    
-    // 获取用户学习偏好设置
-    const { settings } = await getUserLearningPreferences(req.user.id, true);
-    
-    // 转换为API内部使用的格式
-    const internalSettings = {
-      due_only: settings.dueOnly,
-      enabled_forms: settings.enabledForms
-    };
+  };
+  return configs[module] || configs.plain;
+}
 
-    // 如果传入了 forms 参数，覆盖设置中的 enabled_forms
-    if (selectedForms.length > 0) {
-      internalSettings.enabled_forms = selectedForms;
-    }
-    
-    // 根据模块类型设置默认形态
-    let defaultForms;
-    if (module === 'verb') {
-      defaultForms = ['masu', 'te', 'nai', 'ta'];
-    } else if (module === 'adj') {
-      defaultForms = ['negative', 'past', 'past_negative', 'adverb'];
-    } else {
-      defaultForms = ['plain_present', 'plain_past', 'plain_negative'];
-    }
-    
-    // 优先使用前端传递的 forms 参数，如果没有则使用设置中的 enabled_forms，最后使用默认值
-    const enabledForms = selectedForms.length > 0 ? selectedForms : (internalSettings.enabled_forms || defaultForms);
-    
-    let itemType, tableName;
-    if (module === 'verb') {
-      itemType = 'vrb';
-      tableName = 'verbs';
-    } else if (module === 'adj') {
-      itemType = 'adj';
-      tableName = 'adjectives';
-    } else {
-      // 简体形模块使用专门的 plain 表，包含动词和形容词数据
-      itemType = 'vrb';//默认改为动词vrb
-      tableName = 'plain';
-    }
-    
-    let rows = [];
-    
-    let query;
-    if (module === 'plain') {
-      // plain 表的查询，根据 item_type 动态选择字段，避免最近30分钟内出现的题目
-      query = `
+/**
+ * 解析前端传递的表单参数
+ * @param {string} forms - 逗号分隔的表单字符串
+ * @returns {Array} 解析后的表单数组
+ */
+function parseFormsParam(forms) {
+  return forms ? forms.split(',').map(f => f.trim()).filter(Boolean) : [];
+}
+
+/**
+ * 获取启用的表单列表
+ * @param {Array} selectedForms - 前端选择的表单
+ * @param {Object} settings - 用户设置
+ * @param {Array} defaultForms - 默认表单
+ * @returns {Array} 最终启用的表单列表
+ */
+function getEnabledForms(selectedForms, settings, defaultForms) {
+  return selectedForms.length > 0 ? selectedForms : (settings.enabledForms || defaultForms);
+}
+
+/**
+ * 构建查询到期题目的SQL
+ * @param {string} module - 模块类型
+ * @param {string} tableName - 表名
+ * @param {string} itemType - 项目类型
+ * @returns {Object} 包含 query 和 baseParams 的对象
+ */
+function buildDueItemsQuery(module, tableName, itemType) {
+  if (module === 'plain') {
+    return {
+      query: `
         WITH recent_items AS (
           SELECT DISTINCT r.item_id, r.form, r.item_type
           FROM reviews r
-          WHERE r.user_id = $1 AND r.learning_mode = $3
+          WHERE r.user_id = $1 AND r.learning_mode = $2
             AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
         )
         SELECT r.*, i.kana, i.kanji, i.meaning, i.item_type,
@@ -702,593 +695,653 @@ app.get('/api/next', authenticateUser, async (req, res) => {
         FROM reviews r
         JOIN ${tableName} i ON r.item_id = i.id
         LEFT JOIN recent_items ri ON ri.item_id = r.item_id AND ri.form = r.form AND ri.item_type = r.item_type
-        WHERE r.user_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
-          AND ri.item_id IS NULL
-      `;
-    } else {
-      // 原有的 verbs 和 adjectives 表查询，避免最近30分钟内出现的题目
-      query = `
-        WITH recent_items AS (
-          SELECT DISTINCT r.item_id, r.form
-          FROM reviews r
-          WHERE r.user_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
-            AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
-        )
-        SELECT r.*, i.kana, i.kanji, i.meaning,
-               ${itemType === 'adj' ? 'i.type' : 'i.group_type as group'}
+        WHERE r.user_id = $1 AND r.learning_mode = $2
+          AND ri.item_id IS NULL`,
+      paramCount: 2
+    };
+  }
+  
+  return {
+    query: `
+      WITH recent_items AS (
+        SELECT DISTINCT r.item_id, r.form
         FROM reviews r
-        JOIN ${tableName} i ON r.item_id = i.id
-        LEFT JOIN recent_items ri ON ri.item_id = r.item_id AND ri.form = r.form
         WHERE r.user_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
-          AND ri.item_id IS NULL
-      `;
+          AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
+      )
+      SELECT r.*, i.kana, i.kanji, i.meaning,
+             ${itemType === 'adj' ? 'i.type' : 'i.group_type as group'}
+      FROM reviews r
+      JOIN ${tableName} i ON r.item_id = i.id
+      LEFT JOIN recent_items ri ON ri.item_id = r.item_id AND ri.form = r.form
+      WHERE r.user_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
+        AND ri.item_id IS NULL`,
+    paramCount: 3
+  };
+}
+
+/**
+ * 构建查询新题目的SQL
+ * @param {string} module - 模块类型
+ * @param {string} tableName - 表名
+ * @param {string} itemType - 项目类型
+ * @returns {Object} 包含 query 和 paramOrder 的对象
+ */
+function buildNewItemsQuery(module, tableName, itemType) {
+  if (module === 'plain') {
+    return {
+      query: `
+        WITH recent_items AS (
+          SELECT DISTINCT r.item_id, r.form, r.item_type
+          FROM reviews r
+          WHERE r.user_id = $1 AND r.learning_mode = $2
+            AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
+        ),
+        candidates AS (
+          SELECT i.id AS item_id, i.kana, i.kanji, i.meaning, i.item_type,
+                 CASE WHEN i.item_type = 'vrb' THEN i.group_type ELSE NULL END AS group_type,
+                 CASE WHEN i.item_type = 'adj' THEN i.adj_type ELSE NULL END AS adj_type,
+                 f.form
+          FROM ${tableName} i
+          CROSS JOIN UNNEST($3::text[]) AS f(form)
+        )
+        SELECT c.*, 'new' AS status
+        FROM candidates c
+        LEFT JOIN reviews r
+          ON r.user_id = $1
+         AND r.item_id = c.item_id
+         AND r.form = c.form
+         AND r.learning_mode = $2
+        LEFT JOIN recent_items ri
+          ON ri.item_id = c.item_id
+         AND ri.form = c.form
+        WHERE r.id IS NULL AND ri.item_id IS NULL
+        ORDER BY RANDOM()
+        LIMIT 1`,
+      paramOrder: ['userId', 'learningMode', 'enabledForms']
+    };
+  }
+  
+  return {
+    query: `
+      WITH recent_items AS (
+        SELECT DISTINCT r.item_id, r.form
+        FROM reviews r
+        WHERE r.user_id = $1 AND r.item_type = $4 AND r.learning_mode = $3
+          AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
+      ),
+      candidates AS (
+        SELECT i.id AS item_id, i.kana, i.kanji, i.meaning,
+               ${itemType === 'adj' ? 'i.type AS type' : 'i.group_type AS group_type'},
+               f.form
+        FROM ${tableName} i
+        CROSS JOIN UNNEST($2::text[]) AS f(form)
+      )
+      SELECT c.*, 'new' AS status
+      FROM candidates c
+      LEFT JOIN reviews r
+        ON r.user_id = $1
+       AND r.item_type = $4
+       AND r.item_id = c.item_id
+       AND r.form = c.form
+       AND r.learning_mode = $3
+      LEFT JOIN recent_items ri
+        ON ri.item_id = c.item_id
+       AND ri.form = c.form
+      WHERE r.id IS NULL AND ri.item_id IS NULL
+      ORDER BY RANDOM()
+      LIMIT 1`,
+    paramOrder: ['userId', 'enabledForms', 'learningMode', 'itemType']
+  };
+}
+
+/**
+ * 生成正确答案
+ * @param {Object} item - 题目项目
+ * @param {string} targetForm - 目标形式
+ * @param {string} module - 模块类型
+ * @param {string} itemType - 项目类型
+ * @returns {string} 正确答案
+ */
+function generateCorrectAnswer(item, targetForm, module, itemType) {
+  const isAdjective = (module === 'plain' && item.item_type === 'adj') || itemType === 'adj';
+  
+  if (isAdjective) {
+    return conjugationEngine.conjugateAdjective(item, targetForm);
+  }
+  
+  // 动词变形映射
+  const verbConjugations = {
+    masu: () => conjugationEngine.conjugateToMasu(item.kana, item.group),
+    te: () => conjugationEngine.conjugateToTe(item.kana, item.group),
+    nai: () => conjugationEngine.conjugateToNai(item.kana, item.group),
+    ta: () => conjugationEngine.conjugateToTa(item.kana, item.group),
+    potential: () => conjugationEngine.conjugateToPotential(item.kana, item.group),
+    volitional: () => conjugationEngine.conjugateToVolitional(item.kana, item.group),
+    plain_present: () => item.kana,
+    plain_past: () => conjugationEngine.conjugateToTa(item.kana, item.group),
+    plain_negative: () => conjugationEngine.conjugateToNai(item.kana, item.group),
+    plain_past_negative: () => {
+      const naiForm = conjugationEngine.conjugateToNai(item.kana, item.group);
+      return naiForm.replace(/ない$/, 'なかった');
     }
+  };
+  
+  return verbConjugations[targetForm] ? verbConjugations[targetForm]() : item.kana;
+}
+
+/**
+ * 处理项目数据结构
+ * @param {Object} item - 原始项目数据
+ * @param {string} module - 模块类型
+ * @param {string} itemType - 项目类型
+ * @returns {Object} 处理后的项目数据
+ */
+function processItemData(item, module, itemType) {
+  if (module === 'plain') {
+    const baseItem = {
+      id: item.item_id,
+      kana: item.kana,
+      kanji: item.kanji,
+      meaning: item.meaning
+    };
     
-    const params = [req.user.id, itemType, learningMode];
+    if (item.item_type === 'vrb') {
+      return { ...baseItem, group: (item.group_type || '').trim() };
+    } else {
+      return { ...baseItem, type: (item.adj_type || '').trim() };
+    }
+  }
+  
+  const baseItem = {
+    id: item.item_id,
+    kana: item.kana,
+    kanji: item.kanji,
+    meaning: item.meaning
+  };
+  
+  if (itemType === 'adj') {
+    return { ...baseItem, type: item.type };
+  } else {
+    return { ...baseItem, group: (item.group_type || '').trim() };
+  }
+}
+
+/**
+ * 构建响应数据
+ * @param {Object} item - 处理后的项目数据
+ * @param {string} targetForm - 目标形式
+ * @param {string} module - 模块类型
+ * @param {string} correctAnswer - 正确答案
+ * @param {boolean} isNew - 是否为新题目
+ * @param {Object} reviewData - 复习数据（可选）
+ * @returns {Object} 响应数据
+ */
+function buildResponseData(item, targetForm, module, correctAnswer, isNew = false, reviewData = null) {
+  const responseData = {
+    itemId: item.item_id || item.id,
+    itemType: module === 'plain' ? item.item_type || reviewData?.item_type : module,
+    kana: cleanWordText(item.kana),
+    kanji: cleanWordText(item.kanji),
+    meaning: cleanWordText(item.meaning),
+    targetForm,
+    correctAnswer,
+    isNew
+  };
+  
+  if (!isNew && reviewData) {
+    responseData.streak = reviewData.streak;
+    responseData.attempts = reviewData.attempts;
+  }
+  
+  // 添加类型特定字段
+  if (module === 'verb' && item.group) {
+    responseData.group = item.group;
+  } else if (module === 'adj' && item.type) {
+    responseData.type = item.type;
+  } else if (module === 'plain') {
+    const actualType = item.item_type || reviewData?.item_type;
+    if (actualType === 'vrb' && item.group) {
+      responseData.group = item.group;
+    } else if (actualType === 'adj' && item.type) {
+      responseData.type = item.type;
+    }
+  }
+  
+  return responseData;
+}
+
+/**
+ * 创建新的复习记录
+ * @param {number} userId - 用户ID
+ * @param {string} itemType - 项目类型
+ * @param {number} itemId - 项目ID
+ * @param {string} targetForm - 目标形式
+ * @param {string} learningMode - 学习模式
+ * @returns {Promise} 数据库操作Promise
+ */
+async function createReviewRecord(userId, itemType, itemId, targetForm, learningMode) {
+  const insertSql = `
+    INSERT INTO reviews (user_id, item_type, item_id, form, learning_mode, due_at, last_reviewed) 
+    VALUES ($1, $2, $3, $4, $5, $6, NOW()) 
+    ON CONFLICT (user_id, item_type, item_id, form, learning_mode) 
+    DO UPDATE SET due_at = EXCLUDED.due_at, last_reviewed = EXCLUDED.last_reviewed
+  `;
+  
+  const initialDueTime = new Date();
+  const params = [userId, itemType, itemId, targetForm, learningMode, initialDueTime];
+  
+  return pool.query(insertSql, params);
+}
+
+/**
+ * 获取下一个学习题目的主要API端点
+ */
+app.get('/api/next', authenticateUser, async (req, res) => {
+  try {
+    // 设置缓存控制头
+    res.set({
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
     
-    // 按启用的形态过滤（确保只取当前启用形态的到期题目）
-    query += ' AND r.form = ANY($4)';
-    params.push(enabledForms);
+    const { module, forms, mode } = req.query;
+    const learningMode = mode || 'flashcard';
+    
+    // 解析参数和获取配置
+    const selectedForms = parseFormsParam(forms);
+    const { settings } = await getUserLearningPreferences(req.user.id, true);
+    const moduleConfig = getModuleConfig(module);
+    const enabledForms = getEnabledForms(selectedForms, settings, moduleConfig.defaultForms);
+    
+    const internalSettings = {
+      due_only: settings.dueOnly,
+      enabled_forms: enabledForms
+    };
+    
+    // 查询到期的复习题目
+    const { query: dueQuery, paramCount } = buildDueItemsQuery(module, moduleConfig.tableName, moduleConfig.itemType);
+    const baseParams = module === 'plain' 
+      ? [req.user.id, learningMode] 
+      : [req.user.id, moduleConfig.itemType, learningMode];
+    
+    let finalQuery = dueQuery + ` AND r.form = ANY($${paramCount + 1})`;
+    let queryParams = [...baseParams, enabledForms];
     
     if (internalSettings.due_only) {
-      query += ' AND r.due_at <= NOW()';
+      finalQuery += ' AND r.due_at <= NOW()';
     }
     
-    query += ' ORDER BY r.due_at ASC, r.streak ASC, RANDOM() LIMIT 1';
+    // 修改排序逻辑：优先随机，然后按到期时间和连续次数排序
+    finalQuery += ' ORDER BY RANDOM(), r.due_at ASC, r.streak ASC LIMIT 1';
     
-    // console.log('SQL查询:', query, '参数:', params);
-    const result = await pool.query(query, params);
-    rows = result.rows;
+    //console.log('SQL查询:', finalQuery, '参数:', queryParams) ;
+    const result = await pool.query(finalQuery, queryParams);
     
-    // 如果没有到期项目，随机选择一个新项目（避免最近出现的题目）
-    if (rows.length === 0) {
-      // console.log('没有到期项目，随机选择一个新项目');
-      let item;
+    // 如果有到期题目，返回复习题目
+    if (result.rows.length > 0) {
+      const review = result.rows[0];
       
-      let randomQuery;
-      let randomParams;
+      // 处理复习题目数据
+      let reviewItem, reviewItemType;
       if (module === 'plain') {
-        randomQuery = `
-          WITH recent_items AS (
-            SELECT DISTINCT r.item_id, r.form, r.item_type
-            FROM reviews r
-            WHERE r.user_id = $1 AND r.learning_mode = $3
-              AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
-          ),
-          candidates AS (
-            SELECT i.id AS item_id, i.kana, i.kanji, i.meaning, i.item_type,
-                   CASE WHEN i.item_type = 'vrb' THEN i.group_type ELSE NULL END AS group_type,
-                   CASE WHEN i.item_type = 'adj' THEN i.adj_type ELSE NULL END AS adj_type,
-                   f.form
-            FROM ${tableName} i
-            CROSS JOIN UNNEST($2::text[]) AS f(form)
-          )
-          SELECT c.*, 'new' AS status
-          FROM candidates c
-          LEFT JOIN reviews r
-            ON r.user_id = $1
-           AND r.item_type = c.item_type
-           AND r.item_id = c.item_id
-           AND r.form = c.form
-           AND r.learning_mode = $3
-          LEFT JOIN recent_items ri
-            ON ri.item_id = c.item_id
-           And ri.form = c.form
-           AND ri.item_type = c.item_type
-          WHERE r.id IS NULL AND ri.item_id IS NULL
-          ORDER BY RANDOM()
-          LIMIT 1
-        `;
-        randomParams = [req.user.id, enabledForms, learningMode];
+        reviewItemType = review.item_type;
+        reviewItem = review.item_type === 'vrb' 
+          ? { ...review, group: (review.type_info || '').trim() }
+          : { ...review, type: (review.type_info || '').trim() };
       } else {
-        randomQuery = `
-          WITH recent_items AS (
-            SELECT DISTINCT r.item_id, r.form
-            FROM reviews r
-            WHERE r.user_id = $1 AND r.item_type = $4 AND r.learning_mode = $3
-              AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
-          ),
-          candidates AS (
-            SELECT i.id AS item_id, i.kana, i.kanji, i.meaning,
-                   ${itemType === 'adj' ? 'i.type AS type' : 'i.group_type AS group_type'},
-                   f.form
-            FROM ${tableName} i
-            CROSS JOIN UNNEST($2::text[]) AS f(form)
-          )
-          SELECT c.*, 'new' AS status
-          FROM candidates c
-          LEFT JOIN reviews r
-            ON r.user_id = $1
-           AND r.item_type = $4
-           AND r.item_id = c.item_id
-           AND r.form = c.form
-           AND r.learning_mode = $3
-          LEFT JOIN recent_items ri
-            ON ri.item_id = c.item_id
-           AND ri.form = c.form
-          WHERE r.id IS NULL AND ri.item_id IS NULL
-          ORDER BY RANDOM()
-          LIMIT 1
-        `;
-        randomParams = [req.user.id, enabledForms, learningMode, itemType];
+        reviewItemType = moduleConfig.itemType;
+        reviewItem = moduleConfig.itemType === 'adj' 
+          ? review 
+          : { ...review, group: (review.group || '').trim() };
       }
       
-      // console.log('SQL查询:', randomQuery, '参数:', randomParams);
-      const { rows: newRows } = await pool.query(randomQuery, randomParams);
+      const correctAnswer = generateCorrectAnswer(reviewItemType, reviewItem, review.form);
+      const responseData = buildResponseData(reviewItem, review.form, module, correctAnswer, false, review);
       
-      if (newRows.length === 0) {
-        return res.json({ error: '没有更多题目' });
-      }
-      
-      item = newRows[0];
-      const targetForm = item.form; // 已按item+form粒度选择
-      
-      // 创建新的复习记录
-      const insertSql = `INSERT INTO reviews (user_id, item_type, item_id, form, learning_mode, due_at) 
-         VALUES ($1, $2, $3, $4, $5, NOW()) 
-         ON CONFLICT (user_id, item_type, item_id, form, learning_mode) 
-         DO UPDATE SET due_at = EXCLUDED.due_at`;
-      const actualItemType = module === 'plain' ? item.item_type : itemType;
-      const insertParams = [req.user.id, actualItemType, item.item_id, targetForm, learningMode];
-      await pool.query(insertSql, insertParams);
-      
-      // 处理 plain 表和其他表的数据结构差异
-      let processedItem;
-      if (module === 'plain') {
-        if (item.item_type === 'vrb') {
-          processedItem = { id: item.item_id, kana: item.kana, kanji: item.kanji, meaning: item.meaning, group: (item.group_type || '').trim() };
-        } else {
-          processedItem = { id: item.item_id, kana: item.kana, kanji: item.kanji, meaning: item.meaning, type: (item.adj_type || '').trim() };
-        }
-      } else {
-        processedItem = itemType === 'adj'
-          ? { id: item.item_id, kana: item.kana, kanji: item.kanji, meaning: item.meaning, type: item.type }
-          : { id: item.item_id, kana: item.kana, kanji: item.kanji, meaning: item.meaning, group: (item.group_type || '').trim() };
-      }
-      
-      let correctAnswer;
-      if ((module === 'plain' && item.item_type === 'adj') || itemType === 'adj') {
-        correctAnswer = conjugationEngine.conjugateAdjective(processedItem, targetForm);
-      } else {
-        // 根据 targetForm 调用相应的动词变形方法
-        switch (targetForm) {
-          case 'masu':
-            correctAnswer = conjugationEngine.conjugateToMasu ? conjugationEngine.conjugateToMasu(processedItem.kana, processedItem.group) : processedItem.kana;
-            break;
-          case 'te':
-            correctAnswer = conjugationEngine.conjugateToTe ? conjugationEngine.conjugateToTe(processedItem.kana, processedItem.group) : processedItem.kana;
-            break;
-          case 'nai':
-            correctAnswer = conjugationEngine.conjugateToNai(processedItem.kana, processedItem.group);
-            break;
-          case 'ta':
-            correctAnswer = conjugationEngine.conjugateToTa(processedItem.kana, processedItem.group);
-            break;
-          case 'potential':
-            correctAnswer = conjugationEngine.conjugateToPotential(processedItem.kana, processedItem.group);
-            break;
-          case 'volitional':
-            correctAnswer = conjugationEngine.conjugateToVolitional(processedItem.kana, processedItem.group);
-            break;
-          default:
-            correctAnswer = processedItem.kana;
-        }
-      }
-      
-      const responseData = {
-        itemId: processedItem.id,
-        itemType: module === 'plain' ? item.item_type : module,
-        kana: cleanWordText(processedItem.kana),
-        kanji: cleanWordText(processedItem.kanji),
-        meaning: cleanWordText(processedItem.meaning),
-        targetForm,
-        correctAnswer, // 仅用于验证，前端不应显示
-        isNew: true
-      };
-      
-      // 为动词添加group字段，为形容词添加type字段
-      if (module === 'verb') {
-        if (processedItem.group) responseData.group = processedItem.group;
-      } else if (module === 'adj') {
-        if (processedItem.type) responseData.type = processedItem.type;
-      } else if (module === 'plain') {
-        if (item.item_type === 'vrb' && processedItem.group) responseData.group = processedItem.group;
-        if (item.item_type === 'adj' && processedItem.type) responseData.type = processedItem.type;
-      }
       return res.json(responseData);
     }
     
-    const review = rows[0];
-    // 处理复习题目的数据结构
-    let reviewItem, reviewItemType;
-    if (module === 'plain') {
-      reviewItemType = review.item_type; // 从 plain 表获取实际类型
-      if (review.item_type === 'vrb') {
-        reviewItem = { ...review, group: (review.type_info || '').trim() };
-      } else {
-        reviewItem = { ...review, type: (review.type_info || '').trim() };
-      }
-    } else {
-      reviewItemType = itemType;
-      reviewItem = itemType === 'adj' ? review : { ...review, group: (review.group || '').trim() };
-    }
+    // 没有到期题目，查询新题目
+    console.log('没有到期项目，随机选择一个新项目');
+    const { query: newQuery, paramOrder } = buildNewItemsQuery(module, moduleConfig.tableName, moduleConfig.itemType);
     
-    let correctAnswer;
-    if ((module === 'plain' && review.item_type === 'adj') || itemType === 'adj') {
-      correctAnswer = conjugationEngine.conjugateAdjective(reviewItem, review.form);
-    } else {
-      // 根据 targetForm 调用相应的动词变形方法
-      switch (review.form) {
-        case 'masu':
-          correctAnswer = conjugationEngine.conjugateToMasu(reviewItem.kana, reviewItem.group);
-          break;
-        case 'te':
-          correctAnswer = conjugationEngine.conjugateToTe(reviewItem.kana, reviewItem.group);
-          break;
-        case 'nai':
-          correctAnswer = conjugationEngine.conjugateToNai(reviewItem.kana, reviewItem.group);
-          break;
-        case 'ta':
-          correctAnswer = conjugationEngine.conjugateToTa(reviewItem.kana, reviewItem.group);
-          break;
-        case 'potential':
-          correctAnswer = conjugationEngine.conjugateToPotential(reviewItem.kana, reviewItem.group);
-          break;
-        case 'volitional':
-          correctAnswer = conjugationEngine.conjugateToVolitional(reviewItem.kana, reviewItem.group);
-          break;
-        case 'plain_present':
-          correctAnswer = reviewItem.kana;
-          break;
-        case 'plain_past':
-          correctAnswer = conjugationEngine.conjugateToTa(reviewItem.kana, reviewItem.group);
-          break;
-        case 'plain_negative':
-          correctAnswer = conjugationEngine.conjugateToNai(reviewItem.kana, reviewItem.group);
-          break;
-        case 'plain_past_negative':
-          const naiForm = conjugationEngine.conjugateToNai(reviewItem.kana, reviewItem.group);
-          correctAnswer = naiForm.replace(/ない$/, 'なかった');
-          break;
-        default:
-          correctAnswer = reviewItem.kana;
-      }
-    }
-    
-    // console.log(`复习题目 - ${module}:`, review.kanji || review.kana, itemType === 'adj' ? '类型:' : '分组:', itemType === 'adj' ? review.type : review.group, '目标形式:', review.form, '正确答案:', correctAnswer);
-    
-    const responseData = {
-      itemId: review.item_id || review.id, // 兼容两种情况
-      itemType: module === 'plain' ? reviewItemType : module, // 修复：plain 模块使用实际的项目类型，其他模块使用模块名
-      kana: cleanWordText(review.kana),
-      kanji: cleanWordText(review.kanji),
-      meaning: cleanWordText(review.meaning),
-      targetForm: review.form,
-      correctAnswer, // 仅用于验证，前端不应显示
-      streak: review.streak,
-      attempts: review.attempts
+    const paramMap = {
+      userId: req.user.id,
+      learningMode,
+      enabledForms,
+      itemType: moduleConfig.itemType
     };
     
-    // 为动词添加group字段，为形容词添加type字段
-     if (module === 'verb') {
-       responseData.group = reviewItem.group;
-     } else if (module === 'adj') {
-       responseData.type = reviewItem.type;
-     } else if (module === 'plain') {
-       // plain 模块根据实际类型添加相应字段
-       if (reviewItemType === 'vrb') {
-         responseData.group = reviewItem.group;
-       } else if (reviewItemType === 'adj') {
-         responseData.type = reviewItem.type;
-       }
-     }
-    // console.log('/api/next 返回数据:', responseData);
+    const newQueryParams = paramOrder.map(key => paramMap[key]);
+    
+    //console.log('SQL查询:', newQuery, '参数:', newQueryParams);
+    const { rows: newRows } = await pool.query(newQuery, newQueryParams);
+    
+    if (newRows.length === 0) {
+      return res.json({ error: '没有更多题目' });
+    }
+    
+    const newItem = newRows[0];
+    const targetForm = newItem.form;
+    
+    // 创建新的复习记录
+    const actualItemType = module === 'plain' ? newItem.item_type : moduleConfig.itemType;
+    await createReviewRecord(req.user.id, actualItemType, newItem.item_id, targetForm, learningMode);
+    
+    // 处理新题目数据
+    const processedItem = processItemData(newItem, module, moduleConfig.itemType);
+    const correctAnswer = generateCorrectAnswer(actualItemType, processedItem, targetForm);
+    const responseData = buildResponseData(processedItem, targetForm, module, correctAnswer, true);
+    
     res.json(responseData);
     
   } catch (error) {
-    // console.error('获取下一题错误:', error);
+    console.error('获取下一题错误:', error);
     res.status(500).json({ error: '获取题目失败' });
   }
 });
 
 // 提交答案
+// 标准化itemType
+function normalizeItemType(itemType) {
+  return itemType.toUpperCase() === 'VRB' || itemType.toLowerCase() === 'verb' ? 'vrb' : 
+         itemType.toUpperCase() === 'ADJ' || itemType.toLowerCase() === 'adjective' ? 'adj' : 
+         itemType.toUpperCase() === 'PLN' || itemType.toLowerCase() === 'plain' ? 'pln' : 
+         itemType.toLowerCase();
+}
+
+// 获取学习项目数据
+async function getItemData(normalizedItemType, itemId) {
+  let tableName;
+  if (normalizedItemType === 'pln') {
+    tableName = 'plain';
+  } else if (normalizedItemType === 'adj') {
+    tableName = 'adjectives';
+  } else {
+    tableName = 'verbs';
+  }
+  
+  const sql = `SELECT * FROM ${tableName} WHERE id = $1`;
+  const { rows: itemRows } = await pool.query(sql, [itemId]);
+  
+  if (itemRows.length === 0) {
+    throw new Error('题目不存在');
+  }
+  
+  return itemRows[0];
+}
+
+// 生成正确答案
+function generateCorrectAnswer(normalizedItemType, item, form) {
+  if (normalizedItemType === 'pln') {
+    if (item.item_type === 'adj') {
+      const processedItem = { ...item, type: (item.adj_type || '').trim() };
+      return conjugationEngine.conjugateAdjective(processedItem, form);
+    } else {
+      const processedItem = { ...item, group: (item.group_type || '').trim() };
+      switch (form) {
+        case 'plain_present':
+          return processedItem.kana;
+        case 'plain_past':
+          return conjugationEngine.conjugateToTa(processedItem.kana, processedItem.group);
+        case 'plain_negative':
+          return conjugationEngine.conjugateToNai(processedItem.kana, processedItem.group);
+        case 'plain_past_negative':
+          const naiForm = conjugationEngine.conjugateToNai(processedItem.kana, processedItem.group);
+          return naiForm.replace(/ない$/, 'なかった');
+        default:
+          return processedItem.kana;
+      }
+    }
+  } else if (normalizedItemType === 'adj') {
+    return conjugationEngine.conjugateAdjective(item, form);
+  } else {
+    switch (form) {
+      case 'masu':
+        return conjugationEngine.conjugateToMasu(item.kana, item.group);
+      case 'te':
+        return conjugationEngine.conjugateToTe(item.kana, item.group);
+      case 'nai':
+        return conjugationEngine.conjugateToNai(item.kana, item.group);
+      case 'ta':
+        return conjugationEngine.conjugateToTa(item.kana, item.group);
+      case 'potential':
+        return conjugationEngine.conjugateToPotential(item.kana, item.group);
+      case 'volitional':
+        return conjugationEngine.conjugateToVolitional(item.kana, item.group);
+      default:
+        return item.kana;
+    }
+  }
+}
+
+// 生成汉字版本的正确答案
+function generateKanjiAnswer(normalizedItemType, item, form) {
+  if (!item.kanji) return null;
+  
+  if (normalizedItemType === 'pln') {
+    if (item.item_type === 'adj') {
+      const processedItem = { 
+        kana: item.kana, 
+        kanji: item.kanji, 
+        type: (item.adj_type || '').trim() 
+      };
+      return conjugationEngine.conjugateAdjective(processedItem, form);
+    } else {
+      const processedItem = { ...item, group: (item.group_type || '').trim() };
+      switch (form) {
+        case 'plain_present':
+          return processedItem.kanji || processedItem.kana;
+        case 'plain_past':
+          return conjugationEngine.conjugateToTa(processedItem.kanji || processedItem.kana, processedItem.group);
+        case 'plain_negative':
+          return conjugationEngine.conjugateToNai(processedItem.kanji || processedItem.kana, processedItem.group);
+        case 'plain_past_negative':
+          const naiFormKanji = conjugationEngine.conjugateToNai(processedItem.kanji || processedItem.kana, processedItem.group);
+          return naiFormKanji.replace(/ない$/, 'なかった');
+        default:
+          return processedItem.kanji || processedItem.kana;
+      }
+    }
+  } else if (normalizedItemType === 'adj') {
+    const processedItem = {
+      kana: item.kana,
+      kanji: item.kanji,
+      type: (item.type || '').trim()
+    };
+    return conjugationEngine.conjugateAdjective(processedItem, form);
+  } else {
+    switch (form) {
+      case 'masu':
+        return conjugationEngine.conjugateToMasu(item.kanji || item.kana, item.group);
+      case 'te':
+        return conjugationEngine.conjugateToTe(item.kanji || item.kana, item.group);
+      case 'nai':
+        return conjugationEngine.conjugateToNai(item.kanji || item.kana, item.group);
+      case 'ta':
+        return conjugationEngine.conjugateToTa(item.kanji || item.kana, item.group);
+      case 'potential':
+        return conjugationEngine.conjugateToPotential(item.kanji || item.kana, item.group);
+      case 'volitional':
+        return conjugationEngine.conjugateToVolitional(item.kanji || item.kana, item.group);
+      default:
+        return item.kanji || item.kana;
+    }
+  }
+}
+
+// 验证用户答案
+function validateAnswer(mode, feedback, userAnswer, correctAnswer, item, normalizedItemType, form) {
+  if (mode === 'flashcard') {
+    return feedback === 'good' || feedback === 'easy';
+  }
+  
+  const trimmedUserAnswer = userAnswer ? userAnswer.trim() : '';
+  
+  // 基本答案匹配
+  if (trimmedUserAnswer === correctAnswer) {
+    return true;
+  }
+  
+  // 检查汉字形式的答案
+  const kanjiCorrectAnswer = generateKanjiAnswer(normalizedItemType, item, form);
+  if (kanjiCorrectAnswer && trimmedUserAnswer === kanjiCorrectAnswer) {
+    return true;
+  }
+  
+  return false;
+}
+
+// 获取复习记录
+async function getReviewRecord(userId, normalizedItemType, itemId, form, learningMode) {
+  const reviewSql = 'SELECT * FROM reviews WHERE user_id = $1 AND item_type = $2 AND item_id = $3 AND form = $4 AND learning_mode = $5';
+  const reviewParams = [userId, normalizedItemType, itemId, form, learningMode];
+  const { rows: reviewRows } = await pool.query(reviewSql, reviewParams);
+  
+  if (reviewRows.length > 0) {
+    const review = reviewRows[0];
+    return {
+      currentStreak: review.streak,
+      attempts: review.attempts,
+      correct: review.correct
+    };
+  }
+  
+  return {
+    currentStreak: 0,
+    attempts: 0,
+    correct: 0
+  };
+}
+
+// 更新复习记录
+async function updateReviewRecord(userId, normalizedItemType, itemId, form, learningMode, attempts, correct, newStreak, dueAt) {
+  const updateSql = `INSERT INTO reviews (user_id, item_type, item_id, form, learning_mode, attempts, correct, streak, due_at, last_reviewed)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
+     ON CONFLICT (user_id, item_type, item_id, form, learning_mode)
+     DO UPDATE SET attempts = $6, correct = $7, streak = $8, due_at = $9, last_reviewed = NOW()`;
+  const updateParams = [userId, normalizedItemType, itemId, form, learningMode, attempts, correct, newStreak, dueAt];
+  await pool.query(updateSql, updateParams);
+}
+
+// 更新每日学习统计
+async function updateDailyStats(userId, learningMode, normalizedItemType, isNewItem, sessionDuration) {
+  const todayDate = new Date().toISOString().split('T')[0];
+  
+  // 确保今日统计记录存在
+  const ensureStatsSQL = `
+    INSERT INTO daily_learning_stats (user_id, stat_date, learning_mode, module_type, new_items_target, new_items_completed, reviews_due, reviews_completed, total_study_time_seconds, accuracy_rate, streak_improvements)
+    VALUES ($1, $2, $3, $4, 0, 0, 0, 0, 0, 0.00, 0)
+    ON CONFLICT (user_id, stat_date, learning_mode, module_type) DO NOTHING`;
+  await pool.query(ensureStatsSQL, [userId, todayDate, learningMode, normalizedItemType]);
+  
+  // 更新统计数据
+  if (isNewItem) {
+    const updateNewSQL = `
+      UPDATE daily_learning_stats 
+      SET new_items_completed = new_items_completed + 1,
+          total_study_time_seconds = total_study_time_seconds + $5,
+          updated_at = NOW()
+      WHERE user_id = $1 AND stat_date = $2 AND learning_mode = $3 AND module_type = $4`;
+    await pool.query(updateNewSQL, [userId, todayDate, learningMode, normalizedItemType, sessionDuration || 0]);
+  } else {
+    const updateReviewSQL = `
+      UPDATE daily_learning_stats 
+      SET reviews_completed = reviews_completed + 1,
+          total_study_time_seconds = total_study_time_seconds + $5,
+          updated_at = NOW()
+      WHERE user_id = $1 AND stat_date = $2 AND learning_mode = $3 AND module_type = $4`;
+    await pool.query(updateReviewSQL, [userId, todayDate, learningMode, normalizedItemType, sessionDuration || 0]);
+  }
+}
+
+// 更新学习会话
+async function updateLearningSession(userId, normalizedItemType, learningMode, isCorrect, sessionDuration) {
+  const sessionSQL = `
+    INSERT INTO learning_sessions (user_id, module_type, learning_mode, session_date, total_questions, correct_answers, session_duration_seconds)
+    VALUES ($1, $2, $3, CURRENT_DATE, 1, $4, $5)
+    ON CONFLICT (user_id, session_date, learning_mode, module_type) 
+    DO UPDATE SET 
+      total_questions = learning_sessions.total_questions + 1,
+      correct_answers = learning_sessions.correct_answers + $4,
+      session_duration_seconds = learning_sessions.session_duration_seconds + $5,
+      ended_at = NOW()`;
+  await pool.query(sessionSQL, [userId, normalizedItemType, learningMode, isCorrect ? 1 : 0, sessionDuration || 0]);
+}
+
+// 更新用户学习偏好
+async function updateUserPreferences(userId, sessionDuration) {
+  const todayDate = new Date().toISOString().split('T')[0];
+  const updatePreferencesSQL = `
+    INSERT INTO user_learning_preferences (user_id, last_study_date, study_streak_days, total_study_time_seconds)
+    VALUES ($1, $2, 1, $3)
+    ON CONFLICT (user_id) 
+    DO UPDATE SET 
+      study_streak_days = CASE 
+        WHEN user_learning_preferences.last_study_date = $2 THEN user_learning_preferences.study_streak_days
+        WHEN user_learning_preferences.last_study_date = ($2::date - interval '1 day')::date THEN user_learning_preferences.study_streak_days + 1
+        ELSE 1
+      END,
+      last_study_date = $2,
+      total_study_time_seconds = user_learning_preferences.total_study_time_seconds + $3`;
+  await pool.query(updatePreferencesSQL, [userId, todayDate, sessionDuration || 0]);
+}
+
+// 获取解释
+function getExplanation(normalizedItemType, item, form) {
+  if (normalizedItemType === 'adj') {
+    return conjugationEngine.getExplanation(normalizedItemType, form, null, item.type);
+  } else if (normalizedItemType === 'pln') {
+    if (item.item_type === 'adj') {
+      return conjugationEngine.getExplanation('adj', form, null, item.adj_type);
+    } else {
+      return conjugationEngine.getExplanation('pln', form, (item.group_type || '').trim(), null);
+    }
+  } else {
+    const rawBase = item.kanji || item.kana;
+    const base = rawBase.replace(/\d+$/, '');
+    let groupForExplanation = item.group_type;
+    if (!groupForExplanation || groupForExplanation.trim() === '') {
+      groupForExplanation = conjugationEngine.inferVerbGroup(base);
+    } else {
+      groupForExplanation = groupForExplanation.trim();
+    }
+    return conjugationEngine.getExplanation(normalizedItemType, form, groupForExplanation, null);
+  }
+}
+
 app.post('/api/submit', authenticateUser, async (req, res) => {
   try {
     const { itemType, itemId, form, userAnswer, feedback, mode, sessionDuration } = req.body;
-    const learningMode = mode || 'quiz'; // 默认为quiz模式
-    // console.log('/api/submit 收到的数据:', { itemType, itemId, form, userAnswer, feedback, mode, sessionDuration });
+    const learningMode = mode || 'quiz';
     
-    // 标准化itemType - 处理大小写不匹配问题
-    const normalizedItemType = itemType.toUpperCase() === 'VRB' || itemType.toLowerCase() === 'verb' ? 'vrb' : 
-                               itemType.toUpperCase() === 'ADJ' || itemType.toLowerCase() === 'adjective' ? 'adj' : 
-                               itemType.toUpperCase() === 'PLN' || itemType.toLowerCase() === 'plain' ? 'pln' : 
-                               itemType.toLowerCase();
+    const normalizedItemType = normalizeItemType(itemType);
+    const item = await getItemData(normalizedItemType, itemId);
+    const correctAnswer = generateCorrectAnswer(normalizedItemType, item, form);
+    const isCorrect = validateAnswer(mode, feedback, userAnswer, correctAnswer, item, normalizedItemType, form);
     
-    let item, correctAnswer;
-    
-    // 根据 itemType 确定查询的表和逻辑
-    let tableName, sql;
-    if (normalizedItemType === 'pln') {
-      // plain 模块从 plain 表查询
-      tableName = 'plain';
-      sql = `SELECT * FROM ${tableName} WHERE id = $1`;
-    } else if (normalizedItemType === 'adj') {
-      tableName = 'adjectives';
-      sql = `SELECT * FROM ${tableName} WHERE id = $1`;
-    } else {
-      tableName = 'verbs';
-      sql = `SELECT * FROM ${tableName} WHERE id = $1`;
-    }
-    
-    // console.log('SQL查询:', sql, '参数:', [itemId]);
-    const { rows: itemRows } = await pool.query(sql, [itemId]);
-    
-    if (itemRows.length === 0) {
-      return res.status(404).json({ error: '题目不存在' });
-    }
-    
-    item = itemRows[0]; 
-    
-    // 生成正确答案
-    if (normalizedItemType === 'pln') {
-      // plain 模块根据实际的 item_type 决定变位方式
-      if (item.item_type === 'adj') {
-        // 处理形容词数据结构
-        const processedItem = { ...item, type: (item.adj_type || '').trim() };
-        correctAnswer = conjugationEngine.conjugateAdjective(processedItem, form);
-      } else {
-        // 处理动词数据结构
-        const processedItem = { ...item, group: (item.group_type || '').trim() };
-        // 根据form调用相应的动词变形方法
-        switch (form) {
-          case 'plain_present':
-            correctAnswer = processedItem.kana;
-            break;
-          case 'plain_past':
-            correctAnswer = conjugationEngine.conjugateToTa(processedItem.kana, processedItem.group);
-            break;
-          case 'plain_negative':
-            correctAnswer = conjugationEngine.conjugateToNai(processedItem.kana, processedItem.group);
-            break;
-          case 'plain_past_negative':
-            const naiForm = conjugationEngine.conjugateToNai(processedItem.kana, processedItem.group);
-            correctAnswer = naiForm.replace(/ない$/, 'なかった');
-            break;
-          default:
-            correctAnswer = processedItem.kana;
-        }
-      }
-    } else if (normalizedItemType === 'adj') {
-      correctAnswer = conjugationEngine.conjugateAdjective(item, form);
-    } else {
-      // 动词处理 - 根据form调用相应的变形方法
-      switch (form) {
-        case 'masu':
-          correctAnswer = conjugationEngine.conjugateToMasu(item.kana, item.group);
-          break;
-        case 'te':
-          correctAnswer = conjugationEngine.conjugateToTe(item.kana, item.group);
-          break;
-        case 'nai':
-          correctAnswer = conjugationEngine.conjugateToNai(item.kana, item.group);
-          break;
-        case 'ta':
-          correctAnswer = conjugationEngine.conjugateToTa(item.kana, item.group);
-          break;
-        case 'potential':
-          correctAnswer = conjugationEngine.conjugateToPotential(item.kana, item.group);
-          break;
-        case 'volitional':
-          correctAnswer = conjugationEngine.conjugateToVolitional(item.kana, item.group);
-          break;
-        default:
-          correctAnswer = item.kana;
-      }
-    }
-    
-    // 闪卡模式不需要userAnswer，直接根据feedback判断
-    let isCorrect;
-    if (mode === 'flashcard') {
-      // 闪卡模式根据用户反馈判断
-      isCorrect = feedback === 'good' || feedback === 'easy';
-    } else {
-      // 测验模式根据答案判断 - 支持汉字和平假名两种形式
-      const trimmedUserAnswer = userAnswer ? userAnswer.trim() : '';
-      
-      // 基本答案匹配
-      isCorrect = trimmedUserAnswer === correctAnswer;
-      
-      // 如果基本匹配失败，检查是否有汉字形式的答案
-      if (!isCorrect && item && item.kanji) {
-        // 生成汉字版本的正确答案
-        let kanjiCorrectAnswer;
-        
-        if (normalizedItemType === 'pln') {
-          if (item.item_type === 'adj') {
-            // 形容词的汉字变形 - 确保传递汉字信息
-            const processedItem = { 
-              kana: item.kana, 
-              kanji: item.kanji, 
-              type: (item.adj_type || '').trim() 
-            };
-            kanjiCorrectAnswer = conjugationEngine.conjugateAdjective(processedItem, form);
-          } else {
-            // 动词的汉字变形
-            const processedItem = { ...item, group: (item.group_type || '').trim() };
-            switch (form) {
-              case 'plain_present':
-                kanjiCorrectAnswer = processedItem.kanji || processedItem.kana;
-                break;
-              case 'plain_past':
-                kanjiCorrectAnswer = conjugationEngine.conjugateToTa(processedItem.kanji || processedItem.kana, processedItem.group);
-                break;
-              case 'plain_negative':
-                kanjiCorrectAnswer = conjugationEngine.conjugateToNai(processedItem.kanji || processedItem.kana, processedItem.group);
-                break;
-              case 'plain_past_negative':
-                const naiFormKanji = conjugationEngine.conjugateToNai(processedItem.kanji || processedItem.kana, processedItem.group);
-                kanjiCorrectAnswer = naiFormKanji.replace(/ない$/, 'なかった');
-                break;
-              default:
-                kanjiCorrectAnswer = processedItem.kanji || processedItem.kana;
-            }
-          }
-        } else if (normalizedItemType === 'adj') {
-          // 普通形容词的汉字变形 - 确保传递汉字信息
-          const processedItem = {
-            kana: item.kana,
-            kanji: item.kanji,
-            type: (item.type || '').trim()
-          };
-          kanjiCorrectAnswer = conjugationEngine.conjugateAdjective(processedItem, form);
-        } else {
-          // 动词处理 - 使用汉字形式
-          switch (form) {
-            case 'masu':
-              kanjiCorrectAnswer = conjugationEngine.conjugateToMasu(item.kanji || item.kana, item.group);
-              break;
-            case 'te':
-              kanjiCorrectAnswer = conjugationEngine.conjugateToTe(item.kanji || item.kana, item.group);
-              break;
-            case 'nai':
-              kanjiCorrectAnswer = conjugationEngine.conjugateToNai(item.kanji || item.kana, item.group);
-              break;
-            case 'ta':
-              kanjiCorrectAnswer = conjugationEngine.conjugateToTa(item.kanji || item.kana, item.group);
-              break;
-            case 'potential':
-              kanjiCorrectAnswer = conjugationEngine.conjugateToPotential(item.kanji || item.kana, item.group);
-              break;
-            case 'volitional':
-              kanjiCorrectAnswer = conjugationEngine.conjugateToVolitional(item.kanji || item.kana, item.group);
-              break;
-            default:
-              kanjiCorrectAnswer = item.kanji || item.kana;
-          }
-        }
-        
-        // 检查用户答案是否匹配汉字版本
-        if (kanjiCorrectAnswer && trimmedUserAnswer === kanjiCorrectAnswer) {
-          isCorrect = true;
-        }
-      }
-    }
-    
-    let currentStreak = 0;
-    let attempts = 0;
-    let correct = 0;
-    
-    const reviewSql = 'SELECT * FROM reviews WHERE user_id = $1 AND item_type = $2 AND item_id = $3 AND form = $4 AND learning_mode = $5';
-    const reviewParams = [req.user.id, normalizedItemType, itemId, form, learningMode];
-    // console.log('SQL查询:', reviewSql, '参数:', reviewParams);
-    const { rows: reviewRows } = await pool.query(reviewSql, reviewParams);
-    
-    if (reviewRows.length > 0) {
-      const review = reviewRows[0];
-      currentStreak = review.streak;
-      attempts = review.attempts;
-      correct = review.correct;
-    }
+    const { currentStreak, attempts, correct } = await getReviewRecord(req.user.id, normalizedItemType, itemId, form, learningMode);
     
     // 更新统计
-    attempts++;
-    if (isCorrect) correct++;
+    const newAttempts = attempts + 1;
+    const newCorrect = correct + (isCorrect ? 1 : 0);
     
     // 计算新的间隔和到期时间
     const finalFeedback = feedback || (isCorrect ? 'good' : 'again');
     const { newStreak, dueAt } = srsAlgorithm.calculateNextDue(currentStreak, finalFeedback);
     
     // 更新复习记录
-    const updateSql = `INSERT INTO reviews (user_id, item_type, item_id, form, learning_mode, attempts, correct, streak, due_at, last_reviewed)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
-       ON CONFLICT (user_id, item_type, item_id, form, learning_mode)
-       DO UPDATE SET attempts = $6, correct = $7, streak = $8, due_at = $9, last_reviewed = NOW()`;
-    const updateParams = [req.user.id, normalizedItemType, itemId, form, learningMode, attempts, correct, newStreak, dueAt];
-    // console.log('SQL更新:', updateSql, '参数:', updateParams);
-    await pool.query(updateSql, updateParams);
+    await updateReviewRecord(req.user.id, normalizedItemType, itemId, form, learningMode, newAttempts, newCorrect, newStreak, dueAt);
     
-    // 更新每日学习统计
-    const isNewItem = attempts === 1; // 如果是第一次尝试，则为新学习项目
-    const todayDate = new Date().toISOString().split('T')[0];
+    // 更新各种统计
+    const isNewItem = attempts === 0;
+    await updateDailyStats(req.user.id, learningMode, normalizedItemType, isNewItem, sessionDuration);
+    await updateLearningSession(req.user.id, normalizedItemType, learningMode, isCorrect, sessionDuration);
+    await updateUserPreferences(req.user.id, sessionDuration);
     
-    // 确保今日统计记录存在
-    const ensureStatsSQL = `
-      INSERT INTO daily_learning_stats (user_id, stat_date, learning_mode, module_type, new_items_target, new_items_completed, reviews_due, reviews_completed, total_study_time_seconds, accuracy_rate, streak_improvements)
-      VALUES ($1, $2, $3, $4, 0, 0, 0, 0, 0, 0.00, 0)
-      ON CONFLICT (user_id, stat_date, learning_mode, module_type) DO NOTHING`;
-    await pool.query(ensureStatsSQL, [req.user.id, todayDate, learningMode, normalizedItemType]);
-    
-    // 更新统计数据
-    if (isNewItem) {
-      // 新学习项目（无论对错都要记录）
-      const updateNewSQL = `
-        UPDATE daily_learning_stats 
-        SET new_items_completed = new_items_completed + 1,
-            total_study_time_seconds = total_study_time_seconds + $5,
-            updated_at = NOW()
-        WHERE user_id = $1 AND stat_date = $2 AND learning_mode = $3 AND module_type = $4`;
-      await pool.query(updateNewSQL, [req.user.id, todayDate, learningMode, normalizedItemType, sessionDuration || 0]);
-    } else {
-      // 复习项目
-      const updateReviewSQL = `
-        UPDATE daily_learning_stats 
-        SET reviews_completed = reviews_completed + 1,
-            total_study_time_seconds = total_study_time_seconds + $5,
-            updated_at = NOW()
-        WHERE user_id = $1 AND stat_date = $2 AND learning_mode = $3 AND module_type = $4`;
-      await pool.query(updateReviewSQL, [req.user.id, todayDate, learningMode, normalizedItemType, sessionDuration || 0]);
-    }
-    
-    // 记录学习会话 - 使用正确的表结构
-    const sessionSQL = `
-      INSERT INTO learning_sessions (user_id, module_type, learning_mode, session_date, total_questions, correct_answers, session_duration_seconds)
-      VALUES ($1, $2, $3, CURRENT_DATE, 1, $4, $5)
-      ON CONFLICT (user_id, session_date, learning_mode, module_type) 
-      DO UPDATE SET 
-        total_questions = learning_sessions.total_questions + 1,
-        correct_answers = learning_sessions.correct_answers + $4,
-        session_duration_seconds = GREATEST(learning_sessions.session_duration_seconds, $5),
-        ended_at = NOW()`;
-    await pool.query(sessionSQL, [req.user.id, normalizedItemType, learningMode, isCorrect ? 1 : 0, sessionDuration || 0]);
-    
-    // 更新用户学习偏好和连击天数
-    const updatePreferencesSQL = `
-      INSERT INTO user_learning_preferences (user_id, last_study_date, study_streak_days, total_study_time_seconds)
-      VALUES ($1, $2, 1, $3)
-      ON CONFLICT (user_id) 
-      DO UPDATE SET 
-        study_streak_days = CASE 
-          WHEN user_learning_preferences.last_study_date = $2 THEN user_learning_preferences.study_streak_days
-          WHEN user_learning_preferences.last_study_date = ($2::date - interval '1 day')::date THEN user_learning_preferences.study_streak_days + 1
-          ELSE 1
-        END,
-        last_study_date = $2,
-        total_study_time_seconds = user_learning_preferences.total_study_time_seconds + $3`;
-    await pool.query(updatePreferencesSQL, [req.user.id, todayDate, sessionDuration || 0]);
-    
-    // 获取解释
-    let explanation;
-    if (normalizedItemType === 'adj') {
-      explanation = conjugationEngine.getExplanation(normalizedItemType, form, null, item.type);
-    } else if (normalizedItemType === 'pln') {
-      // plain模块根据实际item_type决定解释
-      if (item.item_type === 'adj') {
-        explanation = conjugationEngine.getExplanation('adj', form, null, item.adj_type);
-      } else {
-        explanation = conjugationEngine.getExplanation('pln', form, (item.group_type || '').trim(), null);
-      }
-    } else {
-      // 动词 - 如果group_type缺失，使用推断的类型
-      const rawBase = item.kanji || item.kana;
-      const base = rawBase.replace(/\d+$/, ''); // 去掉末尾的数字
-      let groupForExplanation = item.group_type;
-      if (!groupForExplanation || groupForExplanation.trim() === '') {
-        groupForExplanation = conjugationEngine.inferVerbGroup(base);
-      } else {
-        groupForExplanation = groupForExplanation.trim(); // 修复：去除多余空格
-      }
-      explanation = conjugationEngine.getExplanation(normalizedItemType, form, groupForExplanation, null);
-    }
+    const explanation = getExplanation(normalizedItemType, item, form);
     
     res.json({
       correct: isCorrect,
@@ -1299,7 +1352,9 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
     });
     
   } catch (error) {
-    // console.error('提交答案错误:', error);
+    if (error.message === '题目不存在') {
+      return res.status(404).json({ error: error.message });
+    }
     res.status(500).json({ error: '提交答案失败' });
   }
 });

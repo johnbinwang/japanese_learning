@@ -19,6 +19,7 @@ const state = {
     isFlashcardFlipped: false,
     // 学习时间计时器
     sessionStartTime: null,
+    questionStartTime: null,
     totalSessionTime: 0
 };
 
@@ -636,6 +637,7 @@ class LearningManager {
             
             // 记录学习会话开始时间
             state.sessionStartTime = new Date();
+            state.questionStartTime = null; // 将在displayQuestion中设置
             state.totalSessionTime = 0;
             
             // 将选择的变形类型同步到设置中
@@ -666,6 +668,9 @@ class LearningManager {
         const q = state.currentQuestion;
         if (!q) return;
         
+        // 记录当前题目开始时间
+        state.questionStartTime = new Date();
+        
         // 清理单词文本，去掉末尾的数字
         const cleanKanji = this.cleanWordText(q.kanji);
         const cleanKana = this.cleanWordText(q.kana);
@@ -688,6 +693,9 @@ class LearningManager {
         document.getElementById('result-section').style.display = 'none';
         document.getElementById('card-back').style.display = 'none';
         document.getElementById('card-front').style.display = 'block';
+        
+        // 重置闪卡翻转状态
+        state.isFlashcardFlipped = false;
     }
     
     // 清理单词文本，去掉末尾的数字
@@ -723,12 +731,13 @@ class LearningManager {
             return;
         }
         
-        // 计算学习时长
+        // 计算单题学习时长
         let sessionDuration = 0;
-        if (state.sessionStartTime) {
+        if (state.questionStartTime) {
             const currentTime = new Date();
-            sessionDuration = Math.floor((currentTime - state.sessionStartTime) / 1000); // 转换为秒
-            state.totalSessionTime = sessionDuration;
+            sessionDuration = Math.floor((currentTime - state.questionStartTime) / 1000); // 转换为秒
+            // 限制单题时间在合理范围内（最少1秒，最多300秒）
+            sessionDuration = Math.max(1, Math.min(sessionDuration, 300));
         }
         
         try {
@@ -1191,12 +1200,13 @@ class LearningManager {
     }
     
     async submitFlashcardFeedback(feedback) {
-        // 计算学习时长
+        // 计算单题学习时长
         let sessionDuration = 0;
-        if (state.sessionStartTime) {
+        if (state.questionStartTime) {
             const currentTime = new Date();
-            sessionDuration = Math.floor((currentTime - state.sessionStartTime) / 1000); // 转换为秒
-            state.totalSessionTime = sessionDuration;
+            sessionDuration = Math.floor((currentTime - state.questionStartTime) / 1000); // 转换为秒
+            // 限制单题时间在合理范围内（最少1秒，最多300秒）
+            sessionDuration = Math.max(1, Math.min(sessionDuration, 300));
         }
         
         try {
@@ -1416,7 +1426,12 @@ function updateTodayOverview(data) {
     const totalDueCount = Object.values(dueReviews).reduce((sum, count) => sum + count, 0);
     const studyTimeTodayEl = document.getElementById('study-time-today');
     if (studyTimeTodayEl) {
-        studyTimeTodayEl.textContent = `${Math.round(overview.total_study_time_today / 60) || 0}分钟`;
+        const totalSeconds = overview.total_study_time_today || 0;
+        if (totalSeconds < 60) {
+            studyTimeTodayEl.textContent = `${totalSeconds}秒`;
+        } else {
+            studyTimeTodayEl.textContent = `${Math.round(totalSeconds / 60)}分钟`;
+        }
     }
     const studyStreakEl = document.getElementById('study-streak');
     if (studyStreakEl) {
