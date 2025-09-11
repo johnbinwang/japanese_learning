@@ -155,7 +155,30 @@ const conjugationEngine = {
       return stem + (aRow[lastChar] || 'わ') + 'ない';
     } else if (normalizedGroup === 'II') {
       return verb.slice(0, -1) + 'ない';
+    } else if (normalizedGroup === 'III' || normalizedGroup === 'IRR') {
+      // 不规则动词特殊处理
+      if (verb === 'する') return 'しない';
+      if (verb === '来る' || verb === 'くる') return 'こない';
+      if (verb === '行く' || verb === 'いく') return 'いかない';
+      // 如果是其他不规则动词但没有特殊规则，尝试基本变形
+      return verb + 'ない';
     }
+    
+    // 防护措施：检查是否是形容词被错误分类
+    if (verb.endsWith('い')) {
+      // 排除明确的动词形式
+      const verbExceptions = ['立つ', '待つ', '持つ', '打つ', '勝つ', '死ぬ', '呼ぶ', '遊ぶ', '結ぶ', '読む', '住む', '泳ぐ', '働く', '歩く', '書く', '聞く'];
+      const isDefinitelyVerb = verb.endsWith('る') || verb.endsWith('う') || verb.endsWith('く') || verb.endsWith('ぐ') || 
+                              verb.endsWith('す') || verb.endsWith('つ') || verb.endsWith('ぬ') || verb.endsWith('ぶ') || 
+                              verb.endsWith('む') || verbExceptions.includes(verb);
+      
+      if (!isDefinitelyVerb) {
+        // 可能是i形容词，使用i形容词变形规则
+        if (verb === 'いい') return 'よくない';
+        return verb.slice(0, -1) + 'くない';
+      }
+    }
+    
     return verb + 'ない';
   },
   
@@ -246,7 +269,7 @@ const conjugationEngine = {
   },
   
   conjugateNaAdjective(adj, form) {
-    const base = adj.replace(/な$/, '').replace(/だ$/, '');
+    const base = adj.replace(/な$/, '').replace(/だ$/, '').replace(/の$/, '').replace(/である$/, '');
     
     switch (form) {
       case 'negative':
@@ -803,32 +826,6 @@ function buildNewItemsQuery(module, tableName, itemType) {
  * @param {string} itemType - 项目类型
  * @returns {string} 正确答案
  */
-function generateCorrectAnswer(item, targetForm, module, itemType) {
-  const isAdjective = (module === 'plain' && item.item_type === 'adj') || itemType === 'adj';
-  
-  if (isAdjective) {
-    return conjugationEngine.conjugateAdjective(item, targetForm);
-  }
-  
-  // 动词变形映射
-  const verbConjugations = {
-    masu: () => conjugationEngine.conjugateToMasu(item.kana, item.group),
-    te: () => conjugationEngine.conjugateToTe(item.kana, item.group),
-    nai: () => conjugationEngine.conjugateToNai(item.kana, item.group),
-    ta: () => conjugationEngine.conjugateToTa(item.kana, item.group),
-    potential: () => conjugationEngine.conjugateToPotential(item.kana, item.group),
-    volitional: () => conjugationEngine.conjugateToVolitional(item.kana, item.group),
-    plain_present: () => item.kana,
-    plain_past: () => conjugationEngine.conjugateToTa(item.kana, item.group),
-    plain_negative: () => conjugationEngine.conjugateToNai(item.kana, item.group),
-    plain_past_negative: () => {
-      const naiForm = conjugationEngine.conjugateToNai(item.kana, item.group);
-      return naiForm.replace(/ない$/, 'なかった');
-    }
-  };
-  
-  return verbConjugations[targetForm] ? verbConjugations[targetForm]() : item.kana;
-}
 
 /**
  * 处理项目数据结构
@@ -843,7 +840,8 @@ function processItemData(item, module, itemType) {
       id: item.item_id,
       kana: item.kana,
       kanji: item.kanji,
-      meaning: item.meaning
+      meaning: item.meaning,
+      item_type: item.item_type  // 保留原始的item_type
     };
     
     if (item.item_type === 'vrb') {
@@ -973,8 +971,8 @@ app.get('/api/next', authenticateUser, async (req, res) => {
       finalQuery += ' AND r.due_at <= NOW()';
     }
     
-    // 修改排序逻辑：优先随机，然后按到期时间和连续次数排序
-    finalQuery += ' ORDER BY RANDOM(), r.due_at ASC, r.streak ASC LIMIT 1';
+    // 修改排序逻辑：优先到期时间为空的项目，然后完全随机选择
+    finalQuery += ' ORDER BY CASE WHEN r.due_at IS NULL THEN 0 ELSE 1 END, RANDOM() LIMIT 1';
     
     //console.log('SQL查询:', finalQuery, '参数:', queryParams) ;
     const result = await pool.query(finalQuery, queryParams);
@@ -997,7 +995,8 @@ app.get('/api/next', authenticateUser, async (req, res) => {
           : { ...review, group: (review.group || '').trim() };
       }
       
-      const correctAnswer = generateCorrectAnswer(reviewItemType, reviewItem, review.form);
+      const normalizedItemTypeForGeneration = module === 'plain' ? 'pln' : reviewItemType;
+      const correctAnswer = generateCorrectAnswer(normalizedItemTypeForGeneration, reviewItem, review.form);
       const responseData = buildResponseData(reviewItem, review.form, module, correctAnswer, false, review);
       
       return res.json(responseData);
@@ -1032,7 +1031,8 @@ app.get('/api/next', authenticateUser, async (req, res) => {
     
     // 处理新题目数据
     const processedItem = processItemData(newItem, module, moduleConfig.itemType);
-    const correctAnswer = generateCorrectAnswer(actualItemType, processedItem, targetForm);
+    const normalizedItemTypeForGeneration = module === 'plain' ? 'pln' : actualItemType;
+    const correctAnswer = generateCorrectAnswer(normalizedItemTypeForGeneration, processedItem, targetForm);
     const responseData = buildResponseData(processedItem, targetForm, module, correctAnswer, true);
     
     res.json(responseData);
@@ -1077,10 +1077,10 @@ async function getItemData(normalizedItemType, itemId) {
 function generateCorrectAnswer(normalizedItemType, item, form) {
   if (normalizedItemType === 'pln') {
     if (item.item_type === 'adj') {
-      const processedItem = { ...item, type: (item.adj_type || '').trim() };
+      const processedItem = { ...item, type: (item.adj_type || item.type || item.type_info || '').trim() };
       return conjugationEngine.conjugateAdjective(processedItem, form);
     } else {
-      const processedItem = { ...item, group: (item.group_type || '').trim() };
+      const processedItem = { ...item, group: (item.group || item.group_type || item.type_info || '').trim() };
       switch (form) {
         case 'plain_present':
           return processedItem.kana;
@@ -1126,11 +1126,11 @@ function generateKanjiAnswer(normalizedItemType, item, form) {
       const processedItem = { 
         kana: item.kana, 
         kanji: item.kanji, 
-        type: (item.adj_type || '').trim() 
+        type: (item.adj_type || item.type || item.type_info || '').trim() 
       };
       return conjugationEngine.conjugateAdjective(processedItem, form);
     } else {
-      const processedItem = { ...item, group: (item.group_type || '').trim() };
+      const processedItem = { ...item, group: (item.group || item.group_type || item.type_info || '').trim() };
       switch (form) {
         case 'plain_present':
           return processedItem.kanji || processedItem.kana;
@@ -1189,6 +1189,80 @@ function validateAnswer(mode, feedback, userAnswer, correctAnswer, item, normali
   const kanjiCorrectAnswer = generateKanjiAnswer(normalizedItemType, item, form);
   if (kanjiCorrectAnswer && trimmedUserAnswer === kanjiCorrectAnswer) {
     return true;
+  }
+  
+  // 对于复合动词（如「バスにのる」），也接受只变形动词部分的答案
+  if (normalizedItemType === 'pln' && item.item_type !== 'adj') {
+    const kana = item.kana || '';
+    const kanji = item.kanji || '';
+    
+    // 检查是否为复合动词（包含助词「に」、「を」、「で」等）
+    const hasParticle = /[にをでへとから]/.test(kana);
+    
+    if (hasParticle) {
+      // 提取动词部分（最后一个动词）
+      const kanaVerbMatch = kana.match(/([^にをでへとから]+)$/);
+      const kanjiVerbMatch = kanji.match(/([^にをでへとから]+)$/);
+      
+      if (kanaVerbMatch) {
+        const verbKana = kanaVerbMatch[1];
+        const processedItem = { ...item, group: (item.group || item.group_type || item.type_info || '').trim() };
+        
+        // 生成只变形动词部分的答案（假名形式）
+        let verbOnlyAnswer = '';
+        switch (form) {
+          case 'plain_present':
+            verbOnlyAnswer = verbKana;
+            break;
+          case 'plain_past':
+            verbOnlyAnswer = conjugationEngine.conjugateToTa(verbKana, processedItem.group);
+            break;
+          case 'plain_negative':
+            verbOnlyAnswer = conjugationEngine.conjugateToNai(verbKana, processedItem.group);
+            break;
+          case 'plain_past_negative':
+            const naiForm = conjugationEngine.conjugateToNai(verbKana, processedItem.group);
+            verbOnlyAnswer = naiForm.replace(/ない$/, 'なかった');
+            break;
+          default:
+            verbOnlyAnswer = verbKana;
+        }
+        
+        if (trimmedUserAnswer === verbOnlyAnswer) {
+          return true;
+        }
+      }
+      
+      // 如果有汉字形式，也检查汉字动词部分
+      if (kanjiVerbMatch) {
+        const verbKanji = kanjiVerbMatch[1];
+        const processedItem = { ...item, group: (item.group || item.group_type || item.type_info || '').trim() };
+        
+        // 生成只变形动词部分的答案（汉字形式）
+        let verbOnlyKanjiAnswer = '';
+        switch (form) {
+          case 'plain_present':
+            verbOnlyKanjiAnswer = verbKanji;
+            break;
+          case 'plain_past':
+            verbOnlyKanjiAnswer = conjugationEngine.conjugateToTa(verbKanji, processedItem.group);
+            break;
+          case 'plain_negative':
+            verbOnlyKanjiAnswer = conjugationEngine.conjugateToNai(verbKanji, processedItem.group);
+            break;
+          case 'plain_past_negative':
+            const naiFormKanji = conjugationEngine.conjugateToNai(verbKanji, processedItem.group);
+            verbOnlyKanjiAnswer = naiFormKanji.replace(/ない$/, 'なかった');
+            break;
+          default:
+            verbOnlyKanjiAnswer = verbKanji;
+        }
+        
+        if (trimmedUserAnswer === verbOnlyKanjiAnswer) {
+          return true;
+        }
+      }
+    }
   }
   
   return false;
