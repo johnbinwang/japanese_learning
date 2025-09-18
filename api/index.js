@@ -30,6 +30,31 @@ app.use('/api/auth', authRoutes);
 
 // 动词变形引擎
 const conjugationEngine = {
+  // 规范化群组格式，将各种可能的格式统一为标准格式
+  normalizeGroup(group) {
+    if (!group) return '';
+
+    const cleaned = (group || '').toString().replace(/\s+/g, '').toUpperCase();
+
+    // 将各种I类动词的表示方式统一为 'I'
+    if (['I', '1', 'TYPE1', 'TYPEI', 'GROUP_I', 'GROUP1', 'GROUPI', 'CLASS_I', 'CLASS1', 'CLASSI', 'VERB1', 'VERBI'].includes(cleaned)) {
+      return 'I';
+    }
+
+    // 将各种II类动词的表示方式统一为 'II'
+    if (['II', '2', 'TYPE2', 'TYPEII', 'GROUP_II', 'GROUP2', 'GROUPII', 'CLASS_II', 'CLASS2', 'CLASSII', 'VERB2', 'VERBII'].includes(cleaned)) {
+      return 'II';
+    }
+
+    // 将各种不规则动词的表示方式统一为 'IRR'
+    if (['IRR', 'IRREGULAR', 'III', '3', 'TYPE3', 'TYPEIII', 'GROUP_III', 'GROUP3', 'GROUPIII', 'CLASS_III', 'CLASS3', 'CLASSIII', 'VERB3', 'VERBIII'].includes(cleaned)) {
+      return 'IRR';
+    }
+
+    // 如果无法识别，返回原值
+    return cleaned;
+  },
+
   conjugateVerb(verb, group) {
     // 这个函数专门处理 nai 形式
     // 参数验证：确保verb是字符串
@@ -62,8 +87,8 @@ const conjugationEngine = {
       return verb.slice(0, -2) + 'します';
     }
     
-    // 确保group参数去除所有空格
-    const normalizedGroup = (group || '').replace(/\s+/g, '');
+    // 确保group参数去除所有空格并规范化
+    const normalizedGroup = this.normalizeGroup(group);
     
     if (normalizedGroup === 'I') {
       const stem = verb.slice(0, -1);
@@ -81,12 +106,12 @@ const conjugationEngine = {
     if (verb.endsWith('する')) {
       return verb.slice(0, -2) + 'して';
     }
-    
+
     if (verb === '来る' || verb === 'くる') return 'きて';
-    
-    // 确保group参数去除所有空格
-    const normalizedGroup = (group || '').replace(/\s+/g, '');
-    
+
+    // 确保group参数去除所有空格并规范化
+    const normalizedGroup = this.normalizeGroup(group);
+
     if (normalizedGroup === 'I') {
       const stem = verb.slice(0, -1);
       const lastChar = verb.slice(-1);
@@ -114,15 +139,82 @@ const conjugationEngine = {
         return verb.slice(0, -2) + 'して';
       }
     }
-    return verb + 'て';
+
+    // 智能fallback：当群组未被识别时，根据动词词尾推断变位规则
+    return this.intelligentTeConjugation(verb);
+  },
+
+  // 智能变位：根据动词词尾推断正确的te形变位
+  intelligentTeConjugation(verb) {
+    // 处理复合动词（名词+する）
+    if (verb.endsWith('する')) {
+      return verb.slice(0, -2) + 'して';
+    }
+
+    // 特殊不规则动词
+    if (verb === '来る' || verb === 'くる') return 'きて';
+    if (verb === '行く' || verb === 'いく') return 'いって';
+    if (verb === 'する') return 'して';
+
+    const lastChar = verb.slice(-1);
+    const stem = verb.slice(0, -1);
+
+    // 根据词尾推断动词类型并应用相应规则
+    if (lastChar === 'る') {
+      // る结尾的动词可能是I类或II类
+      // 启发式：如果倒数第二个字符是い或え段，通常是II类
+      const secondLastChar = verb.slice(-2, -1);
+      const iRow = ['い', 'き', 'ぎ', 'し', 'じ', 'ち', 'に', 'ひ', 'び', 'ぴ', 'み', 'り'];
+      const eRow = ['え', 'け', 'げ', 'せ', 'ぜ', 'て', 'で', 'ね', 'へ', 'べ', 'ぺ', 'め', 'れ'];
+
+      // 检查已知的II类动词模式和特定动词
+      const knownIIClassPatterns = [
+        'べる', 'める', 'ける', 'せる', 'てる', 'ねる', 'へる', 'れる', 'げる', 'ぜる', 'でる', 'ぺる',
+        'びる', 'みる', 'きる', 'しる', 'ちる', 'にる', 'ひる', 'りる', 'ぎる', 'じる', 'ぢる', 'ぴる'
+      ];
+
+      // 已知II类动词（包括汉字动词）
+      const knownIIClassVerbs = [
+        '見る', '食べる', '寝る', '起きる', '着る', '降りる', '借りる', '受ける', '答える', '考える',
+        '教える', '覚える', '忘れる', '出る', '入れる', '捨てる', '疲れる', '慣れる', '生まれる'
+      ];
+
+      // 检查动词的最后两个字符是否匹配已知的II类模式，或者是已知的II类动词
+      const lastTwoChars = verb.slice(-2);
+      const matchesIIPattern = knownIIClassPatterns.includes(lastTwoChars) || knownIIClassVerbs.includes(verb);
+
+      if (iRow.includes(secondLastChar) || eRow.includes(secondLastChar) || matchesIIPattern) {
+        // 可能是II类动词
+        return stem + 'て';
+      } else {
+        // 可能是I类る动词
+        return stem + 'って';
+      }
+    } else {
+      // 非る结尾的动词，按I类动词规则处理
+      if (lastChar === 'く') {
+        return stem + 'いて';
+      } else if (lastChar === 'ぐ') {
+        return stem + 'いで';
+      } else if (lastChar === 'す') {
+        return stem + 'して';
+      } else if (['つ', 'う'].includes(lastChar)) {
+        return stem + 'って';
+      } else if (['ぬ', 'ぶ', 'む'].includes(lastChar)) {
+        return stem + 'んで';
+      }
+    }
+
+    // 最终fallback
+    return stem + 'って';
   },
   
   conjugateToTa(verb, group) {
     if (verb === 'する') return 'した';
     if (verb === '来る' || verb === 'くる') return 'きた';
     
-      // 确保group参数去除所有空格
-    const normalizedGroup = (group || '').replace(/\s+/g, '');
+      // 确保group参数去除所有空格并规范化
+    const normalizedGroup = this.normalizeGroup(group);
     
     // 特殊处理：确保II类动词正确变形
     if (normalizedGroup === 'II') {
@@ -145,8 +237,8 @@ const conjugationEngine = {
       return verb.slice(0, -2) + 'しない';
     }
     
-    // 确保group参数去除所有空格
-    const normalizedGroup = (group || '').replace(/\s+/g, '');
+    // 确保group参数去除所有空格并规范化
+    const normalizedGroup = this.normalizeGroup(group);
     
     if (normalizedGroup === 'I') {
       const stem = verb.slice(0, -1);
@@ -192,7 +284,7 @@ const conjugationEngine = {
     }
     
     // 确保group参数去除所有空格
-     const normalizedGroup = (group || '').replace(/\s+/g, '');
+     const normalizedGroup = this.normalizeGroup(group);
     
     if (normalizedGroup === 'I') {
       const stem = verb.slice(0, -1);
@@ -215,7 +307,7 @@ const conjugationEngine = {
     }
     
     // 确保group参数去除所有空格
-     const normalizedGroup = (group || '').replace(/\s+/g, '');
+     const normalizedGroup = this.normalizeGroup(group);
     
     if (normalizedGroup === 'I') {
       const stem = verb.slice(0, -1);
@@ -847,7 +939,12 @@ function processItemData(item, module, itemType) {
     if (item.item_type === 'vrb') {
       return { ...baseItem, group: (item.group_type || '').trim() };
     } else {
-      return { ...baseItem, type: (item.adj_type || '').trim() };
+      // 确保形容词类型不为空
+      const adjType = (item.adj_type || '').trim();
+      if (!adjType) {
+        console.warn('形容词类型为空:', item);
+      }
+      return { ...baseItem, type: adjType };
     }
   }
   
@@ -897,12 +994,18 @@ function buildResponseData(item, targetForm, module, correctAnswer, isNew = fals
     responseData.group = item.group;
   } else if (module === 'adj' && item.type) {
     responseData.type = item.type;
+    if (!item.type || item.type.trim() === '') {
+      console.warn('形容词响应数据中type为空:', item);
+    }
   } else if (module === 'plain') {
     const actualType = item.item_type || reviewData?.item_type;
     if (actualType === 'vrb' && item.group) {
       responseData.group = item.group;
     } else if (actualType === 'adj' && item.type) {
       responseData.type = item.type;
+      if (!item.type || item.type.trim() === '') {
+        console.warn('简体形容词响应数据中type为空:', item);
+      }
     }
   }
   
@@ -1390,6 +1493,15 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
   try {
     const { itemType, itemId, form, userAnswer, feedback, mode, sessionDuration } = req.body;
     const learningMode = mode || 'quiz';
+
+    // 验证和限制sessionDuration（防止异常的时间值）
+    let validatedSessionDuration = parseInt(sessionDuration) || 0;
+    if (validatedSessionDuration < 0) {
+      validatedSessionDuration = 0;
+    } else if (validatedSessionDuration > 300) {
+      console.warn(`异常的sessionDuration值: ${sessionDuration}秒，限制为300秒`);
+      validatedSessionDuration = 300;
+    }
     
     const normalizedItemType = normalizeItemType(itemType);
     const item = await getItemData(normalizedItemType, itemId);
@@ -1411,9 +1523,9 @@ app.post('/api/submit', authenticateUser, async (req, res) => {
     
     // 更新各种统计
     const isNewItem = attempts === 0;
-    await updateDailyStats(req.user.id, learningMode, normalizedItemType, isNewItem, sessionDuration);
-    await updateLearningSession(req.user.id, normalizedItemType, learningMode, isCorrect, sessionDuration);
-    await updateUserPreferences(req.user.id, sessionDuration);
+    await updateDailyStats(req.user.id, learningMode, normalizedItemType, isNewItem, validatedSessionDuration);
+    await updateLearningSession(req.user.id, normalizedItemType, learningMode, isCorrect, validatedSessionDuration);
+    await updateUserPreferences(req.user.id, validatedSessionDuration);
     
     const explanation = getExplanation(normalizedItemType, item, form);
     

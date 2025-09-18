@@ -723,23 +723,44 @@ class LearningManager {
             document.getElementById('flashcard').style.display = 'block';
         }
     }
-    
+
+    // 计算学习时长的通用方法
+    calculateSessionDuration() {
+        let sessionDuration = 0;
+        if (state.questionStartTime) {
+            const currentTime = new Date();
+            const rawDuration = Math.floor((currentTime - state.questionStartTime) / 1000); // 转换为秒
+
+            // 验证时间计算是否合理
+            if (rawDuration < 0) {
+                console.warn('时间计算异常：负数时间差', rawDuration);
+                sessionDuration = 1; // 默认最小值
+            } else if (rawDuration > 3600) { // 1小时
+                console.warn('时间计算异常：超过1小时', rawDuration);
+                sessionDuration = 300; // 使用最大值
+            } else {
+                // 限制单题时间在合理范围内（最少1秒，最多300秒）
+                sessionDuration = Math.max(1, Math.min(rawDuration, 300));
+            }
+
+            // 添加调试日志
+            if (rawDuration > 300) {
+                console.log(`单题时间超过5分钟: ${rawDuration}秒，限制为${sessionDuration}秒`);
+            }
+        }
+        return sessionDuration;
+    }
+
     async submitAnswer() {
         const userAnswer = document.getElementById('answer-input').value.trim();
         if (!userAnswer) {
             showToast('请输入答案', 'error');
             return;
         }
-        
+
         // 计算单题学习时长
-        let sessionDuration = 0;
-        if (state.questionStartTime) {
-            const currentTime = new Date();
-            sessionDuration = Math.floor((currentTime - state.questionStartTime) / 1000); // 转换为秒
-            // 限制单题时间在合理范围内（最少1秒，最多300秒）
-            sessionDuration = Math.max(1, Math.min(sessionDuration, 300));
-        }
-        
+        const sessionDuration = this.calculateSessionDuration();
+
         try {
             showLoading(true);
             
@@ -1132,7 +1153,13 @@ class LearningManager {
     getAdjectiveExplanation(form, type) {
         // 数据清理：去除空格并转换为标准格式
         const cleanType = this.normalizeAdjectiveType(type);
-        
+
+        // 如果无法确定形容词类型，返回通用解释
+        if (cleanType === null) {
+            console.error('无法确定形容词类型，type:', type);
+            return '形容词变形（类型未知）';
+        }
+
         const explanations = {
             'negative': cleanType === 'i' ? 'i形容词否定形：去い+くない（如：高い→高くない）' : 'na形容词否定形：+じゃない（如：きれい→きれいじゃない）',
             'past': cleanType === 'i' ? 'i形容词过去形：去い+かった（如：高い→高かった）' : 'na形容词过去形：+だった（如：きれい→きれいだった）',
@@ -1183,10 +1210,13 @@ class LearningManager {
     
     // 标准化形容词类型
     normalizeAdjectiveType(type) {
-        if (!type) return 'i';
-        
+        if (!type || type === '' || type === null || type === undefined) {
+            console.warn('Form normalizeAdjectiveType: type为空或未定义，无法确定形容词类型:', type);
+            return null; // 返回null而不是默认值，让调用者处理
+        }
+
         const cleaned = String(type).trim().toLowerCase();
-        
+
         // 处理各种可能的输入格式
         if (cleaned === 'i' || cleaned === 'i-adj' || cleaned === 'i形容词' || cleaned === 'keiyoushi') {
             return 'i';
@@ -1194,21 +1224,24 @@ class LearningManager {
         if (cleaned === 'na' || cleaned === 'na-adj' || cleaned === 'na形容词' || cleaned === 'keiyoudoushi') {
             return 'na';
         }
-        
-        // 默认返回原值的小写形式
-        return String(type).trim().toLowerCase();
+
+        console.warn('Form normalizeAdjectiveType: 无法识别的形容词类型:', type, '清理后:', cleaned);
+        // 对于无法识别的类型，尝试根据字符串内容推断
+        if (cleaned.includes('i') || cleaned.includes('1')) {
+            return 'i';
+        }
+        if (cleaned.includes('na') || cleaned.includes('2')) {
+            return 'na';
+        }
+
+        // 最后的fallback，返回原值
+        return cleaned;
     }
     
     async submitFlashcardFeedback(feedback) {
         // 计算单题学习时长
-        let sessionDuration = 0;
-        if (state.questionStartTime) {
-            const currentTime = new Date();
-            sessionDuration = Math.floor((currentTime - state.questionStartTime) / 1000); // 转换为秒
-            // 限制单题时间在合理范围内（最少1秒，最多300秒）
-            sessionDuration = Math.max(1, Math.min(sessionDuration, 300));
-        }
-        
+        const sessionDuration = this.calculateSessionDuration();
+
         try {
             showLoading(true);
             
@@ -1672,13 +1705,8 @@ function updateRecommendationSection(sectionId, items, options) {
         
         // 根据推荐类型生成不同的操作按钮和元数据
         if (sectionId === 'goals') {
-            actionsHtml = `
-                <div class="recommendation-actions">
-                    <button class="apply-recommendation-btn" onclick="applyGoalRecommendation(${item.suggested_new_target}, ${item.suggested_review_target})">
-                        应用建议
-                    </button>
-                </div>
-            `;
+            // 移除"应用建议"按钮
+            actionsHtml = '';
         } else if (sectionId === 'modes') {
             const mode = item.data?.mode || item.mode || '闪卡模式';
             const accuracy = item.data?.accuracy || item.accuracy;
@@ -1764,35 +1792,7 @@ function updateRecommendationSection(sectionId, items, options) {
     });
 }
 
-// 应用目标推荐
-function applyGoalRecommendation(newTarget, reviewTarget) {
-    API.request('/api/recommendations/apply', {
-        method: 'POST',
-        body: JSON.stringify({
-            type: 'goals',
-            new_target: newTarget,
-            review_target: reviewTarget
-        })
-    })
-    .then(data => {
-        if (data.success) {
-            showNotification('学习目标已更新！', 'success');
-            // 更新设置页面的目标显示
-            const dailyGoalInput = document.getElementById('daily-goal-input');
-            if (dailyGoalInput) {
-                dailyGoalInput.value = newTarget;
-            }
-            // 重新加载推荐
-            loadSuggestions();
-        } else {
-            showNotification('更新失败: ' + (data.error || '未知错误'), 'error');
-        }
-    })
-    .catch(error => {
-        // console.error('应用推荐失败:', error);
-        showNotification('应用推荐失败', 'error');
-    });
-}
+// 应用目标推荐功能已移除
 
 // 显示通知
 function showNotification(message, type = 'info') {
