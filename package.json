@@ -1,6 +1,6 @@
 {
   "name": "japanese-learning-app",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "日语形态练习H5应用 - 动词变形、形容词变形、简体形学习",
   "main": "api/index.js",
   "scripts": {
