@@ -17,7 +17,7 @@ function getModuleConfig(module) {
     verb: {
       itemType: 'vrb',
       tableName: 'verbs',
-      defaultForms: ['masu', 'te', 'nai', 'ta']
+      defaultForms: ['masu', 'te', 'nai', 'ta', 'imperative']
     },
     adj: {
       itemType: 'adj',
@@ -40,7 +40,18 @@ function parseFormsParam(forms) {
 
 // 获取启用的表单
 function getEnabledForms(selectedForms, settings, defaultForms) {
-  return selectedForms.length > 0 ? selectedForms : (settings.enabledForms || defaultForms);
+  if (Array.isArray(selectedForms) && selectedForms.length > 0) {
+    return selectedForms;
+  }
+
+  const fallback = Array.isArray(settings.enabledForms) ? settings.enabledForms : [];
+  const filtered = fallback.filter(formId => defaultForms.includes(formId));
+
+  if (filtered.length > 0) {
+    return filtered;
+  }
+
+  return defaultForms;
 }
 
 // 生成正确答案

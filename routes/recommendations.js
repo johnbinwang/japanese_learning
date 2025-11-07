@@ -223,6 +223,7 @@ async function generateFocusRecommendations(userId) {
       'ta': 'た形',
       'potential': '可能形',
       'volitional': '意志形',
+      'imperative': '命令形',
       'plain_present': '简体现在形',
       'plain_past': '简体过去形',
       'plain_negative': '简体否定形',

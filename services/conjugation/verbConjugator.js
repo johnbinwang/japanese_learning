@@ -258,6 +258,34 @@ class VerbConjugator {
   }
 
   /**
+   * 命令形变形
+   */
+  static conjugateToImperative(verb, group) {
+    if (verb === 'する') return 'しろ';
+    if (verb === '来る' || verb === 'くる') return 'こい';
+
+    if (verb.endsWith('する')) {
+      return verb.slice(0, -2) + 'しろ';
+    }
+
+    const normalizedGroup = this.normalizeGroup(group);
+
+    if (normalizedGroup === 'I') {
+      const stem = verb.slice(0, -1);
+      const lastChar = verb.slice(-1);
+      const eRow = { 'く': 'け', 'ぐ': 'げ', 'す': 'せ', 'つ': 'て', 'ぬ': 'ね', 'ぶ': 'べ', 'む': 'め', 'る': 'れ', 'う': 'え' };
+      return stem + (eRow[lastChar] || 'え');
+    } else if (normalizedGroup === 'II') {
+      if (verb.endsWith('る')) {
+        return verb.slice(0, -1) + 'ろ';
+      }
+      return verb + 'ろ';
+    }
+
+    return verb + 'ろ';
+  }
+
+  /**
    * 获取变形说明
    */
   static getExplanation(form, group) {
@@ -269,7 +297,8 @@ class VerbConjugator {
       'nai': normalizedGroup === 'I' ? 'I类动词ない形:词尾变a段+ない(如:飲む→飲まない)' : normalizedGroup === 'II' ? 'II类动词ない形:去る+ない(如:食べる→食べない)' : '不规则动词ない形',
       'ta': normalizedGroup === 'I' ? 'I类动词た形:る/う/つ→った,ぶ/む/ぬ→んだ,く→いた,ぐ→いだ,す→した(如:つくる→作った)' : normalizedGroup === 'II' ? 'II类动词た形:去る+た(如:食べる→食べた)' : '不规则动词た形',
       'potential': normalizedGroup === 'I' ? 'I类动词可能形:词尾变e段+る(如:飲む→飲める)' : normalizedGroup === 'II' ? 'II类动词可能形:去る+られる(如:食べる→食べられる)' : '不规则动词可能形',
-      'volitional': normalizedGroup === 'I' ? 'I类动词意志形:词尾变o段+う(如:飲む→飲もう)' : normalizedGroup === 'II' ? 'II类动词意志形:去る+よう(如:食べる→食べよう)' : '不规则动词意志形'
+      'volitional': normalizedGroup === 'I' ? 'I类动词意志形:词尾变o段+う(如:飲む→飲もう)' : normalizedGroup === 'II' ? 'II类动词意志形:去る+よう(如:食べる→食べよう)' : '不规则动词意志形',
+      'imperative': normalizedGroup === 'I' ? 'I类动词命令形:词尾变e段(如:飲む→飲め)' : normalizedGroup === 'II' ? 'II类动词命令形:去る+ろ(如:食べる→食べろ)' : '不规则动词命令形:する→しろ, 来る→こい'
     };
     return explanations[form] || '基本形';
   }

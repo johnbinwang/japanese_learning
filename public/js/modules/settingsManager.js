@@ -61,10 +61,13 @@ function updateSettingsDisplay(userData) {
   const dailyReviewGoal = userData.preferences?.daily_review_target || 20;
   document.getElementById('daily-review-goal-input').value = dailyReviewGoal;
 
+  const enabledForms =
+    Array.isArray(userData.settings?.enabledForms) ? [...userData.settings.enabledForms] : [];
+
   const newSettings = {
     dueOnly: userData.settings?.dueOnly === true,
     showExplain: userData.settings?.showExplain !== false,
-    enabledForms: userData.settings?.enabledForms || [],
+    enabledForms,
     dailyGoal: dailyGoal,
     dailyReviewGoal: dailyReviewGoal
   };

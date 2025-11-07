@@ -153,6 +153,16 @@ function showToast(message, type = 'info') {
 
 // 等待所有模块加载完成后再启动应用
 function initializeApp() {
+  if (window.app) {
+    console.warn('[App] 已初始化,跳过重复初始化');
+    return;
+  }
+
+  if (window.__appInitializing) {
+    console.warn('[App] 初始化进行中,跳过重复调用');
+    return;
+  }
+
   console.log('[App] 开始初始化应用');
 
   // 检查所有必需的全局对象是否已加载
@@ -184,6 +194,7 @@ function initializeApp() {
   console.log('[App] 所有模块已加载，创建App实例');
 
   try {
+    window.__appInitializing = true;
     window.app = new App();
 
     // 初始化更新管理器
@@ -196,6 +207,9 @@ function initializeApp() {
   } catch (error) {
     console.error('[App] 应用初始化失败:', error);
     window.showToast('应用初始化失败: ' + error.message, 'error');
+    window.app = null;
+  } finally {
+    window.__appInitializing = false;
   }
 }
 

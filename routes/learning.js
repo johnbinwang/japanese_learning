@@ -16,6 +16,36 @@ const {
 } = require('./utils/learningUtils');
 
 const srsAlgorithm = new SRSAlgorithm();
+const DEFAULT_VERB_FORMS = ['masu', 'te', 'nai', 'ta', 'potential', 'volitional', 'imperative'];
+
+function normalizeEnabledForms(value) {
+  if (Array.isArray(value)) {
+    return value.slice();
+  }
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (trimmed === '') {
+      return [...DEFAULT_VERB_FORMS];
+    }
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    } catch (e) {
+      if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+        return trimmed
+          .slice(1, -1)
+          .split(',')
+          .map(part => part.trim().replace(/^"(.*)"$/, '$1'))
+          .filter(Boolean);
+      }
+    }
+  }
+
+  return [...DEFAULT_VERB_FORMS];
+}
 
 // 获取用户学习偏好
 async function getUserLearningPreferences(userId, includeSettings = false) {
@@ -27,11 +57,10 @@ async function getUserLearningPreferences(userId, includeSettings = false) {
   const p = rows[0] || {};
 
   if (includeSettings) {
-    let enabledForms;
-    try {
-      enabledForms = p.enabled_forms ? JSON.parse(p.enabled_forms) : ['masu', 'te', 'nai', 'ta', 'potential', 'volitional'];
-    } catch (e) {
-      enabledForms = ['masu', 'te', 'nai', 'ta', 'potential', 'volitional'];
+    let enabledForms = normalizeEnabledForms(p.enabled_forms);
+
+    if (Array.isArray(enabledForms) && !enabledForms.includes('imperative')) {
+      enabledForms.push('imperative');
     }
 
     return {

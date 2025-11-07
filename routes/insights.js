@@ -264,6 +264,7 @@ function getWeaknessSuggestion(form, errorRate) {
     'ta': 'た形变位与て形类似,可以对比学习',
     'potential': '可能形变位规则较多,建议按动词类型分别练习',
     'volitional': '意志形变位需要区分动词类型,建议重点记忆',
+    'imperative': '命令形使用语境较强,建议熟悉一段/五段的变位差异',
     'plain_present': '简体现在形即动词原形,注意与敬语形区别',
     'plain_past': '简体过去形即た形,建议与敬语过去形对比学习',
     'plain_negative': '简体否定形即ない形,注意语境使用',

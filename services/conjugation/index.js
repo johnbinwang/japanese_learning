@@ -23,6 +23,8 @@ class ConjugationEngine {
         return VerbConjugator.conjugateToPotential(verb, group);
       case 'volitional':
         return VerbConjugator.conjugateToVolitional(verb, group);
+      case 'imperative':
+        return VerbConjugator.conjugateToImperative(verb, group);
       default:
         return verb;
     }

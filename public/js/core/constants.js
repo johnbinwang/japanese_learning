@@ -6,7 +6,8 @@ window.FORMS = {
     { id: 'nai', name: 'ない形', desc: '否定形' },
     { id: 'ta', name: 'た形', desc: '过去形' },
     { id: 'potential', name: '可能形', desc: '可能形' },
-    { id: 'volitional', name: '意志形', desc: '意志形' }
+    { id: 'volitional', name: '意志形', desc: '意志形' },
+    { id: 'imperative', name: '命令形', desc: '命令形' }
   ],
   adj: [
     { id: 'negative', name: '否定形', desc: '否定形' },
