@@ -27,7 +27,12 @@ function getModuleConfig(module) {
     plain: {
       itemType: null,
       tableName: 'plain',
-      defaultForms: ['plain_present', 'plain_past', 'plain_negative']
+      defaultForms: ['plain_present', 'plain_past', 'plain_negative', 'plain_past_negative']
+    },
+    polite: {
+      itemType: null,
+      tableName: 'plain',
+      defaultForms: ['polite_present', 'polite_past', 'polite_negative', 'polite_past_negative']
     }
   };
   return configs[module] || configs.plain;
@@ -54,6 +59,75 @@ function getEnabledForms(selectedForms, settings, defaultForms) {
   return defaultForms;
 }
 
+function getVerbGroupInfo(item) {
+  return (item.group || item.group_type || item.type_info || '').trim();
+}
+
+function conjugatePoliteVerb(item, form) {
+  const baseWord = (item.kanji || item.kana || '').trim();
+  const group = getVerbGroupInfo(item);
+  const masuForm = ConjugationEngine.conjugateVerb(baseWord, group, 'masu');
+  const stem = masuForm.endsWith('ます') ? masuForm.slice(0, -2) : masuForm;
+
+  switch (form) {
+    case 'polite_present':
+      return masuForm;
+    case 'polite_past':
+      return `${stem}ました`;
+    case 'polite_negative':
+      return `${stem}ません`;
+    case 'polite_past_negative':
+      return `${stem}ませんでした`;
+    default:
+      return masuForm;
+  }
+}
+
+function cleanNaAdjectiveBase(word) {
+  if (!word) return word;
+  return word
+    .replace(/(です|だ)$/u, '')
+    .replace(/な$/u, '')
+    .trim();
+}
+
+function conjugatePoliteAdjective(item, form) {
+  const type = (item.type || item.adj_type || '').trim().toLowerCase();
+  const rawBase = (item.kanji || item.kana || '').replace(/\d+$/, '');
+
+  if (type === 'i') {
+    const isIi = rawBase === 'いい' || rawBase === '良い';
+    const stem = isIi ? 'よ' : rawBase.slice(0, -1);
+
+    switch (form) {
+      case 'polite_present':
+        return `${rawBase}です`;
+      case 'polite_past':
+        return `${isIi ? 'よかった' : stem + 'かった'}です`;
+      case 'polite_negative':
+        return `${isIi ? 'よく' : stem + 'く'}ありません`;
+      case 'polite_past_negative':
+        return `${isIi ? 'よく' : stem + 'く'}ありませんでした`;
+      default:
+        return `${rawBase}です`;
+    }
+  }
+
+  const base = cleanNaAdjectiveBase(rawBase);
+  switch (form) {
+    case 'polite_present':
+      return `${base}です`;
+    case 'polite_past':
+      return `${base}でした`;
+    case 'polite_negative':
+      return `${base}ではありません`;
+    case 'polite_past_negative':
+      return `${base}ではありませんでした`;
+    default:
+      return `${base}です`;
+  }
+}
+
 // 生成正确答案
 function generateCorrectAnswer(normalizedItemType, item, form) {
   if (normalizedItemType === 'pln') {
@@ -75,6 +149,21 @@ function generateCorrectAnswer(normalizedItemType, item, form) {
         default:
           return processedItem.kana;
       }
+    }
+  } else if (normalizedItemType === 'pol') {
+    const lexicalType = (item.item_type || item.source_item_type || '').trim();
+    if (lexicalType === 'adj') {
+      const processedItem = {
+        ...item,
+        type: (item.adj_type || item.type || '').trim()
+      };
+      return conjugatePoliteAdjective(processedItem, form);
+    } else {
+      const processedItem = {
+        ...item,
+        group: getVerbGroupInfo(item)
+      };
+      return conjugatePoliteVerb(processedItem, form);
     }
   } else if (normalizedItemType === 'adj') {
     return ConjugationEngine.conjugateAdjective(item, form);
@@ -112,6 +201,22 @@ function generateKanjiAnswer(normalizedItemType, item, form) {
           return baseWord;
       }
     }
+  } else if (normalizedItemType === 'pol') {
+    const lexicalType = (item.item_type || item.source_item_type || '').trim();
+    if (lexicalType === 'adj') {
+      const processedItem = {
+        kana: item.kana,
+        kanji: item.kanji,
+        type: (item.adj_type || item.type || '').trim()
+      };
+      return conjugatePoliteAdjective(processedItem, form);
+    } else {
+      const processedItem = {
+        ...item,
+        group: getVerbGroupInfo(item)
+      };
+      return conjugatePoliteVerb(processedItem, form);
+    }
   } else if (normalizedItemType === 'adj') {
     const processedItem = {
       kana: item.kana,
@@ -130,13 +235,14 @@ function normalizeItemType(itemType) {
   return itemType.toUpperCase() === 'VRB' || itemType.toLowerCase() === 'verb' ? 'vrb' :
          itemType.toUpperCase() === 'ADJ' || itemType.toLowerCase() === 'adjective' ? 'adj' :
          itemType.toUpperCase() === 'PLN' || itemType.toLowerCase() === 'plain' ? 'pln' :
+         itemType.toUpperCase() === 'POL' || itemType.toLowerCase() === 'polite' ? 'pol' :
          itemType.toLowerCase();
 }
 
 // 获取学习项数据
 async function getItemData(normalizedItemType, itemId) {
   let tableName;
-  if (normalizedItemType === 'pln') {
+  if (normalizedItemType === 'pln' || normalizedItemType === 'pol') {
     tableName = 'plain';
   } else if (normalizedItemType === 'adj') {
     tableName = 'adjectives';
@@ -172,7 +278,10 @@ function validateAnswer(mode, feedback, userAnswer, correctAnswer, item, normali
   }
 
   // 复合动词特殊处理
-  if (normalizedItemType === 'pln' && item.item_type !== 'adj') {
+  const isPlainModule = normalizedItemType === 'pln';
+  const isPoliteModule = normalizedItemType === 'pol';
+
+  if ((isPlainModule || isPoliteModule) && item.item_type !== 'adj') {
     const kana = item.kana || '';
     const kanji = item.kanji || '';
     const hasParticle = /[にをでへとから]/.test(kana);
@@ -186,22 +295,26 @@ function validateAnswer(mode, feedback, userAnswer, correctAnswer, item, normali
         const processedItem = { ...item, group: (item.group || item.group_type || item.type_info || '').trim() };
 
         let verbOnlyAnswer = '';
-        switch (form) {
-          case 'plain_present':
-            verbOnlyAnswer = verbKana;
-            break;
-          case 'plain_past':
-            verbOnlyAnswer = ConjugationEngine.conjugateVerb(verbKana, processedItem.group, 'ta');
-            break;
-          case 'plain_negative':
-            verbOnlyAnswer = ConjugationEngine.conjugateVerb(verbKana, processedItem.group, 'nai');
-            break;
-          case 'plain_past_negative':
-            const naiForm = ConjugationEngine.conjugateVerb(verbKana, processedItem.group, 'nai');
-            verbOnlyAnswer = naiForm.replace(/ない$/, 'なかった');
-            break;
-          default:
-            verbOnlyAnswer = verbKana;
+        if (isPlainModule) {
+          switch (form) {
+            case 'plain_present':
+              verbOnlyAnswer = verbKana;
+              break;
+            case 'plain_past':
+              verbOnlyAnswer = ConjugationEngine.conjugateVerb(verbKana, processedItem.group, 'ta');
+              break;
+            case 'plain_negative':
+              verbOnlyAnswer = ConjugationEngine.conjugateVerb(verbKana, processedItem.group, 'nai');
+              break;
+            case 'plain_past_negative':
+              const naiForm = ConjugationEngine.conjugateVerb(verbKana, processedItem.group, 'nai');
+              verbOnlyAnswer = naiForm.replace(/ない$/, 'なかった');
+              break;
+            default:
+              verbOnlyAnswer = verbKana;
+          }
+        } else {
+          verbOnlyAnswer = conjugatePoliteVerb({ ...processedItem, kana: verbKana, kanji: null }, form);
         }
 
         if (trimmedUserAnswer === verbOnlyAnswer) {
@@ -214,22 +327,26 @@ function validateAnswer(mode, feedback, userAnswer, correctAnswer, item, normali
         const processedItem = { ...item, group: (item.group || item.group_type || item.type_info || '').trim() };
 
         let verbOnlyKanjiAnswer = '';
-        switch (form) {
-          case 'plain_present':
-            verbOnlyKanjiAnswer = verbKanji;
-            break;
-          case 'plain_past':
-            verbOnlyKanjiAnswer = ConjugationEngine.conjugateVerb(verbKanji, processedItem.group, 'ta');
-            break;
-          case 'plain_negative':
-            verbOnlyKanjiAnswer = ConjugationEngine.conjugateVerb(verbKanji, processedItem.group, 'nai');
-            break;
-          case 'plain_past_negative':
-            const naiFormKanji = ConjugationEngine.conjugateVerb(verbKanji, processedItem.group, 'nai');
-            verbOnlyKanjiAnswer = naiFormKanji.replace(/ない$/, 'なかった');
-            break;
-          default:
-            verbOnlyKanjiAnswer = verbKanji;
+        if (isPlainModule) {
+          switch (form) {
+            case 'plain_present':
+              verbOnlyKanjiAnswer = verbKanji;
+              break;
+            case 'plain_past':
+              verbOnlyKanjiAnswer = ConjugationEngine.conjugateVerb(verbKanji, processedItem.group, 'ta');
+              break;
+            case 'plain_negative':
+              verbOnlyKanjiAnswer = ConjugationEngine.conjugateVerb(verbKanji, processedItem.group, 'nai');
+              break;
+            case 'plain_past_negative':
+              const naiFormKanji = ConjugationEngine.conjugateVerb(verbKanji, processedItem.group, 'nai');
+              verbOnlyKanjiAnswer = naiFormKanji.replace(/ない$/, 'なかった');
+              break;
+            default:
+              verbOnlyKanjiAnswer = verbKanji;
+          }
+        } else {
+          verbOnlyKanjiAnswer = conjugatePoliteVerb({ ...processedItem, kanji: verbKanji, kana: verbKanji }, form);
         }
 
         if (trimmedUserAnswer === verbOnlyKanjiAnswer) {
@@ -252,6 +369,11 @@ function getExplanation(normalizedItemType, item, form) {
     } else {
       return ConjugationEngine.getExplanation('pln', form, (item.group_type || '').trim(), null);
     }
+  } else if (normalizedItemType === 'pol') {
+    if (item.item_type === 'adj') {
+      return ConjugationEngine.getExplanation('pol', form, null, item.adj_type);
+    }
+    return ConjugationEngine.getExplanation('pol', form, (item.group_type || '').trim(), null);
   } else {
     const rawBase = item.kanji || item.kana;
     const base = rawBase.replace(/\d+$/, '');

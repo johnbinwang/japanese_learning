@@ -60,7 +60,7 @@ router.get('/today-overview', authenticateUser, async (req, res) => {
     const dueReviews = dueReviewsResult.rows.reduce((acc, row) => {
       acc[row.module_type] = parseInt(row.due_count);
       return acc;
-    }, { vrb: 0, adj: 0, pln: 0 });
+    }, { vrb: 0, adj: 0, pln: 0, pol: 0 });
 
     const todaySessions = sessionsResult.rows;
 

@@ -22,5 +22,11 @@ window.FORMS = {
     { id: 'plain_past', name: '简体过去', desc: '简体过去形' },
     { id: 'plain_negative', name: '简体否定', desc: '简体否定形' },
     { id: 'plain_past_negative', name: '简体过去否定', desc: '简体过去否定形' }
+  ],
+  polite: [
+    { id: 'polite_present', name: '敬体现在', desc: 'ます/です形' },
+    { id: 'polite_past', name: '敬体过去', desc: 'ました/でした' },
+    { id: 'polite_negative', name: '敬体否定', desc: 'ません/ではありません' },
+    { id: 'polite_past_negative', name: '敬体过去否定', desc: 'ませんでした/ではありませんでした' }
   ]
 };

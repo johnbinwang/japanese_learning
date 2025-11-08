@@ -227,7 +227,11 @@ async function generateFocusRecommendations(userId) {
       'plain_present': '简体现在形',
       'plain_past': '简体过去形',
       'plain_negative': '简体否定形',
-      'plain_past_negative': '简体过去否定形'
+      'plain_past_negative': '简体过去否定形',
+      'polite_present': '敬体现在形',
+      'polite_past': '敬体过去形',
+      'polite_negative': '敬体否定形',
+      'polite_past_negative': '敬体过去否定形'
     };
     formName = formNameMap[row.form] || row.form;
 

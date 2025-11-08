@@ -112,6 +112,12 @@ body {
     border-color: #a855f7;
 }
 
+/* 敬体形模块配色 - 橙金系 */
+.module-btn[data-module="polite"].active {
+    background: #9a3412;
+    border-color: #f97316;
+}
+
 .module-icon {
     width: 24px;
     height: 24px;

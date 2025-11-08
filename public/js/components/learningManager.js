@@ -370,8 +370,7 @@ class LearningManager {
             showLoading(true);
 
             const submitData = {
-                itemType: this.state.currentModule === 'verb' ? 'vrb' :
-                         this.state.currentModule === 'adj' ? 'adj' : 'pln',
+                itemType: this.getSubmitItemType(),
                 itemId: this.state.currentQuestion.itemId,
                 form: this.state.currentQuestion.targetForm,
                 userAnswer: userAnswer,
@@ -441,6 +440,14 @@ class LearningManager {
                 } else {
                     explanation = '简体形式';
                 }
+            } else if (this.state.currentModule === 'polite') {
+                if (q.itemType === 'vrb') {
+                    explanation = this.getPoliteFormExplanation(q.targetForm, q.group, null, 'vrb');
+                } else if (q.itemType === 'adj') {
+                    explanation = this.getPoliteFormExplanation(q.targetForm, null, q.type, 'adj');
+                } else {
+                    explanation = '敬体形式';
+                }
             } else {
                 explanation = '简体形式';
             }
@@ -471,9 +478,20 @@ class LearningManager {
             const answer = this.conjugatePlainForm({ kana, kanji, group }, targetForm);
             const explanation = this.getPlainFormExplanation(targetForm, group);
             return { text: answer, explanation };
+        } else if (this.state.currentModule === 'polite') {
+            const answer = this.conjugatePoliteForm({ kana, kanji, group, type, itemType: question.itemType }, targetForm);
+            const explanation = this.getPoliteFormExplanation(targetForm, group, type, question.itemType);
+            return { text: answer, explanation };
         } else {
             return { text: base, explanation: '简体形式' };
         }
+    }
+
+    getSubmitItemType() {
+        if (this.state.currentModule === 'verb') return 'vrb';
+        if (this.state.currentModule === 'adj') return 'adj';
+        if (this.state.currentModule === 'polite') return 'pol';
+        return 'pln';
     }
 
     conjugatePlainForm(verb, form) {
@@ -493,6 +511,71 @@ class LearningManager {
                 return naiForm.replace(/ない$/, 'なかった');
             default:
                 return base;
+        }
+    }
+
+    conjugatePoliteForm(item, form) {
+        const lexicalType = (item.itemType || item.item_type || '').trim();
+        if (lexicalType === 'adj') {
+            return this.conjugatePoliteAdjective(item, form);
+        }
+        return this.conjugatePoliteVerb(item, form);
+    }
+
+    conjugatePoliteVerb(item, form) {
+        const base = item.kanji || item.kana;
+        const cleanGroup = this.normalizeVerbGroup(item.group);
+        const masuForm = this.conjugateToMasu(base, cleanGroup);
+        const stem = masuForm.endsWith('ます') ? masuForm.slice(0, -2) : masuForm;
+
+        switch (form) {
+            case 'polite_present':
+                return masuForm;
+            case 'polite_past':
+                return `${stem}ました`;
+            case 'polite_negative':
+                return `${stem}ません`;
+            case 'polite_past_negative':
+                return `${stem}ませんでした`;
+            default:
+                return masuForm;
+        }
+    }
+
+    conjugatePoliteAdjective(adj, form) {
+        const type = this.normalizeAdjectiveType(adj.type);
+        const baseWord = (adj.kanji || adj.kana || '').replace(/\d+$/, '');
+
+        if (type === 'i') {
+            const isIi = baseWord === 'いい' || baseWord === '良い';
+            const stem = isIi ? 'よ' : baseWord.slice(0, -1);
+
+            switch (form) {
+                case 'polite_present':
+                    return `${baseWord}です`;
+                case 'polite_past':
+                    return `${isIi ? 'よかった' : stem + 'かった'}です`;
+                case 'polite_negative':
+                    return `${isIi ? 'よく' : stem + 'く'}ありません`;
+                case 'polite_past_negative':
+                    return `${isIi ? 'よく' : stem + 'く'}ありませんでした`;
+                default:
+                    return `${baseWord}です`;
+            }
+        }
+
+        const cleanBase = this.cleanNaAdjectiveBase(baseWord);
+        switch (form) {
+            case 'polite_present':
+                return `${cleanBase}です`;
+            case 'polite_past':
+                return `${cleanBase}でした`;
+            case 'polite_negative':
+                return `${cleanBase}ではありません`;
+            case 'polite_past_negative':
+                return `${cleanBase}ではありませんでした`;
+            default:
+                return `${cleanBase}です`;
         }
     }
 
@@ -816,7 +899,40 @@ class LearningManager {
             'plain_negative': cleanGroup === 'I' ? '简体否定形(I类动词):词尾变a段+ない(如:飲む→飲まない)' : cleanGroup === 'II' ? '简体否定形(II类动词):去る+ない(如:食べる→食べない)' : '简体否定形(不规则动词)',
             'plain_past_negative': '简体过去否定形:ない形的ない→なかった'
         };
-        return explanations[form] || '简体形式';
+            return explanations[form] || '简体形式';
+    }
+
+    getPoliteFormExplanation(form, group, type, itemType) {
+        const lexicalType = (itemType || '').trim();
+        if (lexicalType === 'adj') {
+            const cleanType = this.normalizeAdjectiveType(type);
+            const isIAdj = cleanType === 'i';
+            const explanations = {
+                'polite_present': isIAdj ? '敬体现在形(i形容词):原形+です(如:高い→高いです)' : '敬体现在形(na形容词):词干+です(如:静か→静かです)',
+                'polite_past': isIAdj ? '敬体过去形(i形容词):去い+かったです' : '敬体过去形(na形容词):词干+でした',
+                'polite_negative': isIAdj ? '敬体否定形(i形容词):去い+くありません' : '敬体否定形(na形容词):词干+ではありません',
+                'polite_past_negative': isIAdj ? '敬体过去否定形(i形容词):去い+くありませんでした' : '敬体过去否定形(na形容词):词干+ではありませんでした'
+            };
+            return explanations[form] || '敬体形式';
+        }
+
+        const cleanGroup = this.normalizeVerbGroup(group);
+        const explanations = {
+            'polite_present': cleanGroup === 'I'
+                ? '敬体现在形(I类动词):词尾变i段+ます(如:書く→書きます)'
+                : cleanGroup === 'II'
+                    ? '敬体现在形(II类动词):去る+ます(如:食べる→食べます)'
+                    : '敬体现在形(不规则动词):する→します, 来る→きます',
+            'polite_past': '敬体过去形:ます形结尾ます→ました',
+            'polite_negative': '敬体否定形:ます形结尾ます→ません',
+            'polite_past_negative': '敬体过去否定形:ます形结尾ます→ませんでした'
+        };
+        return explanations[form] || '敬体形式';
+    }
+
+    cleanNaAdjectiveBase(word) {
+        if (!word) return '';
+        return word.replace(/(です|だ)$/u, '').replace(/な$/u, '');
     }
 
     // 标准化动词分组
@@ -885,8 +1001,7 @@ class LearningManager {
             showLoading(true);
 
             const submitData = {
-                itemType: this.state.currentModule === 'verb' ? 'vrb' :
-                         this.state.currentModule === 'adj' ? 'adj' : 'pln',
+                itemType: this.getSubmitItemType(),
                 itemId: this.state.currentQuestion.itemId,
                 form: this.state.currentQuestion.targetForm,
                 feedback: feedback,

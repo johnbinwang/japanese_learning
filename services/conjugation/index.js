@@ -51,6 +51,26 @@ class ConjugationEngine {
         'plain_past_negative': '简体过去否定形:ない形的ない→なかった'
       };
       return explanations[form] || '简体形式';
+    } else if (itemType === 'pol') {
+      if (type) {
+        const cleanType = (type || '').trim().toLowerCase();
+        const isIAdj = cleanType === 'i';
+        const adjExplanations = {
+          'polite_present': isIAdj ? '敬体现在形(i形容词):原形+です(如:高い→高いです)' : '敬体现在形(na形容词):词干+です(如:静か→静かです)',
+          'polite_past': isIAdj ? '敬体过去形(i形容词):去い+かったです(如:高い→高かったです)' : '敬体过去形(na形容词):词干+でした(如:静か→静かでした)',
+          'polite_negative': isIAdj ? '敬体否定形(i形容词):去い+くありません(如:高い→高くありません)' : '敬体否定形(na形容词):词干+ではありません(如:静か→静かではありません)',
+          'polite_past_negative': isIAdj ? '敬体过去否定形(i形容词):去い+くありませんでした' : '敬体过去否定形(na形容词):词干+ではありませんでした'
+        };
+        return adjExplanations[form] || '敬体形式';
+      }
+
+      const explanations = {
+        'polite_present': '敬体现在形(ます形):I类动词词尾变i段+ます,II类动词去る+ます,する→します,来る→きます',
+        'polite_past': '敬体过去形:ます形结尾ます→ました',
+        'polite_negative': '敬体否定形:ます形结尾ます→ません',
+        'polite_past_negative': '敬体过去否定形:ます形结尾ます→ませんでした'
+      };
+      return explanations[form] || '敬体形式';
     } else if (itemType === 'adj') {
       return AdjectiveConjugator.getExplanation(form, type);
     }

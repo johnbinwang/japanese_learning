@@ -91,7 +91,7 @@ function updateSettingsDisplay(userData) {
 // 更新形态开关
 function updateFormToggles() {
   const container = document.getElementById('form-toggles');
-  const allForms = [...window.FORMS.verb, ...window.FORMS.adj, ...window.FORMS.plain];
+  const allForms = Object.keys(window.FORMS || {}).flatMap(key => window.FORMS[key]);
 
   container.innerHTML = allForms.map(form => `
     <div class="form-toggle">

@@ -3,7 +3,23 @@ const router = express.Router();
 const pool = require('../db/pool');
 const { authenticateUser } = require('../middleware/authenticateUser');
 
-const DEFAULT_VERB_FORMS = ['masu', 'te', 'nai', 'ta', 'potential', 'volitional', 'imperative'];
+const DEFAULT_VERB_FORMS = [
+  'masu',
+  'te',
+  'nai',
+  'ta',
+  'potential',
+  'volitional',
+  'imperative',
+  'plain_present',
+  'plain_past',
+  'plain_negative',
+  'plain_past_negative',
+  'polite_present',
+  'polite_past',
+  'polite_negative',
+  'polite_past_negative'
+];
 
 function normalizeEnabledForms(value) {
   if (Array.isArray(value)) {

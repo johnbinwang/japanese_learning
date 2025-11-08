@@ -16,7 +16,25 @@ const {
 } = require('./utils/learningUtils');
 
 const srsAlgorithm = new SRSAlgorithm();
-const DEFAULT_VERB_FORMS = ['masu', 'te', 'nai', 'ta', 'potential', 'volitional', 'imperative'];
+const DEFAULT_VERB_FORMS = [
+  'masu',
+  'te',
+  'nai',
+  'ta',
+  'potential',
+  'volitional',
+  'imperative',
+  'plain_present',
+  'plain_past',
+  'plain_negative',
+  'plain_past_negative',
+  'polite_present',
+  'polite_past',
+  'polite_negative',
+  'polite_past_negative'
+];
+
+const MULTI_TYPE_MODULES = new Set(['plain', 'polite']);
 
 function normalizeEnabledForms(value) {
   if (Array.isArray(value)) {
@@ -45,6 +63,12 @@ function normalizeEnabledForms(value) {
   }
 
   return [...DEFAULT_VERB_FORMS];
+}
+
+function getModuleReviewType(module, moduleItemType) {
+  if (module === 'plain') return 'pln';
+  if (module === 'polite') return 'pol';
+  return moduleItemType;
 }
 
 // 获取用户学习偏好
@@ -84,27 +108,29 @@ async function getUserLearningPreferences(userId, includeSettings = false) {
 }
 
 // 构建到期题目查询
-function buildDueItemsQuery(module, tableName, itemType) {
-  if (module === 'plain') {
+function buildDueItemsQuery(module, tableName, itemType, reviewItemType) {
+  if (MULTI_TYPE_MODULES.has(module)) {
     return {
       query: `
         WITH recent_items AS (
           SELECT DISTINCT r.item_id, r.form, r.item_type
           FROM reviews r
           WHERE r.user_id = $1 AND r.learning_mode = $2
+            AND r.item_type = $3
             AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
         )
-        SELECT r.*, i.kana, i.kanji, i.meaning, i.item_type,
+        SELECT r.*, i.kana, i.kanji, i.meaning, i.item_type AS source_item_type,
                CASE
                  WHEN i.item_type = 'vrb' THEN i.group_type
                  WHEN i.item_type = 'adj' THEN i.adj_type
                END as type_info
         FROM reviews r
         JOIN ${tableName} i ON r.item_id = i.id
-        LEFT JOIN recent_items ri ON ri.item_id = r.item_id AND ri.form = r.form AND ri.item_type = r.item_type
+        LEFT JOIN recent_items ri ON ri.item_id = r.item_id AND ri.form = r.form
         WHERE r.user_id = $1 AND r.learning_mode = $2
+          AND r.item_type = $3
           AND ri.item_id IS NULL`,
-      paramCount: 2
+      paramCount: 3
     };
   }
 
@@ -128,18 +154,19 @@ function buildDueItemsQuery(module, tableName, itemType) {
 }
 
 // 构建新题目查询
-function buildNewItemsQuery(module, tableName, itemType) {
-  if (module === 'plain') {
+function buildNewItemsQuery(module, tableName, itemType, reviewItemType) {
+  if (MULTI_TYPE_MODULES.has(module)) {
     return {
       query: `
         WITH recent_items AS (
-          SELECT DISTINCT r.item_id, r.form, r.item_type
+          SELECT DISTINCT r.item_id, r.form
           FROM reviews r
           WHERE r.user_id = $1 AND r.learning_mode = $2
+            AND r.item_type = $4
             AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
         ),
         candidates AS (
-          SELECT i.id AS item_id, i.kana, i.kanji, i.meaning, i.item_type,
+          SELECT i.id AS item_id, i.kana, i.kanji, i.meaning, i.item_type AS source_item_type,
                  CASE WHEN i.item_type = 'vrb' THEN i.group_type ELSE NULL END AS group_type,
                  CASE WHEN i.item_type = 'adj' THEN i.adj_type ELSE NULL END AS adj_type,
                  f.form
@@ -150,6 +177,7 @@ function buildNewItemsQuery(module, tableName, itemType) {
         FROM candidates c
         LEFT JOIN reviews r
           ON r.user_id = $1
+         AND r.item_type = $4
          AND r.item_id = c.item_id
          AND r.form = c.form
          AND r.learning_mode = $2
@@ -159,7 +187,7 @@ function buildNewItemsQuery(module, tableName, itemType) {
         WHERE r.id IS NULL AND ri.item_id IS NULL
         ORDER BY RANDOM()
         LIMIT 1`,
-      paramOrder: ['userId', 'learningMode', 'enabledForms']
+      paramOrder: ['userId', 'learningMode', 'enabledForms', 'moduleType']
     };
   }
 
@@ -198,16 +226,17 @@ function buildNewItemsQuery(module, tableName, itemType) {
 
 // 处理项目数据
 function processItemData(item, module, itemType) {
-  if (module === 'plain') {
+  if (MULTI_TYPE_MODULES.has(module)) {
+    const lexicalType = (item.source_item_type || item.item_type || '').trim();
     const baseItem = {
       id: item.item_id,
       kana: item.kana,
       kanji: item.kanji,
       meaning: item.meaning,
-      item_type: item.item_type
+      item_type: lexicalType
     };
 
-    if (item.item_type === 'vrb') {
+    if (lexicalType === 'vrb') {
       return { ...baseItem, group: (item.group_type || '').trim() };
     } else {
       const adjType = (item.adj_type || '').trim();
@@ -234,9 +263,11 @@ function processItemData(item, module, itemType) {
 
 // 构建响应数据
 function buildResponseData(item, targetForm, module, correctAnswer, isNew = false, reviewData = null) {
+  const isCompositeModule = MULTI_TYPE_MODULES.has(module);
+  const lexicalType = (item.item_type || item.source_item_type || reviewData?.source_item_type || reviewData?.item_type || '').trim();
   const responseData = {
     itemId: item.item_id || item.id,
-    itemType: module === 'plain' ? item.item_type || reviewData?.item_type : module,
+    itemType: isCompositeModule ? lexicalType || 'vrb' : module,
     kana: cleanWordText(item.kana),
     kanji: cleanWordText(item.kanji),
     meaning: cleanWordText(item.meaning),
@@ -257,14 +288,13 @@ function buildResponseData(item, targetForm, module, correctAnswer, isNew = fals
     if (!item.type || item.type.trim() === '') {
       console.warn('形容词响应数据中type为空:', item);
     }
-  } else if (module === 'plain') {
-    const actualType = item.item_type || reviewData?.item_type;
-    if (actualType === 'vrb' && item.group) {
+  } else if (isCompositeModule) {
+    if (lexicalType === 'vrb' && item.group) {
       responseData.group = item.group;
-    } else if (actualType === 'adj' && item.type) {
+    } else if (lexicalType === 'adj' && item.type) {
       responseData.type = item.type;
       if (!item.type || item.type.trim() === '') {
-        console.warn('简体形容词响应数据中type为空:', item);
+        console.warn('复合模块形容词响应数据中type为空:', item);
       }
     }
   }
@@ -297,12 +327,15 @@ router.get('/next', authenticateUser, async (req, res) => {
     });
 
     const { module, forms, mode } = req.query;
+    const activeModule = module || 'verb';
     const learningMode = mode || 'flashcard';
 
     const selectedForms = parseFormsParam(forms);
     const { settings } = await getUserLearningPreferences(req.user.id, true);
-    const moduleConfig = getModuleConfig(module);
+    const moduleConfig = getModuleConfig(activeModule);
     const enabledForms = getEnabledForms(selectedForms, settings, moduleConfig.defaultForms);
+    const reviewModuleType = getModuleReviewType(activeModule, moduleConfig.itemType);
+    const isCompositeModule = MULTI_TYPE_MODULES.has(activeModule);
 
     const internalSettings = {
       due_only: settings.dueOnly,
@@ -310,10 +343,10 @@ router.get('/next', authenticateUser, async (req, res) => {
     };
 
     // 查询到期题目
-    const { query: dueQuery, paramCount } = buildDueItemsQuery(module, moduleConfig.tableName, moduleConfig.itemType);
-    const baseParams = module === 'plain'
-      ? [req.user.id, learningMode]
-      : [req.user.id, moduleConfig.itemType, learningMode];
+    const { query: dueQuery, paramCount } = buildDueItemsQuery(activeModule, moduleConfig.tableName, moduleConfig.itemType, reviewModuleType);
+    const baseParams = isCompositeModule
+      ? [req.user.id, learningMode, reviewModuleType]
+      : [req.user.id, reviewModuleType, learningMode];
 
     let finalQuery = dueQuery + ` AND r.form = ANY($${paramCount + 1})`;
     let queryParams = [...baseParams, enabledForms];
@@ -331,11 +364,12 @@ router.get('/next', authenticateUser, async (req, res) => {
       const review = result.rows[0];
 
       let reviewItem, reviewItemType;
-      if (module === 'plain') {
-        reviewItemType = review.item_type;
-        reviewItem = review.item_type === 'vrb'
-          ? { ...review, group: (review.type_info || '').trim() }
-          : { ...review, type: (review.type_info || '').trim() };
+      if (isCompositeModule) {
+        const lexicalType = (review.source_item_type || review.item_type || '').trim();
+        reviewItemType = lexicalType || 'vrb';
+        reviewItem = lexicalType === 'vrb'
+          ? { ...review, item_type: lexicalType, group: (review.type_info || '').trim() }
+          : { ...review, item_type: lexicalType, type: (review.type_info || '').trim() };
       } else {
         reviewItemType = moduleConfig.itemType;
         reviewItem = moduleConfig.itemType === 'adj'
@@ -343,22 +377,25 @@ router.get('/next', authenticateUser, async (req, res) => {
           : { ...review, group: (review.group || '').trim() };
       }
 
-      const normalizedItemTypeForGeneration = module === 'plain' ? 'pln' : reviewItemType;
+      const normalizedItemTypeForGeneration = isCompositeModule
+        ? (activeModule === 'polite' ? 'pol' : 'pln')
+        : reviewItemType;
       const correctAnswer = generateCorrectAnswer(normalizedItemTypeForGeneration, reviewItem, review.form);
-      const responseData = buildResponseData(reviewItem, review.form, module, correctAnswer, false, review);
+      const responseData = buildResponseData(reviewItem, review.form, activeModule, correctAnswer, false, review);
 
       return res.json(responseData);
     }
 
     // 没有到期题目,查询新题目
     console.log('没有到期项目,随机选择一个新项目');
-    const { query: newQuery, paramOrder } = buildNewItemsQuery(module, moduleConfig.tableName, moduleConfig.itemType);
+    const { query: newQuery, paramOrder } = buildNewItemsQuery(activeModule, moduleConfig.tableName, moduleConfig.itemType, reviewModuleType);
 
     const paramMap = {
       userId: req.user.id,
       learningMode,
       enabledForms,
-      itemType: moduleConfig.itemType
+      itemType: moduleConfig.itemType,
+      moduleType: reviewModuleType
     };
 
     const newQueryParams = paramOrder.map(key => paramMap[key]);
@@ -372,13 +409,14 @@ router.get('/next', authenticateUser, async (req, res) => {
     const newItem = newRows[0];
     const targetForm = newItem.form;
 
-    const actualItemType = module === 'plain' ? newItem.item_type : moduleConfig.itemType;
-    await createReviewRecord(req.user.id, actualItemType, newItem.item_id, targetForm, learningMode);
+    const processedItem = processItemData(newItem, activeModule, moduleConfig.itemType);
+    await createReviewRecord(req.user.id, reviewModuleType, newItem.item_id, targetForm, learningMode);
 
-    const processedItem = processItemData(newItem, module, moduleConfig.itemType);
-    const normalizedItemTypeForGeneration = module === 'plain' ? 'pln' : actualItemType;
+    const normalizedItemTypeForGeneration = isCompositeModule
+      ? (activeModule === 'polite' ? 'pol' : 'pln')
+      : moduleConfig.itemType;
     const correctAnswer = generateCorrectAnswer(normalizedItemTypeForGeneration, processedItem, targetForm);
-    const responseData = buildResponseData(processedItem, targetForm, module, correctAnswer, true);
+    const responseData = buildResponseData(processedItem, targetForm, activeModule, correctAnswer, true);
 
     res.json(responseData);
 
@@ -547,6 +585,7 @@ router.get('/progress', authenticateUser, async (req, res) => {
     let itemType;
     if (module === 'verb') itemType = 'vrb';
     else if (module === 'adj') itemType = 'adj';
+    else if (module === 'polite') itemType = 'pol';
     else itemType = 'pln';
 
     let whereClause = 'WHERE user_id = $1 AND item_type = $2';
@@ -660,6 +699,7 @@ async function getModuleComparison(userId, mode = null, module = null) {
     let itemType;
     if (module === 'verb') itemType = 'vrb';
     else if (module === 'adj') itemType = 'adj';
+    else if (module === 'polite') itemType = 'pol';
     else itemType = 'pln';
 
     sql += ` AND item_type = $${paramIndex}`;
@@ -677,7 +717,7 @@ async function getModuleComparison(userId, mode = null, module = null) {
   const { rows } = await pool.query(sql, params);
 
   return rows.map(row => ({
-    module: row.item_type === 'vrb' ? 'verb' : row.item_type === 'adj' ? 'adjective' : 'plain',
+    module: row.item_type === 'vrb' ? 'verb' : row.item_type === 'adj' ? 'adjective' : row.item_type === 'pol' ? 'polite' : 'plain',
     mode: row.learning_mode,
     totalItems: parseInt(row.total_items),
     totalAttempts: parseInt(row.total_attempts) || 0,
@@ -694,6 +734,7 @@ async function getFormAnalysis(userId, module, mode = null) {
   let itemType;
   if (module === 'verb') itemType = 'vrb';
   else if (module === 'adj') itemType = 'adj';
+  else if (module === 'polite') itemType = 'pol';
   else itemType = 'pln';
 
   let sql = `SELECT
@@ -736,6 +777,7 @@ async function getErrorAnalysis(userId, module, mode = null) {
   let itemType;
   if (module === 'verb') itemType = 'vrb';
   else if (module === 'adj') itemType = 'adj';
+  else if (module === 'polite') itemType = 'pol';
   else itemType = 'pln';
 
   let sql = `SELECT
