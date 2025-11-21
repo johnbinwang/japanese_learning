@@ -31,6 +31,7 @@ const learningRoutes = require('../routes/learning');
 const userRoutes = require('../routes/user');
 const insightsRoutes = require('../routes/insights');
 const recommendationsRoutes = require('../routes/recommendations');
+const aiRoutes = require('../routes/ai');
 
 // 注册路由
 app.use('/api/auth', authRoutes);
@@ -39,6 +40,7 @@ app.use('/api', learningRoutes);
 app.use('/api', userRoutes);
 app.use('/api', insightsRoutes);
 app.use('/api', recommendationsRoutes);
+app.use('/api', aiRoutes);
 
 // 版本信息端点
 app.get('/api/version', (req, res) => {

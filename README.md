@@ -19,6 +19,13 @@
 - **个性化学习**: 自适应难度调整，个人学习偏好设置
 - **学习统计**: 详细的学习进度分析和薄弱环节识别
 
+### 🤖 AI 日语讲解（MVP）
+- **聊天式体验**: 仿消息列表的 UI，可直接与 AI 互动、查看上下文
+- **OCR.Space OCR**: 自动压缩大图并调用 OCR.Space 识别教材/截图文字
+- **DeepSeek 讲解**: 输出原文+注音、翻译、词语拆解、语法点与练习建议
+- **JWT 保护**: 仅已登录用户可调用 `/api/ai/explain`，统一错误响应结构
+- **流式响应**: DeepSeek 启用 `stream=true`，前端实时显示生成过程
+
 ### 👤 用户系统
 - **邮箱认证**: 基于邮箱+密码的用户注册登录系统
 - **验证码验证**: 6位数字验证码，支持邮箱验证和密码重置
@@ -88,6 +95,14 @@ NODE_ENV="development"
 
 # 服务器端口
 PORT=3000
+
+# AI / OCR 配置
+DEEPSEEK_API_KEY="your_deepseek_api_key"
+DEEPSEEK_MODEL="deepseek-chat"              # 可选，默认 deepseek-chat
+DEEPSEEK_API_BASE="https://api.deepseek.com/v1"
+OCR_SPACE_API_KEY="your_ocr_space_api_key"
+AI_TEXT_MAX_LENGTH=1000                     # 可选，限制文本输入长度
+AI_IMAGE_MAX_BYTES=5242880                  # 可选，限制图片大小
 ```
 
 ### 3. 数据库初始化
@@ -202,6 +217,13 @@ japanese_learning/
 - `POST /api/submit` - 提交答案
 - `GET /api/progress` - 获取学习进度
 - `GET /api/today-overview` - 今日学习概览
+
+### AI 讲解
+- `POST /api/ai/explain` - 统一的 AI 日语讲解接口（multipart/form-data）
+  - 字段：`text`（可选文本，≤1000 字符）、`file`（可选图片，≤AI_IMAGE_MAX_BYTES）
+  - 返回：`sources`（原始文本/图片OCR）、`explain.content`（AI 生成的完整讲解文本）
+  - 错误：`UNAUTHORIZED`、`NO_INPUT`、`NO_TEXT_FROM_IMAGE`、`LLM_ERROR` 等统一结构
+- `POST /api/ai/explain/stream` - 流式 SSE 版本，实时返回 DeepSeek 输出（事件：`chunk` 为文本片段，`done` 包含完整 `explain.content`，`error` 用于异常提示）
 
 ### 分析相关
 - `GET /api/mode-comparison` - 模式对比

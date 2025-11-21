@@ -17,6 +17,7 @@
     // 功能模块
     'js/modules/progressManager.js',
     'js/modules/settingsManager.js',
+    'js/modules/aiAssistant.js',
     'js/modules/updateManager.js'
   ];
 

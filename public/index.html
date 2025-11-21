@@ -123,6 +123,46 @@
                 </div>
             </div>
             
+            <!-- AI 日语讲解页面 -->
+            <div id="ai" class="page">
+                <div class="page-header">
+                    <h1>AI 日语讲解</h1>
+                    <p class="page-desc">与 AI 以聊天方式互动，支持文字与图片提问。</p>
+                </div>
+
+                <section id="ai-assistant-view" class="ai-chat">
+                    <div class="ai-chat-messages" id="ai-chat-messages">
+                        <div class="ai-message ai-bot">
+                            <div class="ai-bubble">
+                                こんにちは！输入日文或中文句子，也可以上传教材/练习照片，我会帮你识别并讲解语法。
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-input-panel">
+                        <div class="ai-input-field">
+                            <textarea
+                                id="ai-chat-text"
+                                placeholder="输入问题或句子..."
+                                maxlength="1000"
+                                data-max-length="1000"
+                            ></textarea>
+                        </div>
+                        <div id="ai-selected-file" class="ai-selected-file hidden">
+                            <img id="ai-image-preview" alt="预览">
+                            <span id="ai-image-name"></span>
+                            <button type="button" id="ai-remove-image" class="link-button">移除</button>
+                        </div>
+                        <div class="ai-input-actions">
+                            <label for="ai-chat-file" class="ai-upload-btn">📷</label>
+                            <input type="file" id="ai-chat-file" accept="image/*" capture="environment" hidden>
+                            <button id="ai-chat-send" class="ai-submit-btn">发送</button>
+                        </div>
+                        <div id="ai-message" class="ai-message"></div>
+                    </div>
+                </section>
+            </div>
+
             <!-- 进度页面 -->
             <div id="progress" class="page">
                 <div class="page-header">
@@ -415,6 +455,10 @@
             <button class="nav-item active" data-page="learn">
                 <div class="nav-icon">📚</div>
                 <div class="nav-label">学习</div>
+            </button>
+            <button class="nav-item" data-page="ai">
+                <div class="nav-icon">🤖</div>
+                <div class="nav-label">AI讲解</div>
             </button>
             <button class="nav-item" data-page="progress">
                 <div class="nav-icon">📊</div>

@@ -3,6 +3,7 @@ class Router {
   constructor() {
     this.routes = {
       'learn': () => this.showPage('learn'),
+      'ai': () => this.showPage('ai'),
       'progress': () => this.showPage('progress'),
       'settings': () => this.showPage('settings')
     };
@@ -73,6 +74,8 @@ class Router {
       this.loadProgress();
     } else if (pageId === 'settings') {
       this.loadSettings();
+    } else if (pageId === 'ai' && window.aiAssistant && typeof window.aiAssistant.onPageShown === 'function') {
+      window.aiAssistant.onPageShown();
     }
   }
 
