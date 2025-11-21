@@ -60,22 +60,27 @@
       }
     }
 
-    handleFileChange() {
+    async handleFileChange() {
       const file = this.elements.fileInput?.files?.[0];
       if (!file) {
         this.clearSelectedFile();
         return;
       }
-      this.pendingFile = file;
-      const reader = new FileReader();
-      reader.onload = () => {
+
+      try {
+        const processed = await this.compressImageIfNeeded(file);
+        this.pendingFile = processed;
+        const previewURL = URL.createObjectURL(processed);
         if (this.elements.fileInfo && this.elements.imagePreview && this.elements.imageName) {
           this.elements.fileInfo.classList.remove('hidden');
-          this.elements.imagePreview.src = reader.result;
-          this.elements.imageName.textContent = file.name;
+          this.elements.imagePreview.src = previewURL;
+          this.elements.imageName.textContent = processed.name;
         }
-      };
-      reader.readAsDataURL(file);
+      } catch (error) {
+        console.error('[AI Assistant] 图片处理失败', error);
+        this.showStatus('图片处理失败，请重试。', 'error');
+        this.clearSelectedFile();
+      }
     }
 
     clearSelectedFile() {
@@ -353,6 +358,43 @@
         }).filter(Boolean).join('<br>');
         return `<div class="ai-text-block">${lines}</div>`;
       }).join('');
+    }
+
+    compressImageIfNeeded(file) {
+      const maxBytes = 1024 * 1024;
+      if (file.size <= maxBytes) {
+        return Promise.resolve(file);
+      }
+
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const scale = Math.min(1, Math.sqrt((1024 * 1024) / file.size));
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob(
+              blob => {
+                if (!blob) {
+                  reject(new Error('压缩图片失败'));
+                  return;
+                }
+                resolve(new File([blob], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' }));
+              },
+              'image/jpeg',
+              0.8
+            );
+          };
+          img.onerror = reject;
+          img.src = reader.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
     }
   }
 
