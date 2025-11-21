@@ -166,6 +166,12 @@ class UpdateManager {
   async performUpdate() {
     try {
       const updateBtn = document.getElementById('updateNow');
+      const resetButton = () => {
+        if (updateBtn) {
+          updateBtn.textContent = '立即更新';
+          updateBtn.disabled = false;
+        }
+      };
       if (updateBtn) {
         updateBtn.textContent = '更新中...';
         updateBtn.disabled = true;
@@ -186,6 +192,16 @@ class UpdateManager {
       const currentUrl = window.location.href.split('?')[0];
       const newUrl = `${currentUrl}?_refresh=${timestamp}&_nocache=${randomId}&_force=1`;
 
+      // 隐藏更新弹窗，避免“更新中”卡住
+      this.hideUpdateModal();
+
+      // 若浏览器未能立即跳转，3秒后恢复按钮状态
+      setTimeout(() => {
+        if (document.visibilityState === 'visible') {
+          resetButton();
+        }
+      }, 3000);
+
       window.location.href = newUrl;
 
     } catch (error) {
@@ -197,6 +213,7 @@ class UpdateManager {
         updateBtn.textContent = '立即更新';
         updateBtn.disabled = false;
       }
+      this.hideUpdateModal();
     }
   }
 
