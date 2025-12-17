@@ -5,6 +5,7 @@
       this.messages = {};
       this.pendingFile = null;
       this.streamingText = '';
+      this.history = [];
 
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => this.initialize(), { once: true });
@@ -28,6 +29,7 @@
       this.elements.imagePreview = document.getElementById('ai-image-preview');
       this.elements.imageName = document.getElementById('ai-image-name');
       this.elements.removeImageBtn = document.getElementById('ai-remove-image');
+      this.elements.clearChatBtn = document.getElementById('ai-clear-chat');
 
       this.maxTextLength = parseInt(this.elements.textarea?.dataset.maxLength || '1000', 10);
 
@@ -49,6 +51,10 @@
 
       if (this.elements.sendButton) {
         this.elements.sendButton.addEventListener('click', () => this.handleSend());
+      }
+
+      if (this.elements.clearChatBtn) {
+        this.elements.clearChatBtn.addEventListener('click', () => this.resetChat());
       }
     }
 
@@ -121,6 +127,9 @@
 
       const formData = new FormData();
       formData.append('text', text);
+      if (this.history.length) {
+        formData.append('history', JSON.stringify(this.history));
+      }
       if (file) {
         formData.append('file', file, file.name);
       }
@@ -137,6 +146,13 @@
         text: 'AI 正在思考…',
         loading: true
       });
+
+      // 将当前用户消息暂存入历史（不含图片预览名）
+      if (text) {
+        this.history.push({ role: 'user', content: text });
+      } else {
+        this.history.push({ role: 'user', content: '[仅图片提问]' });
+      }
 
       this.streamingText = '';
       this.setLoading(true);
@@ -165,6 +181,7 @@
             throw new Error(errorMessage);
           }
           this.renderAiMessage(aiMessageId, payload.data);
+          this.pushAiHistory(payload.data);
           this.streamingText = '';
         } else {
           const json = await response.json().catch(() => null);
@@ -174,6 +191,7 @@
             throw new Error(errorMessage);
           }
           this.renderAiMessage(aiMessageId, json.data);
+          this.pushAiHistory(json.data);
         }
       } catch (error) {
         console.error('[AI Assistant] 提交失败', error);
@@ -187,6 +205,17 @@
         }
         this.clearSelectedFile();
         this.showStatus('', '');
+      }
+    }
+
+    pushAiHistory(data) {
+      if (!data || !data.explain) return;
+      const explainContent = typeof data.explain === 'string'
+        ? data.explain
+        : data.explain?.content;
+
+      if (typeof explainContent === 'string' && explainContent.trim()) {
+        this.history.push({ role: 'assistant', content: explainContent.trim() });
       }
     }
 
@@ -300,6 +329,27 @@
       this.updateMessage(messageId, `<div class="ai-bubble">${formatted}</div>`);
     }
 
+    resetChat() {
+      this.history = [];
+      this.streamingText = '';
+      this.messages = {};
+
+      if (this.elements.messages) {
+        this.elements.messages.innerHTML = `
+          <div class="ai-message ai-bot">
+            <div class="ai-bubble">
+              こんにちは！输入日文或中文句子，也可以上传教材/练习照片，我会帮你识别并讲解语法。
+            </div>
+          </div>`;
+      }
+
+      if (this.elements.textarea) {
+        this.elements.textarea.value = '';
+      }
+      this.clearSelectedFile();
+      this.showStatus('', '');
+    }
+
     showStatus(message, type = 'info') {
       if (!this.elements.status) return;
       this.elements.status.textContent = message;
@@ -337,27 +387,116 @@
     }
 
     formatMultiline(text = '') {
-      const safe = this.escapeHTML(text || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-      const blocks = safe.split(/\n{2,}/);
-      return blocks.map(block => {
-        if (!block.trim()) {
-          return '<div class="ai-text-block"></div>';
+      return this.renderMarkdown(text);
+    }
+
+    renderMarkdown(text = '') {
+      if (!text) return '';
+
+      const codeBlocks = [];
+      const placeholder = (i) => `@@CODEBLOCK${i}@@`;
+
+      // 提取代码块
+      let tmp = text.replace(/```([\s\S]*?)```/g, (_, code) => {
+        const idx = codeBlocks.length;
+        codeBlocks.push(code);
+        return placeholder(idx);
+      });
+
+      // 按行处理
+      const lines = tmp.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      const htmlParts = [];
+      let i = 0;
+
+      const inlineMd = (str) => {
+        let s = this.escapeHTML(str);
+        s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+        s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+        return s;
+      };
+
+      const isTableHeaderSep = (line) => /^[:\-\s\|]+$/.test(line);
+      const isTableRow = (line) => /\|/.test(line);
+
+      while (i < lines.length) {
+        const line = lines[i].trim();
+        if (!line) {
+          i += 1;
+          continue;
         }
-        const lines = block.split('\n').map(line => {
-          const trimmed = line.trim();
-          if (!trimmed) {
-            return '';
+
+        // 标题
+        const headingMatch = line.match(/^(#{1,6})\s+(.*)$/);
+        if (headingMatch) {
+          const level = Math.min(6, headingMatch[1].length);
+          htmlParts.push(`<h${level}>${inlineMd(headingMatch[2])}</h${level}>`);
+          i += 1;
+          continue;
+        }
+
+        // 表格
+        if (isTableRow(line) && i + 1 < lines.length && isTableHeaderSep(lines[i + 1].trim())) {
+          const headerCells = line.split('|').map(c => c.trim()).filter(Boolean);
+          const rows = [];
+          i += 2; // skip header & separator
+          while (i < lines.length && isTableRow(lines[i].trim())) {
+            rows.push(lines[i].trim().split('|').map(c => c.trim()));
+            i += 1;
           }
-          if (/^[-•*]\s+/.test(trimmed)) {
-            return `• ${trimmed.replace(/^[-•*]\s+/, '')}`;
+          const thead = `<thead><tr>${headerCells.map(c => `<th>${inlineMd(c)}</th>`).join('')}</tr></thead>`;
+          const tbody = rows.length
+            ? `<tbody>${rows.map(r => `<tr>${r.map(c => `<td>${inlineMd(c)}</td>`).join('')}</tr>`).join('')}</tbody>`
+            : '';
+          htmlParts.push(`<table class="ai-table">${thead}${tbody}</table>`);
+          continue;
+        }
+
+        // 有序列表
+        if (/^\d+\.\s+/.test(line)) {
+          const items = [];
+          while (i < lines.length && /^\d+\.\s+/.test(lines[i].trim())) {
+            items.push(`<li>${inlineMd(lines[i].trim().replace(/^\d+\.\s+/, ''))}</li>`);
+            i += 1;
           }
-          if (/^\d+[\.\)]\s+/.test(trimmed)) {
-            return `${trimmed}`;
+          htmlParts.push(`<ol>${items.join('')}</ol>`);
+          continue;
+        }
+
+        // 无序列表
+        if (/^[-*+]\s+/.test(line)) {
+          const items = [];
+          while (i < lines.length && /^[-*+]\s+/.test(lines[i].trim())) {
+            items.push(`<li>${inlineMd(lines[i].trim().replace(/^[-*+]\s+/, ''))}</li>`);
+            i += 1;
           }
-          return trimmed;
-        }).filter(Boolean).join('<br>');
-        return `<div class="ai-text-block">${lines}</div>`;
-      }).join('');
+          htmlParts.push(`<ul>${items.join('')}</ul>`);
+          continue;
+        }
+
+        // 段落（连续非空、非列表、非标题行）
+        const paraLines = [line];
+        i += 1;
+        while (
+          i < lines.length &&
+          lines[i].trim() &&
+          !/^(#{1,6})\s+/.test(lines[i].trim()) &&
+          !/^\d+\.\s+/.test(lines[i].trim()) &&
+          !/^[-*+]\s+/.test(lines[i].trim())
+        ) {
+          paraLines.push(lines[i].trim());
+          i += 1;
+        }
+        htmlParts.push(`<p>${inlineMd(paraLines.join(' '))}</p>`);
+      }
+
+      let html = htmlParts.join('');
+      html = html.replace(/@@CODEBLOCK(\d+)@@/g, (_, idx) => {
+        const code = this.escapeHTML(codeBlocks[Number(idx)] || '');
+        return `<pre><code>${code}</code></pre>`;
+      });
+
+      return html;
     }
 
     compressImageIfNeeded(file) {

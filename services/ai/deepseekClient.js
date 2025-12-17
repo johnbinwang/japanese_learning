@@ -4,18 +4,50 @@ const { AiExplainError } = require('./errors');
 const DEFAULT_MODEL = process.env.DEEPSEEK_MODEL || 'deepseek-chat';
 const BASE_URL = process.env.DEEPSEEK_API_BASE || 'https://api.deepseek.com';
 const SYSTEM_PROMPT = `
-你是一名面向中文母语学习者的日语语法讲解老师。
+你是一名面向中文母语学习者的日语语法讲解老师，需根据意图区分“讲解句子”与“元对话/功能咨询”：
+1) 如果用户是在提问你的功能、流程、需求（例如“可以多轮吗”“不要忘记之前内容”“请总结”等），直接用中文回应并遵循要求，不要把问题当作待讲解的日语句子。
+2) 如果用户提供日语句子或包含日语/汉字/假名的示例，再进行语法讲解。
+
 你会收到一个 JSON 对象：
 { "text_input": "...", "image_ocr_text": "..." }
-两个字段中可能有一个为空字符串，请综合处理。
+两个字段中可能有一个为空，请综合处理。
 
-输出纯文本且结构清晰，建议包含：
-1. 简短概括（中文）
-2. 原句逐条讲解：原文、平假名注音、中文翻译
-3. 词语/短语拆解：列出若干重点词语，含读音与释义
-4. 语法讲解：列出若干语法点，描述用法、接续形式、例句（日中对照）
-5. 练习建议：1~3 条练习提示或造句任务
-保持客观、中文说明，可使用简单标题或列表。`.trim();
+输出纯文本，结构清晰，建议包含（仅在句子讲解场景下使用）：
+- 简短概括（中文）
+- 原句逐条讲解：原文、平假名注音、中文翻译
+- 词语/短语拆解：重点词语+读音+释义
+- 语法讲解：用法、接续形式、例句（日中对照）
+- 练习建议：1~3 条练习提示或造句任务
+保持客观、中文说明，可使用简单标题或列表；若是功能类问题，则直接回答，不必套用上述结构。`.trim();
+
+const SUMMARY_PROMPT = `
+你是一名对话压缩助手，请将输入的多轮对话内容摘要为一段不超过 200 字的中文要点，保留：
+- 用户提问中的关键句子、语言偏好或语气要求
+- 助手已给出的核心讲解、语法点、例句
+请不要添加新信息，输出纯文本。`.trim();
+
+function buildMessages({ history = [], userContent }) {
+  const messages = [
+    {
+      role: 'system',
+      content: SYSTEM_PROMPT
+    }
+  ];
+
+  if (Array.isArray(history) && history.length) {
+    history.forEach(item => {
+      if (!item?.role || !item?.content) return;
+      messages.push({ role: item.role, content: item.content });
+    });
+  }
+
+  messages.push({
+    role: 'user',
+    content: userContent
+  });
+
+  return messages;
+}
 
 const getClient = () => {
   const apiKey = process.env.DEEPSEEK_API_KEY;
@@ -36,7 +68,7 @@ async function callDeepseek(messages) {
     const completion = await client.chat.completions.create({
       model: DEFAULT_MODEL,
       temperature: parseFloat(process.env.DEEPSEEK_TEMPERATURE || '0.2'),
-      max_tokens: parseInt(process.env.DEEPSEEK_MAX_TOKENS || '900', 10),
+      max_tokens: parseInt(process.env.DEEPSEEK_MAX_TOKENS || '1500', 10),
       messages
     });
 
@@ -62,49 +94,31 @@ async function callDeepseek(messages) {
   }
 }
 
-async function explainCombinedInput({ textInput = '', imageOcrText = '' }) {
+async function explainCombinedInput({ textInput = '', imageOcrText = '', history = [] }) {
   const payload = JSON.stringify({
     text_input: textInput,
     image_ocr_text: imageOcrText
   });
 
-  const messages = [
-    {
-      role: 'system',
-      content: SYSTEM_PROMPT
-    },
-    {
-      role: 'user',
-      content: payload
-    }
-  ];
+  const messages = buildMessages({ history, userContent: payload });
 
   return callDeepseek(messages);
 }
 
-async function streamExplainCombinedInput({ textInput = '', imageOcrText = '', onDelta }) {
+async function streamExplainCombinedInput({ textInput = '', imageOcrText = '', history = [], onDelta }) {
   const payload = JSON.stringify({
     text_input: textInput,
     image_ocr_text: imageOcrText
   });
 
-  const messages = [
-    {
-      role: 'system',
-      content: SYSTEM_PROMPT
-    },
-    {
-      role: 'user',
-      content: payload
-    }
-  ];
+  const messages = buildMessages({ history, userContent: payload });
 
   const client = getClient();
   try {
     const stream = await client.chat.completions.create({
       model: DEFAULT_MODEL,
       temperature: parseFloat(process.env.DEEPSEEK_TEMPERATURE || '0.2'),
-      max_tokens: parseInt(process.env.DEEPSEEK_MAX_TOKENS || '900', 10),
+      max_tokens: parseInt(process.env.DEEPSEEK_MAX_TOKENS || '1500', 10),
       messages,
       stream: true
     });
@@ -146,5 +160,22 @@ async function streamExplainCombinedInput({ textInput = '', imageOcrText = '', o
 
 module.exports = {
   explainCombinedInput,
-  streamExplainCombinedInput
+  streamExplainCombinedInput,
+  buildMessages,
+  summarizeHistory
 };
+
+async function summarizeHistory(history = []) {
+  if (!Array.isArray(history) || !history.length) {
+    return '';
+  }
+
+  const payload = history.map(item => `${item.role === 'user' ? '用户' : '助手'}: ${item.content}`).join('\n');
+
+  const messages = [
+    { role: 'system', content: SUMMARY_PROMPT },
+    { role: 'user', content: payload }
+  ];
+
+  return callDeepseek(messages);
+}

@@ -76,10 +76,12 @@ router.post('/ai/explain', requireAuthJson, handleUpload, async (req, res) => {
   try {
     const textInput = typeof req.body?.text === 'string' ? req.body.text : '';
     const fileBuffer = req.file ? req.file.buffer : null;
+    const history = req.body?.history ?? null;
 
     const payload = await aiExplainService({
       textInput,
-      fileBuffer
+      fileBuffer,
+      history
     });
 
     res.json({
@@ -101,6 +103,7 @@ router.post('/ai/explain/stream', requireAuthJson, handleUpload, async (req, res
   try {
     const textInput = typeof req.body?.text === 'string' ? req.body.text : '';
     const fileBuffer = req.file ? req.file.buffer : null;
+    const history = req.body?.history ?? null;
     const sources = await prepareAiSources({ textInput, fileBuffer });
 
     res.setHeader('Content-Type', 'text/event-stream');
@@ -118,6 +121,7 @@ router.post('/ai/explain/stream', requireAuthJson, handleUpload, async (req, res
       const explainContent = await streamExplainCombinedInput({
         textInput: sources.text_input,
         imageOcrText: sources.image_ocr_text,
+        history,
         onDelta: (content) => {
           const preview = formatStreamPreview(content);
           if (preview) {

@@ -2190,6 +2190,15 @@ input[type="checkbox"] {
     box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.5);
 }
 
+.ai-chat-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.ai-chat-actions .link-button {
+    color: #8fb3ff;
+}
+
 .ai-input-field textarea {
     width: 100%;
     min-height: 60px;
