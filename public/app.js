@@ -131,9 +131,6 @@ class App {
 }
 
 // 兼容性函数 - 保留以支持从路由调用
-const baseShowLoading = window.showLoading;
-const baseShowToast = window.showToast;
-
 function initProgressPage() {
   window.ProgressManager.initProgressPage();
 }
@@ -144,19 +141,6 @@ async function loadTodayOverview() {
 
 function updateSettingsDisplay(userData) {
   window.SettingsManager.updateSettingsDisplay(userData);
-}
-
-// 防止递归：调用初始注入的 showLoading / showToast
-function showLoading(show) {
-  if (typeof baseShowLoading === 'function') {
-    baseShowLoading(show);
-  }
-}
-
-function showToast(message, type = 'info') {
-  if (typeof baseShowToast === 'function') {
-    baseShowToast(message, type);
-  }
 }
 
 // 等待所有模块加载完成后再启动应用
