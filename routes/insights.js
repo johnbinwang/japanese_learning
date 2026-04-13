@@ -24,7 +24,7 @@ router.get('/today-overview', authenticateUser, async (req, res) => {
         COUNT(*) as due_count
       FROM reviews r
       LEFT JOIN questions q ON q.id = r.question_id
-      WHERE r.user_id = $1 AND r.next_review_at <= NOW()
+      WHERE r.user_id::text = $1::text AND r.next_review_at <= NOW()
       GROUP BY 1
     `;
 
@@ -183,7 +183,7 @@ router.get('/insights/trends', authenticateUser, async (req, res) => {
         AVG(total_count) as avg_attempts,
         COUNT(DISTINCT question_id) as unique_items
       FROM reviews
-      WHERE user_id = $1 AND last_review_at >= NOW() - INTERVAL '7 days'
+      WHERE user_id::text = $1::text AND last_review_at >= NOW() - INTERVAL '7 days'
       GROUP BY DATE(last_review_at)
       ORDER BY date DESC
     `;
@@ -233,7 +233,7 @@ router.get('/insights/weaknesses', authenticateUser, async (req, res) => {
         ROUND(SUM(r.total_count - r.correct_count)::numeric / GREATEST(SUM(r.total_count), 1)::numeric * 100, 1) as error_rate
       FROM reviews r
       LEFT JOIN questions q ON q.id = r.question_id
-      WHERE r.user_id = $1 AND r.last_review_at >= NOW() - INTERVAL '30 days'
+      WHERE r.user_id::text = $1::text AND r.last_review_at >= NOW() - INTERVAL '30 days'
       GROUP BY q.form_name
       HAVING SUM(r.total_count) >= 5 AND SUM(r.total_count - r.correct_count)::numeric / GREATEST(SUM(r.total_count), 1)::numeric > 0.3
       ORDER BY error_rate DESC, total_attempts DESC
@@ -311,7 +311,7 @@ router.get('/insights/suggestions', authenticateUser, async (req, res) => {
     const dueAnalysis = await pool.query(`
       SELECT COUNT(*) as due_count
       FROM reviews
-      WHERE user_id = $1 AND next_review_at <= NOW()
+      WHERE user_id::text = $1::text AND next_review_at <= NOW()
     `, [userId]);
 
     const freq = frequencyAnalysis.rows[0];
