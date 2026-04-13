@@ -14,11 +14,18 @@ router.get('/today-overview', authenticateUser, async (req, res) => {
 
     const dueReviewsQuery = `
       SELECT
-        item_type as module_type,
+        CASE
+          WHEN q.type = 'verb' THEN 'vrb'
+          WHEN q.type LIKE 'adjective_%' THEN 'adj'
+          WHEN q.type = 'plain' THEN 'pln'
+          WHEN q.type = 'polite' THEN 'pol'
+          ELSE 'oth'
+        END as module_type,
         COUNT(*) as due_count
-      FROM reviews
-      WHERE user_id = $1 AND due_at <= NOW()
-      GROUP BY item_type
+      FROM reviews r
+      LEFT JOIN questions q ON q.id = r.question_id
+      WHERE r.user_id = $1 AND r.next_review_at <= NOW()
+      GROUP BY 1
     `;
 
     const todaySessionsQuery = `
@@ -91,6 +98,7 @@ router.get('/today-overview', authenticateUser, async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('获取今日概览失败:', error);
     res.status(500).json({ error: '获取今日概览失败' });
   }
 });
@@ -105,29 +113,22 @@ router.get('/mode-comparison', authenticateUser, async (req, res) => {
     let params = [userId];
 
     if (module !== 'all') {
-      whereClause += ' AND item_type = $2';
+      whereClause += ' AND module_type = $2';
       params.push(module);
     }
 
     const comparisonQuery = `
       SELECT
         learning_mode,
-        item_type,
-        COUNT(*) as total_items,
-        SUM(attempts) as total_attempts,
-        SUM(correct) as total_correct,
-        AVG(streak) as avg_streak,
-        COUNT(CASE WHEN due_at <= NOW() THEN 1 END) as due_count,
-        COUNT(CASE WHEN (correct::DECIMAL / GREATEST(attempts, 1)) >= 0.75 AND streak >= 3 THEN 1 END) as mastered_count,
-        CASE
-          WHEN learning_mode = 'quiz' THEN
-            CASE WHEN SUM(attempts) > 0 THEN (SUM(correct)::DECIMAL / SUM(attempts) * 100) ELSE 0 END
-          ELSE AVG(streak) * 20
-        END as performance_metric
-      FROM reviews
+        module_type,
+        SUM(new_items_completed + reviews_completed) as total_items,
+        AVG(accuracy_rate) as accuracy_rate,
+        SUM(reviews_completed) as due_count,
+        0 as mastered_count
+      FROM daily_learning_stats
       ${whereClause}
-      GROUP BY learning_mode, item_type
-      ORDER BY learning_mode, item_type
+      GROUP BY learning_mode, module_type
+      ORDER BY learning_mode, module_type
     `;
 
     const result = await pool.query(comparisonQuery, params);
@@ -139,12 +140,12 @@ router.get('/mode-comparison', authenticateUser, async (req, res) => {
 
     result.rows.forEach(row => {
       const mode = row.learning_mode;
-      const moduleType = row.item_type;
+      const moduleType = row.module_type;
 
       modeData[mode].modules[moduleType] = {
         total_items: parseInt(row.total_items),
-        accuracy_rate: Math.min(parseFloat(row.performance_metric) || 0, 100),
-        avg_streak: parseFloat(row.avg_streak) || 0,
+        accuracy_rate: Math.min(parseFloat(row.accuracy_rate) || 0, 100),
+        avg_streak: 0,
         due_count: parseInt(row.due_count),
         mastered_count: parseInt(row.mastered_count)
       };
@@ -175,15 +176,15 @@ router.get('/insights/trends', authenticateUser, async (req, res) => {
 
     const trendsQuery = `
       SELECT
-        DATE(last_reviewed) as date,
+        DATE(last_review_at) as date,
         COUNT(*) as total_reviews,
-        SUM(attempts) as total_attempts,
-        SUM(correct) as correct_reviews,
-        AVG(attempts) as avg_attempts,
-        COUNT(DISTINCT item_id) as unique_items
+        SUM(total_count) as total_attempts,
+        SUM(correct_count) as correct_reviews,
+        AVG(total_count) as avg_attempts,
+        COUNT(DISTINCT question_id) as unique_items
       FROM reviews
-      WHERE user_id = $1 AND last_reviewed >= NOW() - INTERVAL '7 days'
-      GROUP BY DATE(last_reviewed)
+      WHERE user_id = $1 AND last_review_at >= NOW() - INTERVAL '7 days'
+      GROUP BY DATE(last_review_at)
       ORDER BY date DESC
     `;
 
@@ -225,15 +226,16 @@ router.get('/insights/weaknesses', authenticateUser, async (req, res) => {
 
     const weaknessQuery = `
       SELECT
-        form,
-        COUNT(*) as total_attempts,
-        SUM(correct) as correct_attempts,
-        (COUNT(*) - SUM(correct)) as error_count,
-        ROUND((COUNT(*) - SUM(correct))::numeric / COUNT(*)::numeric * 100, 1) as error_rate
-      FROM reviews
-      WHERE user_id = $1 AND last_reviewed >= NOW() - INTERVAL '30 days'
-      GROUP BY form
-      HAVING COUNT(*) >= 5 AND (COUNT(*) - SUM(correct))::numeric / COUNT(*)::numeric > 0.3
+        q.form_name as form,
+        SUM(r.total_count) as total_attempts,
+        SUM(r.correct_count) as correct_attempts,
+        SUM(r.total_count - r.correct_count) as error_count,
+        ROUND(SUM(r.total_count - r.correct_count)::numeric / GREATEST(SUM(r.total_count), 1)::numeric * 100, 1) as error_rate
+      FROM reviews r
+      LEFT JOIN questions q ON q.id = r.question_id
+      WHERE r.user_id = $1 AND r.last_review_at >= NOW() - INTERVAL '30 days'
+      GROUP BY q.form_name
+      HAVING SUM(r.total_count) >= 5 AND SUM(r.total_count - r.correct_count)::numeric / GREATEST(SUM(r.total_count), 1)::numeric > 0.3
       ORDER BY error_rate DESC, total_attempts DESC
       LIMIT 10
     `;
@@ -292,24 +294,24 @@ router.get('/insights/suggestions', authenticateUser, async (req, res) => {
       SELECT
         learning_mode as mode,
         COUNT(*) as count,
-        AVG(CASE WHEN correct > 0 THEN 1.0 ELSE 0.0 END) as accuracy
-      FROM reviews
-      WHERE user_id = $1 AND last_reviewed >= NOW() - INTERVAL '7 days'
+        AVG(accuracy_rate) / 100.0 as accuracy
+      FROM daily_learning_stats
+      WHERE user_id = $1 AND stat_date >= CURRENT_DATE - INTERVAL '7 days'
       GROUP BY learning_mode
     `, [userId]);
 
     const frequencyAnalysis = await pool.query(`
       SELECT
-        COUNT(DISTINCT DATE(last_reviewed)) as active_days,
-        COUNT(*) as total_reviews
-      FROM reviews
-      WHERE user_id = $1 AND last_reviewed >= NOW() - INTERVAL '7 days'
+        COUNT(DISTINCT stat_date) as active_days,
+        COALESCE(SUM(reviews_completed), 0) as total_reviews
+      FROM daily_learning_stats
+      WHERE user_id = $1 AND stat_date >= CURRENT_DATE - INTERVAL '7 days'
     `, [userId]);
 
     const dueAnalysis = await pool.query(`
       SELECT COUNT(*) as due_count
       FROM reviews
-      WHERE user_id = $1 AND due_at <= NOW()
+      WHERE user_id = $1 AND next_review_at <= NOW()
     `, [userId]);
 
     const freq = frequencyAnalysis.rows[0];
