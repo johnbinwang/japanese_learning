@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db/pool');
 const { authenticateUser } = require('../middleware/authenticateUser');
+const REVIEWS_TABLE = 'reviews_v2';
 
 // GET /api/recommendations - 获取智能推荐
 router.get('/recommendations', authenticateUser, async (req, res) => {
@@ -97,7 +98,7 @@ async function generateModeRecommendations(userId) {
       SUM(attempts) as total_attempts,
       SUM(correct) as total_correct,
       AVG(streak) as avg_streak
-    FROM reviews
+    FROM ${REVIEWS_TABLE}
     WHERE user_id = $1 AND last_reviewed >= NOW() - INTERVAL '7 days'
     GROUP BY learning_mode
   `;
@@ -157,7 +158,7 @@ async function generateScheduleRecommendations(userId) {
       COUNT(*) as total_reviews,
       SUM(correct) as correct_reviews,
       SUM(attempts) as total_attempts
-    FROM reviews
+    FROM ${REVIEWS_TABLE}
     WHERE user_id = $1 AND last_reviewed >= NOW() - INTERVAL '30 days'
     GROUP BY EXTRACT(HOUR FROM last_reviewed)
     ORDER BY (SUM(correct)::decimal / NULLIF(SUM(attempts), 0)) DESC
@@ -202,7 +203,7 @@ async function generateFocusRecommendations(userId) {
       COUNT(*) as total_attempts,
       SUM(correct) as correct_attempts,
       (COUNT(*) - SUM(correct))::decimal / COUNT(*) as error_rate
-    FROM reviews
+    FROM ${REVIEWS_TABLE}
     WHERE user_id = $1 AND last_reviewed >= NOW() - INTERVAL '30 days'
     GROUP BY form
     HAVING COUNT(*) >= 5

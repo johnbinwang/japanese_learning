@@ -257,7 +257,12 @@ async function getItemData(normalizedItemType, itemId) {
     throw new Error('题目不存在');
   }
 
-  return itemRows[0];
+  const item = itemRows[0];
+  if (normalizedItemType === 'vrb' && item.verb_class && !item.group_type) {
+    item.group_type = item.verb_class;
+    item.group = item.verb_class;
+  }
+  return item;
 }
 
 // 验证答案
@@ -377,7 +382,7 @@ function getExplanation(normalizedItemType, item, form) {
   } else {
     const rawBase = item.kanji || item.kana;
     const base = rawBase.replace(/\d+$/, '');
-    let groupForExplanation = item.group_type;
+    let groupForExplanation = item.group_type || item.verb_class || item.group;
     if (!groupForExplanation || groupForExplanation.trim() === '') {
       groupForExplanation = ConjugationEngine.normalizeGroup(base);
     } else {

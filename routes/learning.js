@@ -35,6 +35,7 @@ const DEFAULT_VERB_FORMS = [
 ];
 
 const MULTI_TYPE_MODULES = new Set(['plain', 'polite']);
+const REVIEWS_TABLE = 'reviews_v2';
 
 function normalizeEnabledForms(value) {
   if (Array.isArray(value)) {
@@ -114,7 +115,7 @@ function buildDueItemsQuery(module, tableName, itemType, reviewItemType) {
       query: `
         WITH recent_items AS (
           SELECT DISTINCT r.item_id, r.form, r.item_type
-          FROM reviews r
+          FROM ${REVIEWS_TABLE} r
           WHERE r.user_id = $1 AND r.learning_mode = $2
             AND r.item_type = $3
             AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
@@ -124,7 +125,7 @@ function buildDueItemsQuery(module, tableName, itemType, reviewItemType) {
                  WHEN i.item_type = 'vrb' THEN i.group_type
                  WHEN i.item_type = 'adj' THEN i.adj_type
                END as type_info
-        FROM reviews r
+        FROM ${REVIEWS_TABLE} r
         JOIN ${tableName} i ON r.item_id = i.id
         LEFT JOIN recent_items ri ON ri.item_id = r.item_id AND ri.form = r.form
         WHERE r.user_id = $1 AND r.learning_mode = $2
@@ -138,13 +139,13 @@ function buildDueItemsQuery(module, tableName, itemType, reviewItemType) {
     query: `
       WITH recent_items AS (
         SELECT DISTINCT r.item_id, r.form
-        FROM reviews r
+        FROM ${REVIEWS_TABLE} r
         WHERE r.user_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
           AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
       )
       SELECT r.*, i.kana, i.kanji, i.meaning,
-             ${itemType === 'adj' ? 'i.type' : 'i.group_type as group'}
-      FROM reviews r
+             ${itemType === 'adj' ? 'i.type' : 'i.verb_class as group_type'}
+      FROM ${REVIEWS_TABLE} r
       JOIN ${tableName} i ON r.item_id = i.id
       LEFT JOIN recent_items ri ON ri.item_id = r.item_id AND ri.form = r.form
       WHERE r.user_id = $1 AND r.item_type = $2 AND r.learning_mode = $3
@@ -160,7 +161,7 @@ function buildNewItemsQuery(module, tableName, itemType, reviewItemType) {
       query: `
         WITH recent_items AS (
           SELECT DISTINCT r.item_id, r.form
-          FROM reviews r
+          FROM ${REVIEWS_TABLE} r
           WHERE r.user_id = $1 AND r.learning_mode = $2
             AND r.item_type = $4
             AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
@@ -175,7 +176,7 @@ function buildNewItemsQuery(module, tableName, itemType, reviewItemType) {
         )
         SELECT c.*, 'new' AS status
         FROM candidates c
-        LEFT JOIN reviews r
+        LEFT JOIN ${REVIEWS_TABLE} r
           ON r.user_id = $1
          AND r.item_type = $4
          AND r.item_id = c.item_id
@@ -195,20 +196,20 @@ function buildNewItemsQuery(module, tableName, itemType, reviewItemType) {
     query: `
       WITH recent_items AS (
         SELECT DISTINCT r.item_id, r.form
-        FROM reviews r
+          FROM ${REVIEWS_TABLE} r
         WHERE r.user_id = $1 AND r.item_type = $4 AND r.learning_mode = $3
           AND r.last_reviewed >= NOW() - INTERVAL '30 minutes'
       ),
       candidates AS (
         SELECT i.id AS item_id, i.kana, i.kanji, i.meaning,
-               ${itemType === 'adj' ? 'i.type AS type' : 'i.group_type AS group_type'},
+               ${itemType === 'adj' ? 'i.type AS type' : 'i.verb_class AS group_type'},
                f.form
         FROM ${tableName} i
         CROSS JOIN UNNEST($2::text[]) AS f(form)
       )
       SELECT c.*, 'new' AS status
       FROM candidates c
-      LEFT JOIN reviews r
+      LEFT JOIN ${REVIEWS_TABLE} r
         ON r.user_id = $1
        AND r.item_type = $4
        AND r.item_id = c.item_id
@@ -305,7 +306,7 @@ function buildResponseData(item, targetForm, module, correctAnswer, isNew = fals
 // 创建复习记录
 async function createReviewRecord(userId, itemType, itemId, targetForm, learningMode) {
   const insertSql = `
-    INSERT INTO reviews (user_id, item_type, item_id, form, learning_mode, due_at, last_reviewed)
+    INSERT INTO ${REVIEWS_TABLE} (user_id, item_type, item_id, form, learning_mode, due_at, last_reviewed)
     VALUES ($1, $2, $3, $4, $5, $6, NOW())
     ON CONFLICT (user_id, item_type, item_id, form, learning_mode)
     DO UPDATE SET due_at = EXCLUDED.due_at, last_reviewed = EXCLUDED.last_reviewed
@@ -374,7 +375,7 @@ router.get('/next', authenticateUser, async (req, res) => {
         reviewItemType = moduleConfig.itemType;
         reviewItem = moduleConfig.itemType === 'adj'
           ? review
-          : { ...review, group: (review.group || '').trim() };
+          : { ...review, group: (review.group || review.group_type || '').trim() };
       }
 
       const normalizedItemTypeForGeneration = isCompositeModule
@@ -428,7 +429,7 @@ router.get('/next', authenticateUser, async (req, res) => {
 
 // 获取复习记录
 async function getReviewRecord(userId, normalizedItemType, itemId, form, learningMode) {
-  const reviewSql = 'SELECT * FROM reviews WHERE user_id = $1 AND item_type = $2 AND item_id = $3 AND form = $4 AND learning_mode = $5';
+  const reviewSql = `SELECT * FROM ${REVIEWS_TABLE} WHERE user_id = $1 AND item_type = $2 AND item_id = $3 AND form = $4 AND learning_mode = $5`;
   const reviewParams = [userId, normalizedItemType, itemId, form, learningMode];
   const { rows: reviewRows } = await pool.query(reviewSql, reviewParams);
 
@@ -450,7 +451,7 @@ async function getReviewRecord(userId, normalizedItemType, itemId, form, learnin
 
 // 更新复习记录
 async function updateReviewRecord(userId, normalizedItemType, itemId, form, learningMode, attempts, correct, newStreak, dueAt) {
-  const updateSql = `INSERT INTO reviews (user_id, item_type, item_id, form, learning_mode, attempts, correct, streak, due_at, last_reviewed)
+  const updateSql = `INSERT INTO ${REVIEWS_TABLE} (user_id, item_type, item_id, form, learning_mode, attempts, correct, streak, due_at, last_reviewed)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
      ON CONFLICT (user_id, item_type, item_id, form, learning_mode)
      DO UPDATE SET attempts = $6, correct = $7, streak = $8, due_at = $9, last_reviewed = NOW()`;
@@ -603,7 +604,7 @@ router.get('/progress', authenticateUser, async (req, res) => {
          SUM(correct) as total_correct,
          AVG(streak) as avg_streak,
          COUNT(CASE WHEN due_at <= NOW() THEN 1 END) as due_count
-       FROM reviews
+       FROM ${REVIEWS_TABLE}
        ${whereClause}`,
       params
     );
@@ -617,7 +618,7 @@ router.get('/progress', authenticateUser, async (req, res) => {
            ELSE 'mastered'
          END as level,
          COUNT(*) as count
-       FROM reviews
+       FROM ${REVIEWS_TABLE}
        ${whereClause}
        GROUP BY
          CASE
@@ -635,7 +636,7 @@ router.get('/progress', authenticateUser, async (req, res) => {
          DATE(last_reviewed) as date,
          COUNT(*) as reviews,
          SUM(CASE WHEN correct > 0 THEN 1 ELSE 0 END) as correct_reviews
-       FROM reviews
+       FROM ${REVIEWS_TABLE}
        ${recentWhereClause}
        GROUP BY DATE(last_reviewed)
        ORDER BY date`,
@@ -689,7 +690,7 @@ async function getModuleComparison(userId, mode = null, module = null) {
        AVG(streak) as avg_streak,
        COUNT(CASE WHEN due_at <= NOW() THEN 1 END) as due_count,
        CASE WHEN SUM(attempts) > 0 THEN SUM(correct)::float / SUM(attempts) ELSE 0 END as accuracy
-     FROM reviews
+     FROM ${REVIEWS_TABLE}
      WHERE user_id = $1`;
 
   const params = [userId];
@@ -745,7 +746,7 @@ async function getFormAnalysis(userId, module, mode = null) {
        SUM(correct) as total_correct,
        AVG(streak) as avg_streak,
        COUNT(CASE WHEN streak >= 5 THEN 1 END) as mastered_count
-     FROM reviews
+     FROM ${REVIEWS_TABLE}
      WHERE user_id = $1 AND item_type = $2`;
 
   const params = [userId, itemType];
@@ -788,7 +789,7 @@ async function getErrorAnalysis(userId, module, mode = null) {
        correct,
        streak,
        (attempts - correct) as errors
-     FROM reviews
+     FROM ${REVIEWS_TABLE}
      WHERE user_id = $1 AND item_type = $2 AND attempts > correct`;
 
   const params = [userId, itemType];
@@ -807,7 +808,7 @@ async function getErrorAnalysis(userId, module, mode = null) {
        COUNT(*) as error_items,
        SUM(attempts - correct) as total_errors,
        AVG(attempts - correct) as avg_errors_per_item
-     FROM reviews
+     FROM ${REVIEWS_TABLE}
      WHERE user_id = $1 AND item_type = $2 AND attempts > correct`;
 
   const errorStatsParams = [userId, itemType];

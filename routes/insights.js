@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db/pool');
 const { authenticateUser } = require('../middleware/authenticateUser');
+const REVIEWS_TABLE = 'reviews_v2';
 
 // GET /api/today-overview - 获取今日学习概览
 router.get('/today-overview', authenticateUser, async (req, res) => {
@@ -14,18 +15,11 @@ router.get('/today-overview', authenticateUser, async (req, res) => {
 
     const dueReviewsQuery = `
       SELECT
-        CASE
-          WHEN q.type = 'verb' THEN 'vrb'
-          WHEN q.type LIKE 'adjective_%' THEN 'adj'
-          WHEN q.type = 'plain' THEN 'pln'
-          WHEN q.type = 'polite' THEN 'pol'
-          ELSE 'oth'
-        END as module_type,
+        item_type as module_type,
         COUNT(*) as due_count
-      FROM reviews r
-      LEFT JOIN questions q ON q.id = r.question_id
-      WHERE r.user_id::text = $1::text AND r.next_review_at <= NOW()
-      GROUP BY 1
+      FROM ${REVIEWS_TABLE}
+      WHERE user_id = $1 AND due_at <= NOW()
+      GROUP BY item_type
     `;
 
     const todaySessionsQuery = `
@@ -176,15 +170,15 @@ router.get('/insights/trends', authenticateUser, async (req, res) => {
 
     const trendsQuery = `
       SELECT
-        DATE(last_review_at) as date,
+        DATE(last_reviewed) as date,
         COUNT(*) as total_reviews,
-        SUM(total_count) as total_attempts,
-        SUM(correct_count) as correct_reviews,
-        AVG(total_count) as avg_attempts,
-        COUNT(DISTINCT question_id) as unique_items
-      FROM reviews
-      WHERE user_id::text = $1::text AND last_review_at >= NOW() - INTERVAL '7 days'
-      GROUP BY DATE(last_review_at)
+        SUM(attempts) as total_attempts,
+        SUM(correct) as correct_reviews,
+        AVG(attempts) as avg_attempts,
+        COUNT(DISTINCT item_id) as unique_items
+      FROM ${REVIEWS_TABLE}
+      WHERE user_id = $1 AND last_reviewed >= NOW() - INTERVAL '7 days'
+      GROUP BY DATE(last_reviewed)
       ORDER BY date DESC
     `;
 
@@ -226,16 +220,15 @@ router.get('/insights/weaknesses', authenticateUser, async (req, res) => {
 
     const weaknessQuery = `
       SELECT
-        q.form_name as form,
-        SUM(r.total_count) as total_attempts,
-        SUM(r.correct_count) as correct_attempts,
-        SUM(r.total_count - r.correct_count) as error_count,
-        ROUND(SUM(r.total_count - r.correct_count)::numeric / GREATEST(SUM(r.total_count), 1)::numeric * 100, 1) as error_rate
-      FROM reviews r
-      LEFT JOIN questions q ON q.id = r.question_id
-      WHERE r.user_id::text = $1::text AND r.last_review_at >= NOW() - INTERVAL '30 days'
-      GROUP BY q.form_name
-      HAVING SUM(r.total_count) >= 5 AND SUM(r.total_count - r.correct_count)::numeric / GREATEST(SUM(r.total_count), 1)::numeric > 0.3
+        form,
+        SUM(attempts) as total_attempts,
+        SUM(correct) as correct_attempts,
+        SUM(attempts - correct) as error_count,
+        ROUND(SUM(attempts - correct)::numeric / GREATEST(SUM(attempts), 1)::numeric * 100, 1) as error_rate
+      FROM ${REVIEWS_TABLE}
+      WHERE user_id = $1 AND last_reviewed >= NOW() - INTERVAL '30 days'
+      GROUP BY form
+      HAVING SUM(attempts) >= 5 AND SUM(attempts - correct)::numeric / GREATEST(SUM(attempts), 1)::numeric > 0.3
       ORDER BY error_rate DESC, total_attempts DESC
       LIMIT 10
     `;
@@ -310,8 +303,8 @@ router.get('/insights/suggestions', authenticateUser, async (req, res) => {
 
     const dueAnalysis = await pool.query(`
       SELECT COUNT(*) as due_count
-      FROM reviews
-      WHERE user_id::text = $1::text AND next_review_at <= NOW()
+      FROM ${REVIEWS_TABLE}
+      WHERE user_id = $1 AND due_at <= NOW()
     `, [userId]);
 
     const freq = frequencyAnalysis.rows[0];

@@ -12,17 +12,17 @@ class VerbConjugator {
     const cleaned = (group || '').toString().replace(/\s+/g, '').toUpperCase();
 
     // I类动词
-    if (['I', '1', 'TYPE1', 'TYPEI', 'GROUP_I', 'GROUP1', 'GROUPI', 'CLASS_I', 'CLASS1', 'CLASSI', 'VERB1', 'VERBI'].includes(cleaned)) {
+    if (['I', '1', 'TYPE1', 'TYPEI', 'GROUP_I', 'GROUP1', 'GROUPI', 'CLASS_I', 'CLASS1', 'CLASSI', 'VERB1', 'VERBI', 'GODAN', 'U', 'GODANVERB'].includes(cleaned)) {
       return 'I';
     }
 
     // II类动词
-    if (['II', '2', 'TYPE2', 'TYPEII', 'GROUP_II', 'GROUP2', 'GROUPII', 'CLASS_II', 'CLASS2', 'CLASSII', 'VERB2', 'VERBII'].includes(cleaned)) {
+    if (['II', '2', 'TYPE2', 'TYPEII', 'GROUP_II', 'GROUP2', 'GROUPII', 'CLASS_II', 'CLASS2', 'CLASSII', 'VERB2', 'VERBII', 'ICHIDAN', 'RU', 'ICHIDANVERB'].includes(cleaned)) {
       return 'II';
     }
 
     // 不规则动词
-    if (['IRR', 'IRREGULAR', 'III', '3', 'TYPE3', 'TYPEIII', 'GROUP_III', 'GROUP3', 'GROUPIII', 'CLASS_III', 'CLASS3', 'CLASSIII', 'VERB3', 'VERBIII'].includes(cleaned)) {
+    if (['IRR', 'IRREGULAR', 'III', '3', 'TYPE3', 'TYPEIII', 'GROUP_III', 'GROUP3', 'GROUPIII', 'CLASS_III', 'CLASS3', 'CLASSIII', 'VERB3', 'VERBIII', 'SURU', 'KURU'].includes(cleaned)) {
       return 'IRR';
     }
 
